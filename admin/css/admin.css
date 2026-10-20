@@ -1,0 +1,935 @@
+/* 1. Bảng màu và thành phần cơ bản trong giao diện admin. */
+:root {
+  --blue: #2563eb;
+  --blue-dark: #1d4ed8;
+  --bg: #f5f7fb;
+  --text: #1e293b;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --navy: #172554;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+  font-size: 14px;
+}
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+button {
+  cursor: pointer;
+}
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+a {
+  color: var(--blue);
+}
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+p {
+  line-height: 1.6;
+}
+.muted {
+  color: var(--muted);
+  font-size: 14px;
+}
+.hidden {
+  display: none !important;
+}
+.btn {
+  border: 0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.btn-primary {
+  color: white;
+  background: var(--blue);
+}
+.btn-primary:hover {
+  background: var(--blue-dark);
+}
+.btn-light {
+  color: #334155;
+  background: #f1f5f9;
+}
+.btn-light:hover {
+  background: #e2e8f0;
+}
+.btn-danger {
+  color: #b91c1c;
+  background: #fee2e2;
+}
+.btn-success {
+  color: #166534;
+  background: #dcfce7;
+}
+.btn-outline {
+  background: white;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+button:focus-visible,
+a:focus-visible {
+  outline: 3px solid #93c5fd;
+  outline-offset: 3px;
+}
+input,
+select,
+textarea {
+  width: 100%;
+  padding: 11px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: white;
+  outline: none;
+  color: var(--text);
+}
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px #2563eb18;
+}
+input[readonly] {
+  background: #f1f5f9;
+  color: #64748b;
+}
+input[type="checkbox"] {
+  width: auto;
+  accent-color: var(--blue);
+}
+textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+.field {
+  margin-top: 18px;
+  min-width: 0;
+}
+.field label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  font-size: 13px;
+}
+.field small,
+.help {
+  font-size: 12px;
+  color: var(--muted);
+  display: block;
+  margin: 7px 0 0;
+  line-height: 1.6;
+}
+.message {
+  min-height: 20px;
+  margin-top: 12px;
+  font-size: 13px;
+  color: #dc2626;
+}
+.notice {
+  padding: 13px 16px;
+  background: #eff6ff;
+  border: 1px solid #dbeafe;
+  border-radius: 9px;
+  color: #365985;
+  font-size: 13px;
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+.notice.warning {
+  background: #fffbeb;
+  border-color: #fde68a;
+  color: #92400e;
+}
+/* 2. Đăng nhập riêng của quản trị viên. */
+.login-screen {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: linear-gradient(135deg, #eff6ff, #f8fafc);
+}
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 32px;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  box-shadow: 0 12px 35px #0f172a12;
+}
+.brand {
+  color: var(--blue);
+  font-size: 25px;
+  font-weight: 800;
+  margin-bottom: 8px;
+  letter-spacing: -0.5px;
+}
+.login-card h1 {
+  font-size: 24px;
+  margin-top: 25px;
+  margin-bottom: 10px;
+}
+.login-submit {
+  width: 100%;
+  margin-top: 24px;
+}
+.demo-note {
+  font-size: 12px;
+  color: #64748b;
+  background: #f8fafc;
+  border-radius: 8px;
+  padding: 12px;
+  line-height: 1.8;
+}
+.demo-note small {
+  font-size: 11px;
+}
+/* 3. Menu xanh đậm, thanh trên và bố cục nội dung. */
+.app {
+  min-height: 100vh;
+}
+.sidebar {
+  width: 245px;
+  position: fixed;
+  inset: 0 auto 0 0;
+  color: white;
+  background: var(--navy);
+  padding: 24px 16px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+}
+.sidebar .brand {
+  color: white;
+  padding: 0 12px;
+  margin-bottom: 5px;
+}
+.sidebar-subtitle {
+  color: #bfdbfe;
+  font-size: 12px;
+  padding: 0 12px;
+  margin-bottom: 26px;
+}
+.menu-label {
+  color: #93a4c7;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  padding: 0 12px;
+  margin: 20px 0 10px;
+}
+.menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  border: 0;
+  border-radius: 9px;
+  padding: 13px 12px;
+  margin-bottom: 6px;
+  color: #dbeafe;
+  background: transparent;
+}
+.menu-item.active,
+.menu-item:hover {
+  background: var(--blue);
+  color: white;
+}
+.menu-icon {
+  width: 21px;
+  text-align: center;
+  font-size: 16px;
+}
+.sidebar-note {
+  margin-top: auto;
+  padding: 25px 12px 0;
+  color: #bfdbfe;
+  font-size: 12px;
+  line-height: 2;
+}
+.sidebar-note small {
+  font-size: 10px;
+  color: #93a4c7;
+}
+.online-dot {
+  display: inline-block;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #4ade80;
+  margin-right: 5px;
+}
+.main {
+  margin-left: 245px;
+  min-width: 0;
+}
+.topbar {
+  min-height: 76px;
+  background: white;
+  border-bottom: 1px solid var(--border);
+  padding: 15px 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.topbar h2 {
+  margin: 0;
+  font-size: 20px;
+}
+.admin-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+}
+.admin-info strong {
+  font-weight: 500;
+}
+.admin-email {
+  font-size: 12px;
+  margin-top: 3px;
+}
+.avatar {
+  width: 38px;
+  height: 38px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  color: var(--blue);
+  background: #dbeafe;
+  border-radius: 50%;
+  font-weight: 800;
+}
+.content {
+  padding: 28px 30px;
+  max-width: 1650px;
+  margin: auto;
+}
+.content:focus {
+  outline: none;
+}
+.page-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.page-heading h1 {
+  margin: 0 0 6px;
+  font-size: 25px;
+}
+.page-heading p {
+  margin: 0;
+}
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 30px;
+  border-top: 1px solid var(--border);
+  padding-top: 20px;
+  color: #94a3b8;
+  font-size: 12px;
+}
+.footer strong {
+  color: #64748b;
+  font-size: 14px;
+}
+/* 4. Thống kê, bộ lọc, trạng thái và bảng. */
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 24px;
+}
+.stat-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  padding: 22px;
+  min-width: 0;
+}
+.stat-title {
+  color: var(--muted);
+  font-size: 13px;
+}
+.stat-number {
+  margin-top: 12px;
+  font-size: 29px;
+  font-weight: 750;
+  overflow-wrap: anywhere;
+}
+.stat-icon {
+  float: right;
+  font-size: 23px;
+}
+.stat-caption {
+  font-size: 11px;
+  color: var(--muted);
+  margin-top: 8px;
+}
+.panel {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+.panel-header {
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--border);
+}
+.panel-header h3 {
+  margin: 0;
+  font-size: 17px;
+}
+.panel-header p {
+  margin: 5px 0 0;
+  font-size: 12px;
+  color: var(--muted);
+}
+.panel-body {
+  padding: 20px;
+}
+.filters {
+  padding: 18px 20px;
+  display: flex;
+  gap: 12px;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  border-bottom: 1px solid var(--border);
+  background: #fff;
+}
+.filters .field {
+  margin-top: 0;
+  flex: 1;
+  min-width: 130px;
+}
+.filters .field.search {
+  flex: 2;
+  min-width: 200px;
+}
+.filters label {
+  font-size: 11px;
+  color: var(--muted);
+}
+.filters input,
+.filters select {
+  min-height: 40px;
+  font-size: 13px;
+}
+.filters .check {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 40px;
+  font-size: 12px;
+}
+.table-wrap {
+  width: 100%;
+  overflow-x: auto;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  white-space: nowrap;
+}
+th,
+td {
+  padding: 15px 18px;
+  text-align: left;
+  border-bottom: 1px solid #edf0f5;
+  font-size: 13px;
+}
+th {
+  background: #f8fafc;
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 650;
+  text-transform: uppercase;
+}
+tbody tr:hover {
+  background: #fafcff;
+}
+tbody tr:last-child td {
+  border-bottom: 0;
+}
+.cell-title {
+  font-weight: 650;
+}
+.cell-subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 5px;
+}
+.status {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 9px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.status-active {
+  background: #dcfce7;
+  color: #166534;
+}
+.status-locked {
+  background: #fee2e2;
+  color: #991b1b;
+}
+.status-pending {
+  background: #fef3c7;
+  color: #92400e;
+}
+.status-blue {
+  background: #dbeafe;
+  color: #1d4ed8;
+}
+.status-neutral {
+  background: #f1f5f9;
+  color: #64748b;
+}
+.actions {
+  display: flex;
+  gap: 7px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.actions .btn {
+  padding: 7px 10px;
+  font-size: 12px;
+}
+.page-heading .actions .btn {
+  padding: 11px 15px;
+  font-size: 13px;
+}
+.empty-state {
+  padding: 40px 20px;
+  text-align: center;
+  color: var(--muted);
+  white-space: normal;
+  line-height: 1.8;
+}
+.empty-state strong {
+  display: block;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.table-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 15px 20px;
+  border-top: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 12px;
+}
+.pagination {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.pagination .btn {
+  padding: 7px 10px;
+}
+.product-thumb {
+  width: 54px;
+  height: 54px;
+  object-fit: contain;
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 4px;
+  flex-shrink: 0;
+}
+.product-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.product-name {
+  font-weight: 650;
+  white-space: normal;
+  min-width: 150px;
+  max-width: 240px;
+}
+.product-code {
+  color: var(--muted);
+  font-size: 12px;
+  margin-top: 5px;
+}
+.product-price {
+  color: var(--blue-dark);
+  font-weight: 700;
+}
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin: 28px 0 16px;
+}
+.section-heading h2 {
+  font-size: 20px;
+  margin: 0;
+}
+.section-heading p {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 6px 0 0;
+}
+.report-totals td {
+  background: #eff6ff;
+  font-weight: 700;
+  border-top: 1px solid var(--border);
+}
+.filters .field.time {
+  min-width: 235px;
+}
+td .actions {
+  flex-wrap: nowrap;
+}
+/* 5. Form thêm/sửa, chi tiết và hộp thoại xác nhận. */
+dialog {
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  width: min(800px, calc(100% - 32px));
+  max-height: calc(100vh - 40px);
+  color: var(--text);
+  box-shadow: 0 20px 60px #0f172a30;
+}
+dialog::backdrop {
+  background: #0f172a80;
+}
+.modal-header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 20px 24px;
+  background: white;
+  border-bottom: 1px solid var(--border);
+}
+.modal-header h2 {
+  margin: 0;
+  font-size: 20px;
+}
+.modal-body {
+  padding: 8px 24px 24px;
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 16px;
+}
+.full-width {
+  grid-column: 1/-1;
+}
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 24px;
+  border-top: 1px solid var(--border);
+  padding-top: 18px;
+}
+.form-section {
+  font-size: 14px;
+  margin: 24px 0 0;
+  border-bottom: 1px solid var(--border);
+  padding-bottom: 10px;
+  color: #475569;
+}
+.image-editor {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 10px;
+}
+.image-preview {
+  width: 76px;
+  height: 76px;
+  object-fit: contain;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+.image-editor > div {
+  flex: 1;
+  min-width: 0;
+}
+.receipt-line {
+  display: grid;
+  grid-template-columns: minmax(180px, 2fr) 90px minmax(100px, 1fr) 38px;
+  gap: 10px;
+  align-items: end;
+  margin-bottom: 12px;
+}
+.receipt-line label {
+  font-size: 12px;
+  display: block;
+  margin-bottom: 6px;
+  color: #64748b;
+}
+.receipt-line .btn {
+  padding: 11px;
+}
+.line-total {
+  text-align: right;
+  font-weight: 600;
+  padding: 12px 0;
+  color: var(--blue-dark);
+}
+.detail-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin: 20px 0;
+}
+.detail-grid dt {
+  font-size: 12px;
+  color: var(--muted);
+  margin-bottom: 6px;
+}
+.detail-grid dd {
+  margin: 0;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+.detail-description {
+  white-space: pre-wrap;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+.detail-product {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin: 20px 0;
+}
+.detail-product img {
+  width: 110px;
+  height: 110px;
+  object-fit: contain;
+}
+.detail-product h3 {
+  margin-bottom: 7px;
+}
+.empty-price {
+  color: var(--muted);
+  font-style: italic;
+}
+.toast {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  max-width: calc(100vw - 48px);
+  background: #166534;
+  color: white;
+  padding: 14px 20px;
+  border-radius: 10px;
+  box-shadow: 0 8px 30px #0f172a25;
+  z-index: 100;
+  font-size: 13px;
+}
+.toast.error {
+  background: #b91c1c;
+}
+/* 6. Màn hình nhỏ: giữ bảng cuộn trong vùng riêng, không tràn cả trang. */
+@media (max-width: 1100px) {
+  .sidebar {
+    width: 220px;
+  }
+  .main {
+    margin-left: 220px;
+  }
+  .content {
+    padding: 24px 20px;
+  }
+  .topbar {
+    padding: 15px 20px;
+  }
+  .stat-card {
+    padding: 18px;
+  }
+  .stat-number {
+    font-size: 25px;
+  }
+}
+@media (max-width: 850px) {
+  .stats {
+    grid-template-columns: 1fr;
+  }
+  .page-heading {
+    align-items: flex-start;
+  }
+  .admin-email {
+    display: none;
+  }
+  .filters .field {
+    min-width: 160px;
+  }
+}
+@media (max-width: 650px) {
+  .sidebar {
+    position: static;
+    width: 100%;
+    padding: 18px 14px;
+    display: block;
+  }
+  .sidebar-subtitle,
+  .menu-label,
+  .sidebar-note {
+    display: none;
+  }
+  .sidebar .brand {
+    margin-bottom: 15px;
+  }
+  .menu {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    padding-bottom: 5px;
+  }
+  .menu li {
+    flex-shrink: 0;
+  }
+  .menu-item {
+    margin: 0;
+    white-space: nowrap;
+    padding: 10px;
+    font-size: 12px;
+  }
+  .main {
+    margin-left: 0;
+  }
+  .topbar {
+    padding: 12px 16px;
+    min-height: 70px;
+  }
+  .topbar h2 {
+    font-size: 16px;
+  }
+  .admin-info > div:not(.avatar) {
+    display: none;
+  }
+  .admin-info {
+    gap: 8px;
+  }
+  .content {
+    padding: 22px 12px;
+  }
+  .page-heading {
+    flex-direction: column;
+    gap: 14px;
+  }
+  .page-heading h1 {
+    font-size: 23px;
+  }
+  .page-heading .muted {
+    font-size: 13px;
+  }
+  .filters {
+    padding: 15px;
+  }
+  .filters .field,
+  .filters .field.search {
+    min-width: 100%;
+    flex-basis: 100%;
+  }
+  .panel-header {
+    padding: 16px;
+  }
+  .table-footer {
+    flex-wrap: wrap;
+  }
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+  .receipt-line {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 12px;
+    background: #f8fafc;
+    border-radius: 9px;
+  }
+  .receipt-line > div:first-child {
+    grid-column: 1/-1;
+  }
+  .receipt-line .btn {
+    justify-self: end;
+  }
+  .modal-header,
+  .modal-body {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+  dialog {
+    width: calc(100% - 16px);
+    max-height: calc(100vh - 16px);
+  }
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+  .section-heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .footer {
+    font-size: 11px;
+  }
+  .login-card {
+    padding: 25px;
+  }
+  .image-editor {
+    align-items: flex-start;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+  }
+}

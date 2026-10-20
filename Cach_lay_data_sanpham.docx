@@ -1,0 +1,29 @@
+/* Nhúng file products.js bằng cách chạy đoạn code javascript sau */
+/*riêng admin/index.html phải đổi đường dẫn là src="../products.js" */
+
+<div id="product-list" style="display: flex; flex-wrap: wrap; gap: 20px;"></div>
+
+<!-- Nhúng file chứa data của bạn vào -->
+<script src="products.js"></script>
+
+<script>
+    const container = document.getElementById('product-list');
+
+    // Dùng vòng lặp duyệt qua từng sản phẩm trong mảng list_products
+    list_products.forEach(p => {
+        container.innerHTML += `
+            <div class="product-card" style="border: 1px solid #ddd; padding: 15px; width: 220px;">
+                <!-- Lấy ảnh từ trường p.img -->
+                <img src="${p.img}" alt="${p.name}" style="width: 100%; height: 200px; object-fit: cover;">
+                
+                <!-- Lấy tên, giá, hãng sản xuất -->
+                <span style="font-size: 12px; color: gray;">${p.company}</span>
+                <h3 style="font-size: 16px; margin: 5px 0;">${p.name}</h3>
+                <p style="color: red; font-weight: bold;">${p.price} đ</p>
+                
+                <!-- Lấy thông tin chi tiết (ví dụ RAM, ROM) -->
+                <p style="font-size: 12px;">RAM: ${p.detail.ram} | ROM: ${p.detail.rom}</p>
+            </div>
+        `;
+    });
+</script>

@@ -1,0 +1,1305 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechStore - Trang khách hàng</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #f5f7fb;
+            color: #263247;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button {
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        /* ===== THANH ĐIỀU HƯỚNG ===== */
+        .navbar {
+            background: #ffffff;
+            border-bottom: 1px solid #e5eaf2;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            min-height: 76px;
+            margin: auto;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: 800;
+            color: #1769d2;
+            white-space: nowrap;
+        }
+
+        .logo span {
+            color: #263247;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .nav-menu a {
+            color: #475569;
+            font-size: 15px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .nav-menu a:hover {
+            color: #1769d2;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 8px;
+            padding: 10px 15px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .btn-outline {
+            background: white;
+            color: #1769d2;
+            border: 1px solid #1769d2;
+        }
+
+        .btn-outline:hover {
+            background: #eef5ff;
+        }
+
+        .btn-primary {
+            background: #1769d2;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1055b0;
+        }
+
+        .btn-cart {
+            background: #edf4ff;
+            color: #1769d2;
+        }
+
+        .btn-cart:hover {
+            background: #dceaff;
+        }
+
+        /* ===== KHU VỰC GIỚI THIỆU ===== */
+        .hero {
+            max-width: 1200px;
+            margin: 28px auto;
+            padding: 0 24px;
+        }
+
+        .hero-content {
+            background: linear-gradient(120deg, #1769d2, #3989f5);
+            color: white;
+            padding: 38px 42px;
+            border-radius: 16px;
+        }
+
+        .hero-content h1 {
+            font-size: 30px;
+            margin-bottom: 12px;
+        }
+
+        .hero-content p {
+            font-size: 15px;
+            line-height: 1.7;
+            color: #edf5ff;
+        }
+
+        /* ===== DANH SÁCH SẢN PHẨM ===== */
+        .products-section {
+            max-width: 1200px;
+            margin: 35px auto 55px;
+            padding: 0 24px;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 22px;
+        }
+
+        .section-heading h2 {
+            font-size: 25px;
+            color: #1e293b;
+        }
+
+        .section-heading p {
+            color: #718096;
+            font-size: 14px;
+            margin-top: 6px;
+        }
+
+        .product-count {
+            color: #64748b;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .product-card {
+            background: white;
+            border: 1px solid #e8edf5;
+            border-radius: 13px;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 9px 24px rgba(34, 68, 120, 0.09);
+        }
+
+        .product-image {
+            height: 175px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .product-image img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .product-company {
+            font-size: 12px;
+            color: #1769d2;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .product-name {
+            font-size: 15px;
+            line-height: 1.5;
+            min-height: 45px;
+            margin-bottom: 10px;
+            color: #273449;
+        }
+
+        .product-rating {
+            color: #e9a21a;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .product-price {
+            font-size: 19px;
+            font-weight: 800;
+            color: #e04747;
+            margin-top: auto;
+            margin-bottom: 14px;
+        }
+
+        .product-card .btn {
+            width: 100%;
+        }
+
+        .empty-products {
+            grid-column: 1 / -1;
+            background: white;
+            padding: 40px;
+            text-align: center;
+            color: #64748b;
+            border-radius: 12px;
+        }
+
+        /* ===== CHÂN TRANG ===== */
+        .footer {
+            background: #17263c;
+            color: #dbe4f0;
+            padding: 40px 24px 20px;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: 1.4fr 1fr 1fr;
+            gap: 40px;
+        }
+
+        .footer h3 {
+            color: white;
+            font-size: 17px;
+            margin-bottom: 16px;
+        }
+
+        .footer p,
+        .footer a {
+            font-size: 14px;
+            line-height: 1.9;
+            color: #c4d0df;
+        }
+
+        .footer a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 28px auto 0;
+            padding-top: 18px;
+            border-top: 1px solid #34445a;
+            text-align: center;
+            font-size: 13px;
+            color: #9fb0c5;
+        }
+
+        /* ===== FORM ĐĂNG NHẬP / ĐĂNG KÝ ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.55);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            padding: 18px;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            width: 100%;
+            max-width: 420px;
+            background: white;
+            border-radius: 15px;
+            padding: 28px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .modal-header {
+            margin-bottom: 22px;
+        }
+
+        .modal-header h2 {
+            color: #1769d2;
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .modal-header p {
+            color: #718096;
+            font-size: 14px;
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 18px;
+            top: 15px;
+            border: none;
+            background: none;
+            font-size: 25px;
+            color: #718096;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 7px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 11px 12px;
+            border: 1px solid #d6deea;
+            border-radius: 8px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .form-group input:focus {
+            border-color: #1769d2;
+            box-shadow: 0 0 0 3px #1769d21a;
+        }
+
+        .form-submit {
+            width: 100%;
+            padding: 12px;
+            margin-top: 5px;
+        }
+
+        .form-switch {
+            text-align: center;
+            font-size: 14px;
+            margin-top: 18px;
+            color: #64748b;
+        }
+
+        .form-switch button {
+            border: none;
+            background: none;
+            color: #1769d2;
+            font-weight: 700;
+        }
+
+        .form-message {
+            font-size: 13px;
+            margin-top: 12px;
+            line-height: 1.5;
+            color: #d14343;
+        }
+
+        .account-name {
+            color: #1769d2;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1000px) {
+            .nav-container {
+                flex-wrap: wrap;
+            }
+
+            .nav-menu {
+                order: 3;
+                width: 100%;
+                justify-content: center;
+                padding-top: 8px;
+            }
+
+            .product-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 700px) {
+            .nav-container {
+                padding: 14px 16px;
+                gap: 14px;
+            }
+
+            .logo {
+                font-size: 21px;
+            }
+
+            .nav-actions {
+                gap: 6px;
+            }
+
+            .nav-actions .btn {
+                padding: 9px;
+                font-size: 12px;
+            }
+
+            .nav-menu {
+                gap: 17px;
+                overflow-x: auto;
+                justify-content: flex-start;
+            }
+
+            .nav-menu a {
+                white-space: nowrap;
+                font-size: 13px;
+            }
+
+            .hero,
+            .products-section {
+                padding: 0 16px;
+            }
+
+            .hero-content {
+                padding: 28px 22px;
+            }
+
+            .hero-content h1 {
+                font-size: 24px;
+            }
+
+            .product-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 12px;
+            }
+
+            .product-card {
+                padding: 12px;
+            }
+
+            .product-image {
+                height: 130px;
+            }
+
+            .product-name {
+                font-size: 13px;
+            }
+
+            .product-price {
+                font-size: 16px;
+            }
+
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+        }
+
+        /* ===== TRANG CHI TIẾT SẢN PHẨM ===== */
+        .product-detail-page {
+            max-width: 1200px;
+            margin: 30px auto 55px;
+            padding: 0 24px;
+        }
+
+        .detail-back {
+            display: inline-block;
+            margin-bottom: 22px;
+            color: #1769d2;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+        }
+
+        .detail-back:hover {
+            text-decoration: underline;
+        }
+
+        .detail-container {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 42px;
+            padding: 32px;
+            background: #fff;
+            border: 1px solid #e5eaf2;
+            border-radius: 15px;
+        }
+
+        .detail-image {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 320px;
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 25px;
+        }
+
+        .detail-image img {
+            max-width: 100%;
+            max-height: 350px;
+            object-fit: contain;
+        }
+
+        .detail-info h1 {
+            font-size: 27px;
+            line-height: 1.4;
+            color: #1e293b;
+            margin: 8px 0 14px;
+        }
+
+        .detail-company {
+            color: #1769d2;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .detail-rating {
+            color: #e9a21a;
+            margin-bottom: 18px;
+        }
+
+        .detail-price {
+            font-size: 28px;
+            font-weight: 800;
+            color: #e04747;
+            margin-bottom: 22px;
+        }
+
+        .detail-actions {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .detail-actions .btn {
+            padding: 12px 20px;
+        }
+
+        .detail-specs {
+            margin-top: 25px;
+        }
+
+        .detail-specs h2 {
+            font-size: 21px;
+            margin-bottom: 16px;
+        }
+
+        .spec-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .spec-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e8edf5;
+            line-height: 1.5;
+        }
+
+        .spec-table td:first-child {
+            width: 38%;
+            color: #64748b;
+            background: #f8fafc;
+            font-weight: 600;
+        }
+
+        .spec-table td:last-child {
+            color: #263247;
+            overflow-wrap: anywhere;
+        }
+
+        @media (max-width: 760px) {
+            .detail-container {
+                grid-template-columns: 1fr;
+                gap: 24px;
+                padding: 18px;
+            }
+
+            .detail-image {
+                min-height: 230px;
+            }
+
+            .detail-info h1 {
+                font-size: 22px;
+            }
+
+            .detail-price {
+                font-size: 24px;
+            }
+
+            .product-detail-page {
+                padding: 0 16px;
+            }
+        }
+
+    </style>
+</head>
+
+<body>
+
+    <!-- THANH ĐIỀU HƯỚNG -->
+    <header class="navbar">
+        <div class="nav-container">
+
+            <a href="index.html" class="logo">
+                Tech<span>Store.</span>
+            </a>
+
+            <nav class="nav-menu">
+                <a href="index.html">Trang chủ</a>
+                <a href="#san-pham">Sản phẩm</a>
+                <a href="#lien-he">Liên hệ</a>
+            </nav>
+
+            <div class="nav-actions" id="accountActions">
+                <button class="btn btn-outline" onclick="openModal('register')">
+                    Đăng ký
+                </button>
+
+                <button class="btn btn-primary" onclick="openModal('login')">
+                    Đăng nhập
+                </button>
+
+                <a href="don-hang.html" class="btn btn-cart">
+                    🛒 Giỏ hàng
+                </a>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- GIỚI THIỆU -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Chào mừng đến với TechStore</h1>
+            <p>
+                Khám phá các sản phẩm điện tử nổi bật với thông tin rõ ràng,
+                giá cả minh bạch và trải nghiệm mua sắm thuận tiện.
+            </p>
+        </div>
+    </section>
+
+    <!-- DANH SÁCH SẢN PHẨM -->
+    <main class="products-section" id="san-pham">
+
+        <div class="section-heading">
+            <div>
+                <h2>Sản phẩm nổi bật</h2>
+                <p>Lựa chọn thiết bị phù hợp với nhu cầu của bạn</p>
+            </div>
+
+            <span class="product-count" id="productCount"></span>
+        </div>
+
+        <div class="product-grid" id="productList">
+            <div class="empty-products">Đang tải sản phẩm...</div>
+        </div>
+
+    </main>
+
+    <!-- THÔNG TIN LIÊN HỆ -->
+    <footer class="footer" id="lien-he">
+        <div class="footer-container">
+
+            <div>
+                <h3>TechStore</h3>
+                <p>
+                    Cửa hàng kinh doanh thiết bị điện tử.
+                    Mang đến trải nghiệm mua sắm tiện lợi
+                    và thông tin sản phẩm minh bạch.
+                </p>
+            </div>
+
+            <div>
+                <h3>Thông tin liên hệ</h3>
+                <p>Địa chỉ: Cập nhật địa chỉ cửa hàng</p>
+                <p>Email: support@techstore.vn</p>
+                <p>Điện thoại: 0123 456 789</p>
+            </div>
+
+            <div>
+                <h3>Hỗ trợ khách hàng</h3>
+                <p><a href="#san-pham">Danh sách sản phẩm</a></p>
+                <p><a href="don-hang.html">Giỏ hàng và đơn hàng</a></p>
+                <p><a href="#" onclick="openModal('login'); return false;">
+                    Tài khoản khách hàng
+                </a></p>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            © 2026 TechStore. Website bán hàng điện tử.
+        </div>
+    </footer>
+
+    <!-- FORM ĐĂNG NHẬP / ĐĂNG KÝ -->
+    <div class="modal" id="authModal" onclick="closeModalOutside(event)">
+        <div class="modal-content">
+
+            <button class="close-modal" onclick="closeModal()" aria-label="Đóng">
+                &times;
+            </button>
+
+            <div class="modal-header">
+                <h2 id="formTitle">Đăng nhập</h2>
+                <p id="formSubtitle">Đăng nhập để sử dụng tài khoản của bạn.</p>
+            </div>
+
+            <form id="authForm">
+                <div class="form-group" id="nameGroup" hidden>
+                    <label for="fullName">Họ và tên</label>
+                    <input id="fullName" type="text" autocomplete="name"
+                           placeholder="Nhập họ và tên">
+                </div>
+
+                <div class="form-group">
+                    <label for="authEmail">Email</label>
+                    <input id="authEmail" type="email" required
+                           autocomplete="email" placeholder="Nhập email">
+                </div>
+
+                <div class="form-group">
+                    <label for="authPassword">Mật khẩu</label>
+                    <input id="authPassword" type="password" required
+                           minlength="8" autocomplete="current-password"
+                           placeholder="Nhập mật khẩu">
+                </div>
+
+                <button type="submit"
+                        class="btn btn-primary form-submit"
+                        id="formSubmit">
+                    Đăng nhập
+                </button>
+
+                <p class="form-message" id="formMessage"></p>
+            </form>
+
+            <div class="form-switch">
+                <span id="switchText">Chưa có tài khoản?</span>
+                <button type="button" id="switchButton"
+                        onclick="switchAuthMode()">
+                    Đăng ký
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Đặt file này cùng thư mục với products.js và don-hang.html. -->
+    <!-- DỮ LIỆU SẢN PHẨM CÓ SẴN -->
+    <script src="products.js"></script>
+
+    <script>
+        // ===== HIỂN THỊ DANH SÁCH SẢN PHẨM =====
+        const productList = document.getElementById("productList");
+
+        function formatPrice(price) {
+            const number = Number(String(price).replace(/[^\d.-]/g, ""));
+            if (!Number.isFinite(number)) return String(price ?? "");
+            return number.toLocaleString("vi-VN") + " ₫";
+        }
+
+        async function loadProductsFromAPI() {
+            productList.innerHTML =
+                '<div class="empty-products">Đang tải sản phẩm...</div>';
+
+            // Ưu tiên dữ liệu mới nhất từ backend. Nếu API chưa chạy,
+            // dùng list_products trong products.js để vẫn xem được giao diện.
+            try {
+                const response = await fetch("/api/products", {
+                    credentials: "same-origin"
+                });
+
+                if (!response.ok) {
+                    throw new Error("API sản phẩm chưa sẵn sàng.");
+                }
+
+                const result = await response.json();
+                const apiProducts = Array.isArray(result)
+                    ? result
+                    : result.products;
+
+                if (!Array.isArray(apiProducts)) {
+                    throw new Error("Dữ liệu sản phẩm từ API không hợp lệ.");
+                }
+
+                window.__customerProducts = apiProducts.map(product => ({
+                    maSanPham: product.maSanPham,
+                    masp: product.maSP,
+                    name: product.tenSanPham ?? product.name ?? "Sản phẩm",
+                    company: product.hang ?? product.company ?? "Điện tử",
+                    img: product.hinhAnh ?? product.img ?? "",
+                    price: product.gia ?? product.price ?? 0,
+                    star: product.soSao ?? product.star ?? 0,
+                    rateCount: product.soLuotDanhGia ?? product.rateCount ?? 0,
+                    promo: {
+                        name: product.loaiKhuyenMai || "",
+                        value: product.giaTriKhuyenMai ?? ""
+                    },
+                    detail: product.detail || {
+                        screen: product.manHinh,
+                        os: product.heDieuHanh,
+                        camara: product.cameraSau,
+                        camaraFront: product.cameraTruoc,
+                        cpu: product.cpu,
+                        ram: product.ram,
+                        rom: product.rom,
+                        microUSB: product.theNho,
+                        battery: product.pin
+                    }
+                }));
+
+                renderProducts();
+            } catch (error) {
+                console.warn("Không tải được sản phẩm từ API; dùng dữ liệu products.js nếu có.", error);
+
+                if (typeof list_products !== "undefined" &&
+                    Array.isArray(list_products) &&
+                    list_products.length > 0) {
+                    window.__customerProducts = list_products;
+                    renderProducts();
+                } else {
+                    productList.innerHTML =
+                        '<div class="empty-products">Không tải được sản phẩm. Hãy khởi động backend hoặc kiểm tra file products.js.</div>';
+                    document.getElementById("productCount").textContent = "";
+                }
+            }
+        }
+
+        function renderProducts() {
+            const products = window.__customerProducts ||
+                (typeof list_products !== "undefined" && Array.isArray(list_products) ? list_products : []);
+            if (!Array.isArray(products) || products.length === 0) {
+                productList.innerHTML = `
+                    <div class="empty-products">
+                        Chưa có dữ liệu sản phẩm.
+                        Hãy kiểm tra file products.js.
+                    </div>`;
+                document.getElementById("productCount").textContent = "";
+                return;
+            }
+
+            document.getElementById("productCount").textContent =
+                products.length + " sản phẩm";
+
+            productList.innerHTML = products.map((product, index) => {
+                const name = String(product.name ?? "Sản phẩm");
+                const company = String(product.company ?? "Điện tử");
+                const image = String(product.img ?? "");
+                const price = formatPrice(product.price);
+                const stars = Math.max(
+                    0, Math.min(5, Math.round(Number(product.star) || 0))
+                );
+
+                return `
+                    <article class="product-card">
+                        <div class="product-image">
+                            <img src="${escapeHTML(image)}"
+                                 alt="${escapeHTML(name)}"
+                                 loading="lazy"
+                                 onerror="this.style.display='none'">
+                        </div>
+
+                        <div class="product-company">
+                            ${escapeHTML(company)}
+                        </div>
+
+                        <h3 class="product-name">
+                            ${escapeHTML(name)}
+                        </h3>
+
+                        <div class="product-rating">
+                            ${"★".repeat(stars)}${"☆".repeat(5 - stars)}
+                            <span style="color:#718096">
+                                (${Number(product.rateCount) || 0})
+                            </span>
+                        </div>
+
+                        <div class="product-price">${escapeHTML(price)}</div>
+
+                        <button class="btn btn-primary"
+                                onclick="viewProduct(${index})">
+                            Xem chi tiết
+                        </button>
+                    </article>`;
+            }).join("");
+        }
+
+        function escapeHTML(value) {
+            return String(value).replace(/[&<>"']/g, character => ({
+                "&": "&amp;",
+                "<": "&lt;",
+                ">": "&gt;",
+                '"': "&quot;",
+                "'": "&#39;"
+            })[character]);
+        }
+
+        function viewProduct(index) {
+            const products = window.__customerProducts ||
+                (typeof list_products !== "undefined" && Array.isArray(list_products) ? list_products : []);
+            const product = products[index];
+
+            if (!product) return;
+
+            // Ẩn danh sách, giữ nguyên thanh điều hướng và chân trang.
+            document.querySelector(".hero").style.display = "none";
+            document.querySelector(".products-section").style.display = "none";
+
+            // Tạo vùng chi tiết nếu chưa có.
+            let detailPage = document.getElementById("productDetailPage");
+
+            if (!detailPage) {
+                detailPage = document.createElement("section");
+                detailPage.id = "productDetailPage";
+                detailPage.className = "product-detail-page";
+
+                document.querySelector(".navbar").after(detailPage);
+            }
+
+            detailPage.style.display = "block";
+
+            const d = product.detail || {};
+
+            // Các thuộc tính tương ứng với cấu trúc detail trong products.js.
+            const specs = [
+                ["Màn hình", d.screen],
+                ["Hệ điều hành", d.os],
+                ["Camera sau", d.camara],
+                ["Camera trước", d.camaraFront],
+                ["CPU", d.cpu],
+                ["RAM", d.ram],
+                ["Bộ nhớ trong", d.rom],
+                ["Cổng kết nối", d.microUSB],
+                ["Dung lượng pin", d.battery]
+            ];
+
+            const specRows = specs
+                .filter(([label, value]) =>
+                    value !== undefined &&
+                    value !== null &&
+                    String(value).trim() !== ""
+                )
+                .map(([label, value]) => `
+                    <tr>
+                        <td>${escapeHTML(label)}</td>
+                        <td>${escapeHTML(value)}</td>
+                    </tr>
+                `)
+                .join("");
+
+            const stars = Math.max(
+                0,
+                Math.min(5, Math.round(Number(product.star) || 0))
+            );
+
+            detailPage.innerHTML = `
+                <button class="detail-back" onclick="backToProducts()">
+                    ← Quay lại danh sách sản phẩm
+                </button>
+
+                <div class="detail-container">
+                    <div class="detail-image">
+                        <img
+                            src="${escapeHTML(product.img || "")}"
+                            alt="${escapeHTML(product.name || "Sản phẩm")}"
+                            onerror="this.style.display='none'"
+                        >
+                    </div>
+
+                    <div class="detail-info">
+                        <div class="detail-company">
+                            ${escapeHTML(product.company || "Điện tử")}
+                        </div>
+
+                        <h1>${escapeHTML(product.name || "Sản phẩm")}</h1>
+
+                        <div class="detail-rating">
+                            ${"★".repeat(stars)}${"☆".repeat(5 - stars)}
+                            <span style="color:#718096">
+                                (${Number(product.rateCount) || 0} đánh giá)
+                            </span>
+                        </div>
+
+                        <div class="detail-price">
+                            ${escapeHTML(formatPrice(product.price))}
+                        </div>
+
+                        <div class="detail-actions">
+                            <button class="btn btn-primary"
+                                    onclick="addToCart(${index})">
+                                🛒 Thêm vào giỏ hàng
+                            </button>
+
+                            <button class="btn btn-outline"
+                                    onclick="backToProducts()">
+                                Tiếp tục mua sắm
+                            </button>
+                        </div>
+
+                        <div class="detail-specs">
+                            <h2>Thông số kỹ thuật</h2>
+
+                            ${
+                                specRows
+                                    ? `<table class="spec-table">
+                                        <tbody>${specRows}</tbody>
+                                    </table>`
+                                    : `<p>Chưa có thông số kỹ thuật.</p>`
+                            }
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        function backToProducts() {
+            const detailPage = document.getElementById("productDetailPage");
+
+            if (detailPage) {
+                detailPage.style.display = "none";
+            }
+
+            document.querySelector(".hero").style.display = "";
+            document.querySelector(".products-section").style.display = "";
+
+            window.scrollTo({ top: 0, behavior: "smooth" });
+        }
+
+        loadProductsFromAPI();
+
+        // ===== GIAO DIỆN FORM TÀI KHOẢN =====
+        let authMode = "login";
+
+        function openModal(mode) {
+            authMode = mode;
+            updateAuthForm();
+            document.getElementById("authModal").classList.add("show");
+            document.getElementById("formMessage").textContent = "";
+        }
+
+        function closeModal() {
+            document.getElementById("authModal").classList.remove("show");
+        }
+
+        function closeModalOutside(event) {
+            if (event.target.id === "authModal") {
+                closeModal();
+            }
+        }
+
+        function switchAuthMode() {
+            authMode = authMode === "login" ? "register" : "login";
+            updateAuthForm();
+            document.getElementById("formMessage").textContent = "";
+        }
+
+        function updateAuthForm() {
+            const isRegister = authMode === "register";
+
+            document.getElementById("formTitle").textContent =
+                isRegister ? "Tạo tài khoản" : "Đăng nhập";
+
+            document.getElementById("formSubtitle").textContent =
+                isRegister
+                    ? "Điền thông tin để đăng ký khách hàng."
+                    : "Đăng nhập để sử dụng tài khoản của bạn.";
+
+            document.getElementById("nameGroup").hidden = !isRegister;
+            document.getElementById("fullName").required = isRegister;
+
+            document.getElementById("formSubmit").textContent =
+                isRegister ? "Đăng ký" : "Đăng nhập";
+
+            document.getElementById("switchText").textContent =
+                isRegister ? "Đã có tài khoản?" : "Chưa có tài khoản?";
+
+            document.getElementById("switchButton").textContent =
+                isRegister ? "Đăng nhập" : "Đăng ký";
+
+            document.getElementById("authPassword").autocomplete =
+                isRegister ? "new-password" : "current-password";
+        }
+
+                const authForm = document.getElementById("authForm");
+        const formMessage = document.getElementById("formMessage");
+
+        // Gửi yêu cầu đến server.js
+        async function callAPI(url, data) {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "same-origin",
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.message || "Đã xảy ra lỗi.");
+            }
+
+            return result;
+        }
+
+        // Hiển thị trạng thái tài khoản trên thanh điều hướng
+        function updateAccountActions(account = null) {
+            const actions = document.getElementById("accountActions");
+            actions.replaceChildren();
+
+            if (account) {
+                const welcome = document.createElement("span");
+                welcome.className = "account-name";
+                welcome.textContent = "Xin chào, " + account.hoTen;
+                actions.appendChild(welcome);
+
+                const logoutButton = document.createElement("button");
+                logoutButton.type = "button";
+                logoutButton.className = "btn btn-outline";
+                logoutButton.textContent = "Đăng xuất";
+                logoutButton.addEventListener("click", logoutAccount);
+                actions.appendChild(logoutButton);
+            } else {
+                const registerButton = document.createElement("button");
+                registerButton.type = "button";
+                registerButton.className = "btn btn-outline";
+                registerButton.textContent = "Đăng ký";
+                registerButton.addEventListener("click", () => {
+                    openModal("register");
+                });
+                actions.appendChild(registerButton);
+
+                const loginButton = document.createElement("button");
+                loginButton.type = "button";
+                loginButton.className = "btn btn-primary";
+                loginButton.textContent = "Đăng nhập";
+                loginButton.addEventListener("click", () => {
+                    openModal("login");
+                });
+                actions.appendChild(loginButton);
+            }
+
+            // Luôn giữ nút giỏ hàng
+            const cartLink = document.createElement("a");
+            cartLink.href = "don-hang.html";
+            cartLink.className = "btn btn-cart";
+            cartLink.textContent = "🛒 Giỏ hàng";
+            actions.appendChild(cartLink);
+        }
+
+        // Xử lý đăng ký và đăng nhập
+        authForm.addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const submitButton = document.getElementById("formSubmit");
+            const email = document.getElementById("authEmail").value.trim();
+            const matKhau = document.getElementById("authPassword").value;
+
+            const data = {
+                email: email,
+                matKhau: matKhau
+            };
+
+            if (authMode === "register") {
+                data.hoTen = document.getElementById("fullName").value.trim();
+
+                if (!data.hoTen) {
+                    formMessage.textContent = "Vui lòng nhập họ và tên.";
+                    return;
+                }
+
+                if (matKhau.length < 8) {
+                    formMessage.textContent =
+                        "Mật khẩu phải có ít nhất 8 ký tự.";
+                    return;
+                }
+            }
+
+            submitButton.disabled = true;
+            formMessage.style.color = "#64748b";
+            formMessage.textContent = "Đang xử lý...";
+
+            try {
+                if (authMode === "register") {
+                    const result = await callAPI("/api/register", data);
+
+                    formMessage.style.color = "#16803d";
+                    formMessage.textContent =
+                        result.message + " Mời bạn đăng nhập.";
+
+                    // Chuyển sang đăng nhập sau khi đăng ký thành công
+                    document.getElementById("authPassword").value = "";
+                    authMode = "login";
+                    updateAuthForm();
+
+                    // Giữ email vừa đăng ký
+                    document.getElementById("authEmail").value = email;
+
+                } else {
+                    const result = await callAPI("/api/login", data);
+
+                    updateAccountActions(result.account);
+                    closeModal();
+                    authForm.reset();
+
+                    alert("Đăng nhập thành công! Xin chào " +
+                        result.account.hoTen + ".");
+
+                    // Không cần lưu mật khẩu trong trình duyệt
+                }
+            } catch (error) {
+                formMessage.style.color = "#d14343";
+                formMessage.textContent = error.message;
+            } finally {
+                submitButton.disabled = false;
+            }
+        });
+
+        // Đăng xuất
+        async function logoutAccount() {
+            try {
+                const result = await callAPI("/api/logout", {});
+
+                updateAccountActions(null);
+                alert(result.message);
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        // Khôi phục trạng thái đăng nhập khi tải lại trang
+        async function restoreAccount() {
+            try {
+                const response = await fetch("/api/me", {
+                    credentials: "same-origin"
+                });
+
+                if (!response.ok) {
+                    updateAccountActions(null);
+                    return;
+                }
+
+                const result = await response.json();
+                updateAccountActions(result.account);
+            } catch (error) {
+                console.error("Không thể kiểm tra tài khoản:", error);
+                updateAccountActions(null);
+            }
+        }
+
+        // Khởi tạo trạng thái tài khoản
+        updateAccountActions(null);
+        restoreAccount();
+    </script>
+
+</body>
+</html>
