@@ -308,7 +308,8 @@
             z-index: 200;
             align-items: center;
             justify-content: center;
-            padding: 18px;
+            padding: 24px;
+            overflow-y: auto;
         }
 
         .modal.show {
@@ -317,27 +318,27 @@
 
         .modal-content {
             width: 100%;
-            max-width: 420px;
+            max-width: 620px;
             background: white;
-            border-radius: 15px;
-            padding: 28px;
+            border-radius: 18px;
+            padding: 36px 40px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
             position: relative;
         }
 
         .modal-header {
-            margin-bottom: 22px;
+            margin-bottom: 28px;
         }
 
         .modal-header h2 {
             color: #1769d2;
-            font-size: 24px;
-            margin-bottom: 8px;
+            font-size: 26px;
+            margin-bottom: 10px;
         }
 
         .modal-header p {
             color: #718096;
-            font-size: 14px;
+            font-size: 15px;
         }
 
         .close-modal {
@@ -351,23 +352,23 @@
         }
 
         .form-group {
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
 
         .form-group label {
             display: block;
             font-size: 14px;
             font-weight: 600;
-            margin-bottom: 7px;
+            margin-bottom: 9px;
         }
 
         .form-group input {
             width: 100%;
-            padding: 11px 12px;
+            padding: 13px 14px;;
             border: 1px solid #d6deea;
             border-radius: 8px;
             outline: none;
-            font-size: 14px;
+            font-size: 15px;
         }
 
         .form-group input:focus {
@@ -406,6 +407,127 @@
             color: #1769d2;
             font-size: 14px;
             font-weight: 700;
+        }
+
+        /* ===== MENU TÀI KHOẢN ===== */
+        .account-menu {
+            position: relative;
+        }
+
+        .account-trigger {
+            border: 1px solid #d6deea;
+            background: #fff;
+            color: #1769d2;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 14px;
+            font-weight: 600;
+            max-width: 220px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .account-trigger:hover,
+        .account-menu:focus-within .account-trigger {
+            background: #eef5ff;
+        }
+
+        .account-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 230px;
+            padding-top: 8px;
+            z-index: 300;
+        }
+
+        .account-menu:hover .account-dropdown,
+        .account-menu:focus-within .account-dropdown {
+            display: block;
+        }
+
+        .account-dropdown-inner {
+            background: #fff;
+            border: 1px solid #e5eaf2;
+            border-radius: 10px;
+            padding: 6px;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.14);
+        }
+
+        .account-dropdown button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 7px;
+            background: #fff;
+            text-align: left;
+            font-size: 14px;
+            color: #263247;
+        }
+
+        .account-dropdown button:hover {
+            background: #eef5ff;
+            color: #1769d2;
+        }
+
+        .account-dropdown button.logout-option {
+            color: #d14343;
+            border-top: 1px solid #e8edf5;
+            margin-top: 4px;
+        }
+        
+        /* ===== FORM ĐĂNG NHẬP ===== */
+        #authForm:not(.register-layout) {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        #authForm:not(.register-layout) .form-group[hidden] {
+            display: none;
+        }
+
+        /* ===== FORM ĐĂNG KÝ ===== */
+        #authForm.register-layout {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            column-gap: 22px;
+            row-gap: 4px;
+        }
+
+        #authForm.register-layout .form-group {
+            min-width: 0;
+            margin-bottom: 18px;
+        }
+
+        #authForm.register-layout .form-group[hidden] {
+            display: none;
+        }
+
+        #authForm.register-layout #formSubmit,
+        #authForm.register-layout #formMessage {
+            grid-column: 1 / -1;
+        }
+
+        #authForm.register-layout #formSubmit {
+            width: 150px;
+            justify-self: center;
+            margin-top: 4px;
+        }
+
+        @media (max-width: 560px) {
+            #authForm.register-layout {
+                grid-template-columns: 1fr;
+                column-gap: 0;
+            }
+
+            #authForm.register-layout #formSubmit,
+            #authForm.register-layout #formMessage {
+                grid-column: 1;
+            }
         }
 
         /* ===== RESPONSIVE ===== */
@@ -494,6 +616,47 @@
                 grid-template-columns: 1fr;
                 gap: 25px;
             }
+        }
+
+        #profileModal .modal-content,
+        #notificationModal .modal-content {
+            max-height: calc(100vh - 48px);
+            overflow-y: auto;
+        }
+
+        #profileForm .form-submit {
+            max-width: 220px;
+            display: block;
+            margin: 16px auto 0;
+        }
+
+        #notificationList {
+            display: grid;
+            gap: 12px;
+        }
+
+        .notification-item {
+            padding: 14px;
+            border: 1px solid #e5eaf2;
+            border-radius: 10px;
+            background: #f8fafc;
+        }
+
+        .notification-item h3 {
+            font-size: 15px;
+            margin-bottom: 6px;
+        }
+
+        .notification-item p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #64748b;
+        }
+
+        .notification-item small {
+            display: block;
+            margin-top: 8px;
+            color: #94a3b8;
         }
 
         /* ===== TRANG CHI TIẾT SẢN PHẨM ===== */
@@ -751,23 +914,77 @@
             </div>
 
             <form id="authForm">
+                <!-- Họ và tên -->
                 <div class="form-group" id="nameGroup" hidden>
                     <label for="fullName">Họ và tên</label>
-                    <input id="fullName" type="text" autocomplete="name"
-                           placeholder="Nhập họ và tên">
+                    <input
+                        id="fullName"
+                        type="text"
+                        autocomplete="name"
+                        maxlength="100"
+                        placeholder="Nhập họ và tên"
+                    >
                 </div>
 
+                <!-- Số điện thoại -->
+                <div class="form-group" id="phoneGroup" hidden>
+                    <label for="authPhone">Số điện thoại</label>
+                    <input
+                        id="authPhone"
+                        type="tel"
+                        autocomplete="tel"
+                        maxlength="20"
+                        pattern="[0-9+() .-]{9,20}"
+                        placeholder="Nhập số điện thoại"
+                    >
+                </div>
+
+                <!-- Email -->
                 <div class="form-group">
                     <label for="authEmail">Email</label>
-                    <input id="authEmail" type="email" required
-                           autocomplete="email" placeholder="Nhập email">
+                    <input
+                        id="authEmail"
+                        type="email"
+                        required
+                        maxlength="254"
+                        autocomplete="email"
+                        placeholder="Nhập email"
+                    >
                 </div>
 
+                <!-- Ngày sinh -->
+                <div class="form-group" id="birthGroup" hidden>
+                    <label for="authBirthDate">Ngày sinh</label>
+                    <input
+                        id="authBirthDate"
+                        type="date"
+                        autocomplete="bday"
+                    >
+                </div>
+
+                <!-- Mật khẩu -->
                 <div class="form-group">
                     <label for="authPassword">Mật khẩu</label>
-                    <input id="authPassword" type="password" required
-                           minlength="8" autocomplete="current-password"
-                           placeholder="Nhập mật khẩu">
+                    <input
+                        id="authPassword"
+                        type="password"
+                        required
+                        minlength="8"
+                        autocomplete="new-password"
+                        placeholder="Nhập mật khẩu (ít nhất 8 ký tự)"
+                    >
+                </div>
+
+                <!-- Nhập lại mật khẩu -->
+                <div class="form-group" id="confirmPasswordGroup" hidden>
+                    <label for="confirmPassword">Nhập lại mật khẩu</label>
+                    <input
+                        id="confirmPassword"
+                        type="password"
+                        minlength="8"
+                        autocomplete="new-password"
+                        placeholder="Nhập lại mật khẩu"
+                    >
                 </div>
 
                 <button type="submit"
@@ -787,6 +1004,80 @@
                 </button>
             </div>
 
+        </div>
+    </div>
+
+    <!-- MODAL THÔNG TIN CÁ NHÂN -->
+    <div class="modal" id="profileModal" onclick="closeOverlayOutside(event)">
+        <div class="modal-content">
+            <button class="close-modal"
+                    type="button"
+                    onclick="closeOverlay('profileModal')"
+                    aria-label="Đóng">&times;</button>
+
+            <div class="modal-header">
+                <h2>Thông tin cá nhân</h2>
+                <p>Xem và cập nhật thông tin tài khoản của bạn.</p>
+            </div>
+
+            <form id="profileForm">
+                <div class="form-group">
+                    <label for="profileName">Họ và tên</label>
+                    <input id="profileName" type="text"
+                        maxlength="100" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="profileEmail">Email</label>
+                    <input id="profileEmail" type="email"
+                        maxlength="254" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="profilePhone">Số điện thoại</label>
+                    <input id="profilePhone" type="tel"
+                        maxlength="20" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="profileBirth">Ngày sinh</label>
+                    <input id="profileBirth" type="date" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="profileAddress">Địa chỉ</label>
+                    <input id="profileAddress" type="text"
+                        maxlength="300"
+                        placeholder="Nhập địa chỉ (không bắt buộc)">
+                </div>
+
+                <p class="form-message" id="profileMessage"></p>
+
+                <button class="btn btn-primary form-submit"
+                        id="profileSubmit" type="submit">
+                    Lưu thay đổi
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL THÔNG BÁO -->
+    <div class="modal" id="notificationModal"
+        onclick="closeOverlayOutside(event)">
+        <div class="modal-content">
+            <button class="close-modal"
+                    type="button"
+                    onclick="closeOverlay('notificationModal')"
+                    aria-label="Đóng">&times;</button>
+
+            <div class="modal-header">
+                <h2>Thông báo</h2>
+                <p>Cập nhật về đơn hàng và tài khoản của bạn.</p>
+            </div>
+
+            <div id="notificationList">
+                <p>Đang tải thông báo...</p>
+            </div>
         </div>
     </div>
 
@@ -1104,16 +1395,28 @@
         function updateAuthForm() {
             const isRegister = authMode === "register";
 
+            document.getElementById("authForm").classList.toggle(
+                "register-layout",
+                isRegister
+            );
+
             document.getElementById("formTitle").textContent =
                 isRegister ? "Tạo tài khoản" : "Đăng nhập";
 
             document.getElementById("formSubtitle").textContent =
                 isRegister
-                    ? "Điền thông tin để đăng ký khách hàng."
+                    ? "Điền đầy đủ thông tin để đăng ký khách hàng."
                     : "Đăng nhập để sử dụng tài khoản của bạn.";
 
             document.getElementById("nameGroup").hidden = !isRegister;
+            document.getElementById("phoneGroup").hidden = !isRegister;
+            document.getElementById("birthGroup").hidden = !isRegister;
+            document.getElementById("confirmPasswordGroup").hidden = !isRegister;
+
             document.getElementById("fullName").required = isRegister;
+            document.getElementById("authPhone").required = isRegister;
+            document.getElementById("authBirthDate").required = isRegister;
+            document.getElementById("confirmPassword").required = isRegister;
 
             document.getElementById("formSubmit").textContent =
                 isRegister ? "Đăng ký" : "Đăng nhập";
@@ -1126,6 +1429,11 @@
 
             document.getElementById("authPassword").autocomplete =
                 isRegister ? "new-password" : "current-password";
+
+            document.getElementById("authPassword").placeholder =
+                isRegister
+                    ? "Nhập mật khẩu (ít nhất 8 ký tự)"
+                    : "Nhập mật khẩu";
         }
 
                 const authForm = document.getElementById("authForm");
@@ -1156,44 +1464,186 @@
             const actions = document.getElementById("accountActions");
             actions.replaceChildren();
 
-            if (account) {
-                const welcome = document.createElement("span");
-                welcome.className = "account-name";
-                welcome.textContent = "Xin chào, " + account.hoTen;
-                actions.appendChild(welcome);
-
-                const logoutButton = document.createElement("button");
-                logoutButton.type = "button";
-                logoutButton.className = "btn btn-outline";
-                logoutButton.textContent = "Đăng xuất";
-                logoutButton.addEventListener("click", logoutAccount);
-                actions.appendChild(logoutButton);
-            } else {
-                const registerButton = document.createElement("button");
-                registerButton.type = "button";
-                registerButton.className = "btn btn-outline";
-                registerButton.textContent = "Đăng ký";
-                registerButton.addEventListener("click", () => {
-                    openModal("register");
-                });
-                actions.appendChild(registerButton);
-
-                const loginButton = document.createElement("button");
-                loginButton.type = "button";
-                loginButton.className = "btn btn-primary";
-                loginButton.textContent = "Đăng nhập";
-                loginButton.addEventListener("click", () => {
-                    openModal("login");
-                });
-                actions.appendChild(loginButton);
-            }
-
-            // Luôn giữ nút giỏ hàng
+            // Giỏ hàng luôn nằm bên trái tài khoản
             const cartLink = document.createElement("a");
             cartLink.href = "don-hang.html";
             cartLink.className = "btn btn-cart";
             cartLink.textContent = "🛒 Giỏ hàng";
             actions.appendChild(cartLink);
+
+            if (account) {
+                // Đã đăng nhập: hiện tên tài khoản
+                const menu = document.createElement("div");
+                menu.className = "account-menu";
+
+                const trigger = document.createElement("button");
+                trigger.type = "button";
+                trigger.className = "account-trigger";
+                trigger.textContent = account.hoTen || account.email || "Tài khoản";
+                trigger.title = trigger.textContent;
+                trigger.setAttribute("aria-haspopup", "true");
+
+                const dropdown = document.createElement("div");
+                dropdown.className = "account-dropdown";
+
+                const inner = document.createElement("div");
+                inner.className = "account-dropdown-inner";
+
+                const profileButton = document.createElement("button");
+                profileButton.type = "button";
+                profileButton.textContent = "👤  Thông tin cá nhân";
+                profileButton.addEventListener("click", openProfileModal);
+
+                const notificationButton = document.createElement("button");
+                notificationButton.type = "button";
+                notificationButton.textContent = "🔔  Thông báo";
+                notificationButton.addEventListener("click", openNotifications);
+
+                const logoutButton = document.createElement("button");
+                logoutButton.type = "button";
+                logoutButton.className = "logout-option";
+                logoutButton.textContent = "↪  Đăng xuất";
+                logoutButton.addEventListener("click", logoutAccount);
+
+                inner.append(profileButton, notificationButton, logoutButton);
+                dropdown.appendChild(inner);
+                menu.append(trigger, dropdown);
+                actions.appendChild(menu);
+            } else {
+                // Chưa đăng nhập
+                const registerButton = document.createElement("button");
+                registerButton.type = "button";
+                registerButton.className = "btn btn-outline";
+                registerButton.textContent = "Đăng ký";
+                registerButton.addEventListener("click", () => openModal("register"));
+
+                const loginButton = document.createElement("button");
+                loginButton.type = "button";
+                loginButton.className = "btn btn-primary";
+                loginButton.textContent = "Đăng nhập";
+                loginButton.addEventListener("click", () => openModal("login"));
+
+                actions.append(registerButton, loginButton);
+            }
+        }
+
+        function closeOverlay(id) {
+            document.getElementById(id).classList.remove("show");
+        }
+
+        function closeOverlayOutside(event) {
+            if (event.target.classList.contains("modal")) {
+                event.target.classList.remove("show");
+            }
+        }
+
+        // Mở modal thông tin cá nhân và tải dữ liệu từ SQL Server
+        async function openProfileModal() {
+            const modal = document.getElementById("profileModal");
+            const message = document.getElementById("profileMessage");
+            const submit = document.getElementById("profileSubmit");
+
+            modal.classList.add("show");
+            message.textContent = "Đang tải thông tin...";
+            message.style.color = "#64748b";
+            submit.disabled = true;
+
+            try {
+                const response = await fetch("/api/profile", {
+                    credentials: "same-origin"
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.message || "Không thể tải thông tin.");
+                }
+
+                const p = result.profile;
+
+                document.getElementById("profileName").value = p.hoTen || "";
+                document.getElementById("profileEmail").value = p.email || "";
+                document.getElementById("profilePhone").value = p.soDienThoai || "";
+                document.getElementById("profileBirth").value =
+                    p.ngaySinh ? String(p.ngaySinh).slice(0, 10) : "";
+                document.getElementById("profileAddress").value = p.diaChi || "";
+
+                message.textContent = "";
+            } catch (error) {
+                message.textContent = error.message;
+                message.style.color = "#d14343";
+            } finally {
+                submit.disabled = false;
+            }
+        }
+
+        // Lưu thông tin đã chỉnh sửa
+        document.getElementById("profileForm").addEventListener("submit", async event => {
+            event.preventDefault();
+
+            const message = document.getElementById("profileMessage");
+            const submit = document.getElementById("profileSubmit");
+
+            const data = {
+                hoTen: document.getElementById("profileName").value.trim(),
+                email: document.getElementById("profileEmail").value.trim(),
+                ngaySinh: document.getElementById("profileBirth").value,
+                soDienThoai: document.getElementById("profilePhone").value.trim(),
+                diaChi: document.getElementById("profileAddress").value.trim()
+            };
+
+            submit.disabled = true;
+            message.style.color = "#64748b";
+            message.textContent = "Đang lưu...";
+
+            try {
+                const response = await fetch("/api/profile", {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    credentials: "same-origin",
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.message || "Không thể lưu thông tin.");
+                }
+
+                message.style.color = "#16803d";
+                message.textContent = result.message;
+
+                updateAccountActions(result.account);
+            } catch (error) {
+                message.style.color = "#d14343";
+                message.textContent = error.message;
+            } finally {
+                submit.disabled = false;
+            }
+        });
+
+        // Mở thông báo. Tạm thời chưa có bảng thông báo đơn hàng.
+        async function openNotifications() {
+            const modal = document.getElementById("notificationModal");
+            const list = document.getElementById("notificationList");
+
+            modal.classList.add("show");
+            list.replaceChildren();
+
+            const item = document.createElement("div");
+            item.className = "notification-item";
+
+            const title = document.createElement("h3");
+            title.textContent = "Chưa có thông báo mới";
+
+            const description = document.createElement("p");
+            description.textContent =
+                "Thông báo về xác nhận đơn hàng và giao hàng sẽ hiển thị tại đây khi được kết nối với dữ liệu đơn hàng.";
+
+            item.append(title, description);
+            list.appendChild(item);
         }
 
         // Xử lý đăng ký và đăng nhập
@@ -1210,10 +1660,19 @@
             };
 
             if (authMode === "register") {
-                data.hoTen = document.getElementById("fullName").value.trim();
+                const hoTen = document.getElementById("fullName").value.trim();
+                const soDienThoai = document.getElementById("authPhone").value.trim();
+                const ngaySinh = document.getElementById("authBirthDate").value;
+                const nhapLaiMatKhau =
+                    document.getElementById("confirmPassword").value;
 
-                if (!data.hoTen) {
-                    formMessage.textContent = "Vui lòng nhập họ và tên.";
+                if (!hoTen || !soDienThoai || !email || !ngaySinh || !matKhau) {
+                    formMessage.textContent = "Vui lòng nhập đầy đủ thông tin.";
+                    return;
+                }
+
+                if (!/^[0-9+() .-]{9,20}$/.test(soDienThoai)) {
+                    formMessage.textContent = "Số điện thoại không hợp lệ.";
                     return;
                 }
 
@@ -1222,6 +1681,29 @@
                         "Mật khẩu phải có ít nhất 8 ký tự.";
                     return;
                 }
+
+                if (matKhau !== nhapLaiMatKhau) {
+                    formMessage.textContent = "Mật khẩu nhập lại không khớp.";
+                    return;
+                }
+
+                const birthDate = new Date(ngaySinh + "T00:00:00");
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                if (
+                    Number.isNaN(birthDate.getTime()) ||
+                    birthDate > today
+                ) {
+                    formMessage.textContent =
+                        "Ngày sinh không hợp lệ.";
+                    return;
+                }
+
+                data.hoTen = hoTen;
+                data.soDienThoai = soDienThoai;
+                data.ngaySinh = ngaySinh;
+                data.nhapLaiMatKhau = nhapLaiMatKhau;
             }
 
             submitButton.disabled = true;
@@ -1251,8 +1733,7 @@
                     closeModal();
                     authForm.reset();
 
-                    alert("Đăng nhập thành công! Xin chào " +
-                        result.account.hoTen + ".");
+                    formMessage.textContent = "";
 
                     // Không cần lưu mật khẩu trong trình duyệt
                 }

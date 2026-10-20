@@ -75,6 +75,54 @@ function validOptionalText(value, maxLength) {
         || (typeof value === 'string' && value.trim().length <= maxLength);
 }
 
+async function requireCustomer(req, res, next) {
+    try {
+        const account = req.session.account;
+
+        if (!account) {
+            return res.status(401).json({
+                message: "Vui lòng đăng nhập."
+            });
+        }
+
+        const result = await pool.request()
+            .input("MaTaiKhoan", sql.Int, account.maKH)
+            .query(`
+                SELECT MaTaiKhoan, HoTen, Email, VaiTro,
+                       TrangThai, DaXoa
+                FROM dbo.TaiKhoan
+                WHERE MaTaiKhoan = @MaTaiKhoan
+            `);
+
+        const current = result.recordset[0];
+
+        if (
+            !current ||
+            current.DaXoa ||
+            current.TrangThai !== "ACTIVE"
+        ) {
+            return res.status(403).json({
+                message: "Tài khoản không còn hoạt động."
+            });
+        }
+
+        if (current.VaiTro !== "CUSTOMER") {
+            return res.status(403).json({
+                message: "Chức năng này dành cho khách hàng."
+            });
+        }
+
+        req.customer = current;
+        next();
+    } catch (err) {
+        console.error("Lỗi kiểm tra khách hàng:", err.message);
+
+        res.status(500).json({
+            message: "Không thể xác minh tài khoản."
+        });
+    }
+}
+
 // BẮT BUỘC ĐĂNG NHẬP ADMIN
 async function requireAdmin(req, res, next) {
     try {
@@ -327,6 +375,177 @@ app.get('/api/me', async (req, res) => {
         console.error('Lỗi lấy tài khoản:', err.message);
         return res.status(500).json({
             message: 'Không thể lấy thông tin tài khoản.'
+        });
+    }
+});
+
+/* =========================================
+   KHÁCH HÀNG: THÔNG TIN CÁ NHÂN
+========================================= */
+
+// Lấy thông tin cá nhân của tài khoản đang đăng nhập
+app.get("/api/profile", requireCustomer, async (req, res) => {
+    try {
+        const result = await pool.request()
+            .input("MaTaiKhoan", sql.Int, req.customer.MaTaiKhoan)
+            .query(`
+                SELECT
+                    tk.HoTen AS hoTen,
+                    tk.Email AS email,
+                    kh.SoDienThoai AS soDienThoai,
+                    kh.NgaySinh AS ngaySinh,
+                    kh.DiaChi AS diaChi
+                FROM dbo.TaiKhoan tk
+                LEFT JOIN dbo.KhachHang kh
+                    ON kh.MaTaiKhoan = tk.MaTaiKhoan
+                WHERE tk.MaTaiKhoan = @MaTaiKhoan
+            `);
+
+        if (!result.recordset.length) {
+            return res.status(404).json({
+                message: "Không tìm thấy thông tin khách hàng."
+            });
+        }
+
+        res.json({
+            profile: result.recordset[0]
+        });
+    } catch (err) {
+        console.error("Lỗi lấy thông tin cá nhân:", err.message);
+
+        res.status(500).json({
+            message: "Không thể tải thông tin cá nhân."
+        });
+    }
+});
+
+// Cập nhật thông tin cá nhân
+app.patch("/api/profile", requireCustomer, async (req, res) => {
+    try {
+        const { hoTen, email, soDienThoai, ngaySinh, diaChi } = req.body;
+
+        if (!validName(hoTen) || !validEmail(email)) {
+            return res.status(400).json({
+                message: "Họ tên hoặc email không hợp lệ."
+            });
+        }
+
+        if (
+            typeof soDienThoai !== "string" ||
+            !/^[0-9+() .-]{9,20}$/.test(soDienThoai.trim())
+        ) {
+            return res.status(400).json({
+                message: "Số điện thoại không hợp lệ."
+            });
+        }
+
+        if (
+            typeof ngaySinh !== "string" ||
+            !/^\d{4}-\d{2}-\d{2}$/.test(ngaySinh)
+        ) {
+            return res.status(400).json({
+                message: "Ngày sinh không hợp lệ."
+            });
+        }
+
+        const date = new Date(ngaySinh + "T00:00:00Z");
+        const today = new Date();
+        today.setUTCHours(0, 0, 0, 0);
+
+        if (
+            Number.isNaN(date.getTime()) ||
+            date.toISOString().slice(0, 10) !== ngaySinh ||
+            date > today
+        ) {
+            return res.status(400).json({
+                message: "Ngày sinh không hợp lệ."
+            });
+        }
+
+        if (!validOptionalText(diaChi, 300)) {
+            return res.status(400).json({
+                message: "Địa chỉ không được vượt quá 300 ký tự."
+            });
+        }
+
+        const emailChuanHoa = email.trim().toLowerCase();
+
+        const existed = await pool.request()
+            .input("Email", sql.NVarChar(254), emailChuanHoa)
+            .input("MaTaiKhoan", sql.Int, req.customer.MaTaiKhoan)
+            .query(`
+                SELECT MaTaiKhoan
+                FROM dbo.TaiKhoan
+                WHERE Email = @Email
+                  AND MaTaiKhoan <> @MaTaiKhoan
+            `);
+
+        if (existed.recordset.length > 0) {
+            return res.status(409).json({
+                message: "Email này đã được tài khoản khác sử dụng."
+            });
+        }
+
+        const transaction = new sql.Transaction(pool);
+
+        try {
+            await transaction.begin();
+
+            await new sql.Request(transaction)
+                .input("MaTaiKhoan", sql.Int, req.customer.MaTaiKhoan)
+                .input("HoTen", sql.NVarChar(100), hoTen.trim())
+                .input("Email", sql.NVarChar(254), emailChuanHoa)
+                .query(`
+                    UPDATE dbo.TaiKhoan
+                    SET HoTen = @HoTen,
+                        Email = @Email
+                    WHERE MaTaiKhoan = @MaTaiKhoan
+                      AND VaiTro = 'CUSTOMER'
+                      AND TrangThai = 'ACTIVE'
+                      AND DaXoa = 0
+                `);
+
+            await new sql.Request(transaction)
+                .input("MaTaiKhoan", sql.Int, req.customer.MaTaiKhoan)
+                .input("SoDienThoai", sql.NVarChar(20), soDienThoai.trim())
+                .input("NgaySinh", sql.Date, ngaySinh)
+                .input("DiaChi", sql.NVarChar(300), diaChi?.trim() || null)
+                .query(`
+                    UPDATE dbo.KhachHang
+                    SET SoDienThoai = @SoDienThoai,
+                        NgaySinh = @NgaySinh,
+                        DiaChi = @DiaChi,
+                        NgayCapNhat = SYSDATETIME()
+                    WHERE MaTaiKhoan = @MaTaiKhoan
+                `);
+
+            await transaction.commit();
+        } catch (err) {
+            try {
+                await transaction.rollback();
+            } catch (_) {}
+            throw err;
+        }
+
+        // Đồng bộ tên hiển thị trên thanh điều hướng
+        req.session.account.hoTen = hoTen.trim();
+        req.session.account.email = emailChuanHoa;
+
+        res.json({
+            message: "Cập nhật thông tin cá nhân thành công.",
+            account: req.session.account
+        });
+    } catch (err) {
+        if (err.number === 2601 || err.number === 2627) {
+            return res.status(409).json({
+                message: "Email này đã được tài khoản khác sử dụng."
+            });
+        }
+
+        console.error("Lỗi cập nhật thông tin cá nhân:", err.message);
+
+        res.status(500).json({
+            message: "Không thể cập nhật thông tin cá nhân."
         });
     }
 });
@@ -1239,7 +1458,7 @@ async function startServer() {
         FROM dbo.TaiKhoan;
 
         SELECT TOP 0
-            MaKhachHang, MaTaiKhoan, SoDienThoai,
+            MaKhachHang, MaTaiKhoan, NgaySinh, SoDienThoai,
             DiaChi, NgayCapNhat
         FROM dbo.KhachHang;
     `);

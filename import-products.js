@@ -54,7 +54,7 @@ function cleanText(value) {
 async function importProducts() {
     if (!Array.isArray(products) || products.length === 0) {
         throw new Error(
-            'Không đọc được danh sách sản phẩm từ public/products.js'
+            'Không đọc được danh sách sản phẩm từ products.js'
         );
     }
 
