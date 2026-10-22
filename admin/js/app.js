@@ -5,6 +5,7 @@
  */
 "use strict";
 const S = window.TechStore;
+const serverMode = window.TV3?.enabled;
 const $ = (selector) => document.querySelector(selector);
 const escapeHTML = (value) =>
   String(value ?? "").replace(
@@ -87,9 +88,14 @@ function notify(message, error = false) {
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => toast.classList.add("hidden"), 5000);
 }
-function persist(operation, message = "Đã lưu thay đổi.") {
+let saving = false;
+async function persist(operation, message = "Đã lưu thay đổi.") {
+  if (saving) return;
+  saving = true;
+  const saveButton = $("#saveButton");
+  if (saveButton) saveButton.disabled = true;
   try {
-    db = S.transact(db, operation);
+    db = serverMode ? await TV3.commit(db, operation) : S.transact(db, operation);
     closeModal();
     render();
     notify(message);
@@ -97,6 +103,9 @@ function persist(operation, message = "Đã lưu thay đổi.") {
     if ($("#modal").open && $("#formMessage"))
       $("#formMessage").textContent = error.message;
     else notify(error.message, true);
+  } finally {
+    saving = false;
+    if (saveButton?.isConnected) saveButton.disabled = false;
   }
 }
 function field(
@@ -348,7 +357,7 @@ function renderProducts() {
           ["Sản phẩm", "Loại", "Giá bán", "Tồn kho", "Trạng thái", "Thao tác"],
           rows.map(
             (p) =>
-              `<tr><td>${productCell(p)}</td><td>${escapeHTML(category(p.categoryId)?.name)}</td><td class="product-price">${S.cost(db, p.masp) ? money(S.sellingPrice(db, p)) : "Chưa có giá vốn"}</td><td>${S.stock(db, p.masp)}</td><td>${badge(p.hidden ? "Đã ẩn" : category(p.categoryId)?.hidden ? "Loại đã ẩn" : "Đang hiển thị", effectiveHidden(p) ? "neutral" : "active")}</td><td><div class="actions">${action("Xem", "view-product", p.masp)}${action("Sửa", "edit-product", p.masp)}${action(p.hidden ? "Hiện" : "Ẩn", "toggle-product", p.masp, p.hidden ? "success" : "light")}${action("Xóa", "delete-product", p.masp, "danger")}</div></td></tr>`,
+              `<tr><td>${productCell(p)}</td><td>${escapeHTML(category(p.categoryId)?.name)}</td><td class="product-price">${serverMode || S.cost(db, p.masp) ? money(S.sellingPrice(db, p)) : "Chưa có giá vốn"}</td><td>${S.stock(db, p.masp)}</td><td>${badge(p.hidden ? "Đã ẩn" : category(p.categoryId)?.hidden ? "Loại đã ẩn" : "Đang hiển thị", effectiveHidden(p) ? "neutral" : "active")}</td><td><div class="actions">${action("Xem", "view-product", p.masp)}${action("Sửa", "edit-product", p.masp)}${action(p.hidden ? "Hiện" : "Ẩn", "toggle-product", p.masp, p.hidden ? "success" : "light")}${action("Xóa", "delete-product", p.masp, "danger")}</div></td></tr>`,
           ),
         ),
     )
@@ -361,6 +370,7 @@ function renderImports() {
         match(
           r.id,
           r.note,
+          ...r.items.map((i) => i.productId),
           ...r.items.map((i) => product(i.productId)?.name || ""),
         ) &&
         (!filters.status || r.status === filters.status) &&
@@ -1102,24 +1112,32 @@ $("#modal").addEventListener("close", () => {
   if (returnFocus?.isConnected) returnFocus.focus({ preventScroll: true });
 });
 $("#menu").innerHTML = Object.entries(pageInfo)
+  .filter(([key]) => !serverMode || ["products", "imports"].includes(key))
   .map(
     ([key, info]) =>
       `<li><button type="button" class="menu-item" data-page="${key}"><span class="menu-icon" aria-hidden="true">${info[0]}</span>${info[1]}</button></li>`,
   )
   .join("");
-function showAdmin() {
+async function showAdmin() {
   try {
-    db = S.load(typeof list_products === "undefined" ? [] : list_products);
+    db = serverMode ? await TV3.call('/api/admin/tv3/state') : S.load(typeof list_products === "undefined" ? [] : list_products);
     sessionStorage.setItem(S.SESSION_KEY, "admin");
     $("#loginScreen").classList.add("hidden");
     $("#adminApp").classList.remove("hidden");
-    go("customers");
+    go(serverMode ? "products" : "customers");
   } catch (error) {
     $("#loginMessage").textContent = error.message;
   }
 }
-$("#adminLoginForm").addEventListener("submit", (event) => {
+$("#adminLoginForm").addEventListener("submit", async (event) => {
   event.preventDefault();
+  if (serverMode) {
+    try {
+      await TV3.call('/api/admin/login', {email:$("#adminEmail").value.trim(),matKhau:$("#adminPassword").value});
+      await showAdmin();
+    } catch(error) { $("#loginMessage").textContent = error.message; }
+    return;
+  }
   if (
     $("#adminEmail").value.trim().toLowerCase() === S.ADMIN.email &&
     $("#adminPassword").value === S.ADMIN.password
@@ -1129,7 +1147,11 @@ $("#adminLoginForm").addEventListener("submit", (event) => {
   } else
     $("#loginMessage").textContent = "Email hoặc mật khẩu quản trị không đúng.";
 });
-$("#logoutButton").addEventListener("click", () => {
+$("#logoutButton").addEventListener("click", async () => {
+  if (serverMode) {
+    try { await TV3.call('/api/admin/logout', {}); }
+    catch(error) { notify(error.message, true); return; }
+  }
   try {
     sessionStorage.removeItem(S.SESSION_KEY);
   } catch {}
@@ -1158,6 +1180,18 @@ window.addEventListener("storage", (event) => {
       true,
     );
 });
+if (serverMode) {
+  $(".demo-note").textContent = 'Sản phẩm và nhập hàng · Dữ liệu SQL. Đăng nhập bằng tài khoản ADMIN của nhóm.';
+  $(".admin-email").textContent = 'Dữ liệu máy chủ';
+  S.sellingPrice = (db, p) => p.price;
+  // Giá bán thuộc TV5; không suy ra giá vốn từ giá bán của dữ liệu cũ.
+}
+if (location.protocol !== 'file:') {
+  const link = document.createElement('a');
+  link.href = serverMode ? 'index.html' : 'index.html?source=server';
+  link.textContent = serverMode ? 'Mở bản thực hành đầy đủ' : 'Quản lý sản phẩm và nhập hàng trên máy chủ';
+  $(".demo-note").append(document.createElement('br'), link);
+}
 try {
   if (sessionStorage.getItem(S.SESSION_KEY) === "admin") showAdmin();
 } catch {

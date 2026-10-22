@@ -8,7 +8,7 @@ const session = require('express-session');
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-app.use(express.json());
+app.use(express.json({ limit: '1mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 app.use(session({
@@ -1018,7 +1018,10 @@ function formatProductPrice(value) {
 }
 
 function mapProduct(row) {
+    const tv3 = row.DuLieu ? JSON.parse(row.DuLieu) : {};
     return {
+        categoryId: tv3.categoryId || (/ipad/i.test(row.TenSanPham) ? 'L02' : 'L01'),
+        description: tv3.description || row.TenSanPham,
         maSanPham: row.MaSanPham,
         maSP: row.MaSP,
         tenSanPham: row.TenSanPham,
@@ -1184,10 +1187,10 @@ function saveProduct(request, product) {
 app.get('/api/products', async (req, res) => {
     try {
         const result = await pool.request().query(`
-            SELECT *
-            FROM dbo.SanPham
-            WHERE TrangThai = 'ACTIVE'
-            ORDER BY NgayTao DESC, MaSanPham DESC
+            SELECT s.*, m.DuLieu
+            FROM dbo.SanPham s LEFT JOIN dbo.TV3SanPham m ON s.MaSP=m.MaSP
+            WHERE s.TrangThai = 'ACTIVE'
+            ORDER BY s.NgayTao DESC, s.MaSanPham DESC
         `);
 
         res.json({
@@ -1248,7 +1251,7 @@ app.post('/api/admin/products', requireAdmin, async (req, res) => {
             )
             OUTPUT INSERTED.*
             VALUES (
-                @MaSP, @TenSanPham, @Hang, @HinhAnh, @Gia, @SoLuongTon,
+                @MaSP, @TenSanPham, @Hang, @HinhAnh, @Gia, 0,
                 @LoaiKhuyenMai, @GiaTriKhuyenMai, @SoSao, @SoLuotDanhGia,
                 @ManHinh, @HeDieuHanh, @CameraSau, @CameraTruoc, @CPU,
                 @RAM, @ROM, @TheNho, @Pin, 'ACTIVE'
@@ -1301,7 +1304,6 @@ app.put('/api/admin/products/:id', requireAdmin, async (req, res) => {
                 Hang = @Hang,
                 HinhAnh = @HinhAnh,
                 Gia = @Gia,
-                SoLuongTon = @SoLuongTon,
                 LoaiKhuyenMai = @LoaiKhuyenMai,
                 GiaTriKhuyenMai = @GiaTriKhuyenMai,
                 SoSao = @SoSao,
@@ -1428,6 +1430,8 @@ app.patch('/api/admin/products/:id/status', requireAdmin, async (req, res) => {
         });
     }
 });
+
+require('./server/tv3')(app, sql, () => pool, requireAdmin);
 
 // Phục vụ các trang HTML trong public
 const path = require('path');

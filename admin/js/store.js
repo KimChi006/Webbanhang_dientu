@@ -406,6 +406,10 @@
       threshold: number(input.threshold, "Ngưỡng cảnh báo", 0, 1000000, true),
       detail: { ...(existing?.detail || {}), ...input.detail },
     };
+    for (const [key, value] of Object.entries(data.detail)) {
+      requireValue(typeof value === "string" && value.length <= (["ram", "rom"].includes(key) ? 100 : key === "os" ? 200 : 300), "Thông số kỹ thuật không hợp lệ hoặc quá dài.");
+    }
+    requireValue(input.img.length <= 700000, "Ảnh vượt quá dung lượng cho phép.");
     if (id) {
       requireValue(existing, "Không tìm thấy sản phẩm.");
       Object.assign(existing, data);
@@ -436,7 +440,7 @@
       "Phiếu nhập cần ít nhất một sản phẩm.",
     );
     const seen = new Set();
-    return items.map((i) => {
+    const lines = items.map((i) => {
       requireValue(
         db.products.some((p) => p.masp === i.productId),
         "Sản phẩm không tồn tại.",
@@ -452,6 +456,8 @@
         cost: number(i.cost, "Giá nhập", 1, 1000000000000, true),
       };
     });
+    requireValue(Number.isSafeInteger(lines.reduce((n, i) => n + i.quantity * i.cost, 0)), "Tổng tiền phiếu vượt giới hạn tính toán chính xác.");
+    return lines;
   }
   function saveReceipt(db, input, id) {
     const at = timestamp(input.at);
@@ -567,7 +573,7 @@
     c.password = password;
     c.passwordUpdatedAt = now();
   }
-  window.TechStore = {
+  const api = {
     KEY,
     SESSION_KEY,
     ADMIN,
@@ -599,4 +605,6 @@
     timestamp,
     safeImage,
   };
+  if (typeof module !== "undefined" && module.exports) module.exports = api;
+  else window.TechStore = api;
 })();

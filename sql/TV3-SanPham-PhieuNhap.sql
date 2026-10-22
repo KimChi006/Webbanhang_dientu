@@ -1,0 +1,29 @@
+USE WebBanHang;
+GO
+-- Chạy sau SanPham.sql. Có thể chạy lại, không xóa dữ liệu.
+ALTER TABLE dbo.SanPham ALTER COLUMN HinhAnh NVARCHAR(MAX) NULL;
+IF OBJECT_ID('dbo.TV3SanPham','U') IS NULL
+CREATE TABLE dbo.TV3SanPham (
+  MaSP VARCHAR(30) PRIMARY KEY REFERENCES dbo.SanPham(MaSP),
+  DuLieu NVARCHAR(MAX) NOT NULL CHECK (ISJSON(DuLieu)=1)
+);
+IF OBJECT_ID('dbo.PhieuNhap','U') IS NULL
+CREATE TABLE dbo.PhieuNhap (
+  MaPhieu VARCHAR(50) PRIMARY KEY,
+  DuLieu NVARCHAR(MAX) NOT NULL CHECK (ISJSON(DuLieu)=1)
+);
+IF OBJECT_ID('dbo.NhatKyNhap','U') IS NULL
+CREATE TABLE dbo.NhatKyNhap (
+  MaPhieu VARCHAR(50) NOT NULL REFERENCES dbo.PhieuNhap(MaPhieu),
+  MaSP VARCHAR(30) NOT NULL REFERENCES dbo.SanPham(MaSP),
+  NgayNhap VARCHAR(16) NOT NULL,
+  SoLuong INT NOT NULL CHECK (SoLuong>0),
+  GiaNhap DECIMAL(18,0) NOT NULL CHECK (GiaNhap>0),
+  PRIMARY KEY (MaPhieu, MaSP)
+);
+IF OBJECT_ID('dbo.TV3Revision','U') IS NULL
+BEGIN
+ CREATE TABLE dbo.TV3Revision (Id INT PRIMARY KEY CHECK(Id=1), Revision INT NOT NULL);
+ INSERT dbo.TV3Revision VALUES(1,0);
+END;
+GO
