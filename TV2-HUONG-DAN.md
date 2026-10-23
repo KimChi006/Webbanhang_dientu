@@ -9,7 +9,7 @@
 - Admin đã có I.3: danh sách, thêm, sửa, ẩn/hiện và xóa loại chưa có sản phẩm. Tên trùng bị chặn, loại có sản phẩm không xóa cứng. Giữ nguyên nghiệp vụ này.
 - Trang chủ đã có layout TechStore và đăng ký/đăng nhập/hồ sơ thông qua Node.js + SQL Server. Có danh sách và chi tiết hiển thị bên trong trang, chưa có tìm kiếm/phân trang; nút mua gọi hàm chưa tồn tại.
 - `chi_tiet_sp.html` và `don-hang.html` là file trống.
-- Admin dùng prototype localStorage, phần khách hàng cũ dùng API. Hai nguồn sản phẩm chưa đồng bộ.
+- Danh sách sản phẩm, giá và tồn kho của trang bán đọc API SQL `/api/products`; màn hình sản phẩm và tồn kho trong admin đọc `/api/admin/products` sau đăng nhập quản trị thật.
 
 ## Phần đã thực hiện
 
@@ -32,18 +32,18 @@
 3. Mở Chi tiết và Quay lại kết quả để kiểm tra giữ bộ lọc/trang.
 4. Mở `admin/index.html`, đăng nhập `admin@techstore.vn` / `Admin123!`, vào Loại sản phẩm. Ẩn một loại rồi tải lại trang mua sắm: sản phẩm thuộc loại biến mất. Hiện lại sau demo.
 5. Thay giá, thêm sản phẩm và hoàn thành nhập hàng bằng nghiệp vụ admin: trang mua sắm đọc cùng giá/tồn/danh mục.
-6. Mua hàng cần chạy `node server.js` với SQL Server và `.env` đã được nhóm thiết lập, đăng ký/đăng nhập khách hàng bằng phần TV1 hiện có. Sau đó Thêm vào giỏ và mở Giỏ hàng. Không tạo tài khoản giả offline để thay phần TV1.
+6. Chạy `node server.js` với SQL Server và `.env` của nhóm. Màn hình admin đăng nhập qua `/api/admin/login`; cửa hàng đọc sản phẩm SQL. Giỏ kiểm tra tồn qua `/api/products` trước khi lưu.
 
 ## Hợp đồng dữ liệu và bàn giao
 
-- Danh mục dùng `TechStore.load(list_products)` và localStorage `techstore_admin_v2`, schema 2. Tên, loại, trạng thái, mô tả và thông số lấy từ đây.
-- Giá dùng `TechStore.sellingPrice(db, product)`, tồn dùng `TechStore.stock(db, product.masp)`. Không giữ giá riêng trong catalog.
+- Giá và tồn hiển thị dùng các trường `gia` và `soLuongTon` từ API hiện có. Trạng thái lấy từ `trangThai`.
+- Database không định nghĩa loại sản phẩm. Mã loại và mối gán loại hiện lấy từ dữ liệu quản lý loại/sản phẩm cục bộ, ghép với bản ghi SQL bằng `MaSP`. Bản ghi SQL chưa có gán loại được hiển thị là “Chưa phân loại”, không tự đoán.
 - Ảnh admin dạng `../images/...` được đổi thành `images/...` khi hiển thị ở thư mục gốc. Data URI do admin tải lên vẫn được giữ.
 - `products.js` vẫn xuất được cho Node.js, đồng thời chạy được trong trình duyệt nhờ kiểm tra biến module.
 - TV4 có thể thay `window.TechStoreCart.add({productId, quantity})` bằng module chính thức. Chỉ resolve khi thực sự đã lưu, reject nếu không thể mua.
 - Adapter hiện tại lưu mảng `{productId, quantity}` ở `techstore_cart_v1:<maKH>` và phát `techstore:cart-changed` sau thêm. Không lưu thông tin đăng nhập, không trừ kho khi thêm giỏ.
 - `don-hang.html` trước đây trống, hiện làm trang giỏ tạm để liên kết có đích hoạt động; khi TV4 làm lịch sử đơn cần thống nhất tên file/đổi liên kết giỏ.
-- Phần API sản phẩm SQL cũ vẫn tồn tại nhưng catalog mới dùng nguồn prototype admin để không chia dữ liệu sản phẩm. Nếu nhóm chuyển toàn bộ quản trị sang SQL cần chuyển adapter danh mục cùng lúc, không trộn mã sản phẩm SQL và mã `masp`.
+- API admin chỉ cung cấp danh sách/sửa sản phẩm theo schema hiện có; nó không cung cấp loại, lịch sử tồn kho, phiếu nhập hoặc giá vốn/lợi nhuận. Không coi các màn hình nghiệp vụ local khác là dữ liệu database.
 - Dữ liệu localStorage cùng origin trên HTTP; dưới file:// cách chia dữ liệu theo đường dẫn tùy trình duyệt. Nên demo tích hợp các trang trên cùng origin HTTP.
 
 ## Kiểm tra đã chạy
@@ -52,4 +52,4 @@
 - `node tests/catalog.test.cjs`: qua phân trang, lọc kết hợp, giá sai, kết quả rỗng, loại ẩn, chi tiết hợp lệ/không tồn tại, giỏ riêng tài khoản, chặn admin và vượt tồn.
 - Kiểm tra cú pháp các script mới và các script inline trong HTML.
 - Kiểm thử catalog dùng DOM mô phỏng trong Node, chưa thay thế kiểm tra giao diện thực tế. Công cụ duyệt trang từ chối URL file:// nên chưa xác nhận trực quan qua trình duyệt trong phiên này.
-- Chưa kiểm thử đăng nhập/giỏ với SQL Server thật vì dự án hiện chưa có cấu hình .env trong thư mục làm việc. Không coi thanh toán, đặt đơn, lịch sử đơn hoặc toàn bộ II.3 là đã hoàn tất.
+- Chưa kiểm thử endpoint với SQL Server thật vì thư mục làm việc không có `.env`. Thanh toán/đặt hàng/lịch sử đơn vẫn thuộc TV4.
