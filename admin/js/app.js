@@ -646,11 +646,11 @@ function details(rows) {
   return `<dl class="detail-grid">${rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join("")}</dl>`;
 }
 function editCategory(id) {
-  const c = category(id) || { name: "", description: "", profitRate: 20 };
+  const c = category(id) || { id: "", name: "", description: "", profitRate: 20 };
   openModal(
     id ? "Sửa loại sản phẩm" : "Thêm loại sản phẩm",
     form(
-      `<div class="form-grid">${field("name", "Tên loại sản phẩm *", c.name, "text", 'required maxlength="80"')}${field("profitRate", "Lợi nhuận mặc định (%) *", c.profitRate, "number", 'required min="0" max="1000" step="0.1"')}${textarea("description", "Mô tả loại sản phẩm", c.description)}</div>`,
+      `<div class="form-grid">${field("id", "Mã loại *", c.id, "text", `required maxlength="30" pattern="[a-zA-Z0-9_-]+" title="Chỉ dùng chữ không dấu, số, gạch ngang hoặc gạch dưới." ${id ? "readonly" : ""}`)}${field("name", "Tên loại sản phẩm *", c.name, "text", 'required maxlength="80"')}${field("profitRate", "Lợi nhuận mặc định (%) *", c.profitRate, "number", 'required min="0" max="1000" step="0.1"')}${textarea("description", "Mô tả loại sản phẩm", c.description)}</div>`,
     ),
     (data) =>
       persist(
