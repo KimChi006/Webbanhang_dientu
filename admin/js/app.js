@@ -65,13 +65,45 @@ const statusInfo = {
   draft: ["Chưa hoàn thành", "pending"],
   completed: ["Hoàn thành", "active"],
 };
-let db,
+let db, dbProducts = [], dbProductsLoaded = false,
   currentPage = "customers",
   filters = {},
   pageNumber = 1,
   toastTimer,
   returnFocus;
 const PAGE_SIZE = 8;
+const TV4_LOCAL_MODE = window.location.protocol === "file:";
+let TV4_INCOMING_DB = null;
+try {
+  if (TV4_LOCAL_MODE && window.location.hash.startsWith("#tv4db=")) {
+    TV4_INCOMING_DB = JSON.parse(decodeURIComponent(window.location.hash.slice(7)));
+  }
+  if (TV4_LOCAL_MODE && TV4_INCOMING_DB && TV4_INCOMING_DB.schema === 2 && Array.isArray(TV4_INCOMING_DB.orders)) {
+    localStorage.setItem(S.KEY, JSON.stringify(TV4_INCOMING_DB));
+  }
+} catch (error) {
+  console.warn("Không đọc được dữ liệu đơn hàng chuyển từ trang khách:", error);
+}
+
+// Chuyển về trang khách với snapshot mới nhất khi giảng viên mở từng file HTML local.
+const customerSiteLink = document.createElement("a");
+customerSiteLink.className = "btn btn-light";
+customerSiteLink.href = "../index.html";
+customerSiteLink.textContent = "Trang khách hàng";
+customerSiteLink.title = "Quay về trang khách và giữ dữ liệu đơn hàng hiện tại";
+$("#logoutButton").before(customerSiteLink);
+customerSiteLink.addEventListener("click", (event) => {
+  if (!TV4_LOCAL_MODE || !db) return;
+  event.preventDefault();
+  const account = db.demoCurrentAccount || null;
+  const profile = db.demoCurrentProfile || (account ? {
+    hoTen: account.hoTen || "", email: account.email || "",
+    soDienThoai: account.soDienThoai || "", ngaySinh: account.ngaySinh || "", diaChi: account.diaChi || ""
+  } : {});
+  const payload = { v: 1, account, profile, cart: [], db };
+  window.location.href = "../index.html#tv4=" + encodeURIComponent(JSON.stringify(payload));
+});
+
 const category = (id) => db.categories.find((c) => c.id === id);
 const product = (id) => db.products.find((p) => p.masp === id);
 const customer = (id) => db.customers.find((c) => c.id === id);
@@ -202,6 +234,14 @@ function go(page) {
   $("#mainContent").focus({ preventScroll: true });
 }
 function render() {
+  if (TV4_LOCAL_MODE && db) {
+    dbProducts = db.products.map((p) => ({
+      ...p,
+      sqlPrice: S.sellingPrice(db, p),
+      sqlStock: S.stock(db, p.masp),
+    }));
+    dbProductsLoaded = false;
+  }
   $("#topbarTitle").textContent = pageInfo[currentPage][1];
   $("#pageTitle").textContent = pageInfo[currentPage][1];
   $("#pageDescription").textContent = pageInfo[currentPage][2];
@@ -213,7 +253,6 @@ function render() {
   });
   const actions = {
     categories: action("+ Thêm loại sản phẩm", "edit-category", "", "primary"),
-    products: action("+ Thêm sản phẩm", "edit-product", "", "primary"),
     imports: action("+ Tạo phiếu nhập", "edit-receipt", "", "primary"),
   };
   $("#pageActions").innerHTML = actions[currentPage] || "";
@@ -306,7 +345,7 @@ function renderCategories() {
           ],
           rows.map(
             (c) =>
-              `<tr><td>${escapeHTML(c.id)}</td><td><strong>${escapeHTML(c.name)}</strong><div class="cell-subtitle">${escapeHTML(c.description)}</div></td><td>${db.products.filter((p) => p.categoryId === c.id).length}</td><td>${c.profitRate}%</td><td>${badge(c.hidden ? "Đã ẩn" : "Đang hiển thị", c.hidden ? "neutral" : "active")}</td><td><div class="actions">${action("Sửa", "edit-category", c.id)}${action(c.hidden ? "Hiện" : "Ẩn", "toggle-category", c.id, c.hidden ? "success" : "light")}${action("Xóa", "delete-category", c.id, "danger")}</div></td></tr>`,
+              `<tr><td>${escapeHTML(c.id)}</td><td><strong>${escapeHTML(c.name)}</strong><div class="cell-subtitle">${escapeHTML(c.description)}</div></td><td>${dbProducts.filter((p) => p.categoryId === c.id).length}</td><td>${c.profitRate}%</td><td>${badge(c.hidden ? "Đã ẩn" : "Đang hiển thị", c.hidden ? "neutral" : "active")}</td><td><div class="actions">${action("Sửa", "edit-category", c.id)}${action(c.hidden ? "Hiện" : "Ẩn", "toggle-category", c.id, c.hidden ? "success" : "light")}${action("Xóa", "delete-category", c.id, "danger")}</div></td></tr>`,
           ),
         ),
     )
@@ -314,19 +353,19 @@ function renderCategories() {
 }
 function renderProducts() {
   const effectiveHidden = (p) => p.hidden || category(p.categoryId)?.hidden;
-  const rows = db.products.filter(
+  const rows = dbProducts.filter(
     (p) =>
       matchesProduct(p) &&
       (!filters.status ||
         (filters.status === "hidden") === Boolean(effectiveHidden(p))),
   );
   return (
-    `<div class="stats">${stat("📦", "Sản phẩm đang hiển thị", db.products.filter((p) => !effectiveHidden(p)).length)}${stat(
+    `<div class="stats">${stat("📦", "Sản phẩm đang hiển thị", dbProducts.filter((p) => !effectiveHidden(p)).length)}${stat(
       "🛒",
       "Tổng số lượng tồn kho",
-      db.products.reduce((n, p) => n + S.stock(db, p.masp), 0),
-      "Bao gồm cả sản phẩm đã ẩn",
-    )}${stat("🙈", "Sản phẩm không hiển thị", db.products.filter(effectiveHidden).length)}</div>` +
+      dbProducts.reduce((n, p) => n + p.sqlStock, 0),
+      "Theo API SQL · gồm cả sản phẩm ẩn",
+    )}${stat("🙈", "Sản phẩm không hiển thị", dbProducts.filter(effectiveHidden).length)}</div>` +
     panel(
       "Danh sách sản phẩm",
       filterForm(
@@ -348,7 +387,7 @@ function renderProducts() {
           ["Sản phẩm", "Loại", "Giá bán", "Tồn kho", "Trạng thái", "Thao tác"],
           rows.map(
             (p) =>
-              `<tr><td>${productCell(p)}</td><td>${escapeHTML(category(p.categoryId)?.name)}</td><td class="product-price">${S.cost(db, p.masp) ? money(S.sellingPrice(db, p)) : "Chưa có giá vốn"}</td><td>${S.stock(db, p.masp)}</td><td>${badge(p.hidden ? "Đã ẩn" : category(p.categoryId)?.hidden ? "Loại đã ẩn" : "Đang hiển thị", effectiveHidden(p) ? "neutral" : "active")}</td><td><div class="actions">${action("Xem", "view-product", p.masp)}${action("Sửa", "edit-product", p.masp)}${action(p.hidden ? "Hiện" : "Ẩn", "toggle-product", p.masp, p.hidden ? "success" : "light")}${action("Xóa", "delete-product", p.masp, "danger")}</div></td></tr>`,
+              `<tr><td>${productCell(p)}</td><td>${escapeHTML(category(p.categoryId)?.name || "Chưa phân loại")}</td><td class="product-price">${money(p.sqlPrice)}</td><td>${p.sqlStock}</td><td>${badge(p.hidden ? "Đã ẩn" : category(p.categoryId)?.hidden ? "Loại đã ẩn" : "Đang hiển thị", effectiveHidden(p) ? "neutral" : "active")}</td><td>${action("Xem", "view-product", p.masp)}</td></tr>`,
           ),
         ),
     )
@@ -488,6 +527,10 @@ function renderOrders() {
   );
 }
 function renderInventory() {
+  const current = dbProducts.filter(matchesProduct);
+  if (dbProductsLoaded) {
+    return `<div class="stats">${stat("📦", "Sản phẩm trong database", dbProducts.length)}${stat("🛒", "Tổng tồn kho hiện tại", dbProducts.reduce((n,p)=>n+p.sqlStock,0), "Đọc từ dbo.SanPham.SoLuongTon")}</div><p class="notice">Database hiện chỉ lưu tồn kho hiện tại; không có bảng lịch sử nhập–xuất hoặc ngưỡng cảnh báo trong schema đang dùng. Màn hình này không ước tính các số liệu đó.</p>` + panel("Tồn kho hiện tại từ SQL", filterForm(queryFilter()+categoryFilter()), table(["Sản phẩm","Loại","Tồn kho","Trạng thái"], current.filter(p=>matchesProduct(p)).map(p=>`<tr><td>${productCell(p)}</td><td>${escapeHTML(category(p.categoryId)?.name||"Chưa phân loại")}</td><td><strong>${p.sqlStock}</strong></td><td>${badge(p.hidden?"Đã ẩn":"Đang hiển thị",p.hidden?"neutral":"active")}</td></tr>`)));
+  }
   const selected = db.products.filter(matchesProduct),
     at = filters.at || S.now();
   const rows = selected.filter(
@@ -646,11 +689,11 @@ function details(rows) {
   return `<dl class="detail-grid">${rows.map(([k, v]) => `<div><dt>${k}</dt><dd>${v}</dd></div>`).join("")}</dl>`;
 }
 function editCategory(id) {
-  const c = category(id) || { name: "", description: "", profitRate: 20 };
+  const c = category(id) || { id: "", name: "", description: "", profitRate: 20 };
   openModal(
     id ? "Sửa loại sản phẩm" : "Thêm loại sản phẩm",
     form(
-      `<div class="form-grid">${field("name", "Tên loại sản phẩm *", c.name, "text", 'required maxlength="80"')}${field("profitRate", "Lợi nhuận mặc định (%) *", c.profitRate, "number", 'required min="0" max="1000" step="0.1"')}${textarea("description", "Mô tả loại sản phẩm", c.description)}</div>`,
+      `<div class="form-grid">${field("id", "Mã loại *", c.id, "text", `required maxlength="30" pattern="[a-zA-Z0-9_-]+" title="Chỉ dùng chữ không dấu, số, gạch ngang hoặc gạch dưới." ${id ? "readonly" : ""}`)}${field("name", "Tên loại sản phẩm *", c.name, "text", 'required maxlength="80"')}${field("profitRate", "Lợi nhuận mặc định (%) *", c.profitRate, "number", 'required min="0" max="1000" step="0.1"')}${textarea("description", "Mô tả loại sản phẩm", c.description)}</div>`,
     ),
     (data) =>
       persist(
@@ -1107,29 +1150,65 @@ $("#menu").innerHTML = Object.entries(pageInfo)
       `<li><button type="button" class="menu-item" data-page="${key}"><span class="menu-icon" aria-hidden="true">${info[0]}</span>${info[1]}</button></li>`,
   )
   .join("");
-function showAdmin() {
+async function showAdmin() {
   try {
     db = S.load(typeof list_products === "undefined" ? [] : list_products);
+    if (TV4_LOCAL_MODE) {
+      dbProductsLoaded = false;
+      dbProducts = db.products.map((p) => ({
+        ...p,
+        sqlPrice: S.sellingPrice(db, p),
+        sqlStock: S.stock(db, p.masp),
+      }));
+    } else {
+      const response = await fetch("/api/admin/products", { credentials: "same-origin" });
+      const result = await response.json();
+      if (!response.ok || !Array.isArray(result.products)) throw new Error(result.message || "Không tải được sản phẩm từ database.");
+      const localByCode = new Map(db.products.map((p) => [p.masp, p]));
+      dbProducts = result.products.map((row) => {
+        const local = localByCode.get(row.maSP) || {};
+        const image = String(row.hinhAnh || local.img || "");
+        return { ...local, masp: row.maSP, name: row.tenSanPham, company: row.hang, img: image.startsWith("../") ? image : image ? "../" + image : "", sqlPrice: Number(row.gia), sqlStock: Number(row.soLuongTon), hidden: row.trangThai !== "ACTIVE" };
+      });
+      dbProductsLoaded = true;
+    }
     sessionStorage.setItem(S.SESSION_KEY, "admin");
     $("#loginScreen").classList.add("hidden");
     $("#adminApp").classList.remove("hidden");
-    go("customers");
+    go(TV4_LOCAL_MODE && TV4_INCOMING_DB ? "orders" : "customers");
   } catch (error) {
     $("#loginMessage").textContent = error.message;
   }
 }
-$("#adminLoginForm").addEventListener("submit", (event) => {
+
+$("#adminLoginForm").addEventListener("submit", async (event) => {
   event.preventDefault();
-  if (
-    $("#adminEmail").value.trim().toLowerCase() === S.ADMIN.email &&
-    $("#adminPassword").value === S.ADMIN.password
-  ) {
+  if (TV4_LOCAL_MODE) {
+    if (
+      $("#adminEmail").value.trim().toLowerCase() === S.ADMIN.email &&
+      $("#adminPassword").value === S.ADMIN.password
+    ) {
+      $("#loginMessage").textContent = "";
+      await showAdmin();
+    } else {
+      $("#loginMessage").textContent = "Email hoặc mật khẩu quản trị không đúng.";
+    }
+    return;
+  }
+  const button = $("#adminLoginForm button[type=submit]"); button.disabled = true;
+  try {
+    const response = await fetch("/api/admin/login", { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: $("#adminEmail").value.trim(), matKhau: $("#adminPassword").value }) });
+    const result = await response.json();
+    if (!response.ok) throw new Error(result.message || "Đăng nhập quản trị thất bại.");
     $("#loginMessage").textContent = "";
-    showAdmin();
-  } else
-    $("#loginMessage").textContent = "Email hoặc mật khẩu quản trị không đúng.";
+    await showAdmin();
+  } catch (error) { $("#loginMessage").textContent = error.message; }
+  finally { button.disabled = false; }
 });
-$("#logoutButton").addEventListener("click", () => {
+$("#logoutButton").addEventListener("click", async () => {
+  if (!TV4_LOCAL_MODE) {
+    try { await fetch("/api/logout", { method: "POST", credentials: "same-origin" }); } catch {}
+  }
   try {
     sessionStorage.removeItem(S.SESSION_KEY);
   } catch {}
@@ -1159,7 +1238,10 @@ window.addEventListener("storage", (event) => {
     );
 });
 try {
-  if (sessionStorage.getItem(S.SESSION_KEY) === "admin") showAdmin();
+  if (sessionStorage.getItem(S.SESSION_KEY) === "admin") {
+    if (TV4_LOCAL_MODE) showAdmin();
+    else fetch("/api/admin/me", { credentials: "same-origin" }).then(r => { if (r.ok) showAdmin(); else sessionStorage.removeItem(S.SESSION_KEY); }).catch(() => sessionStorage.removeItem(S.SESSION_KEY));
+  }
 } catch {
   $("#loginMessage").textContent =
     "Trình duyệt đang chặn bộ nhớ phiên. Hãy cho phép lưu dữ liệu để sử dụng bản thực hành.";

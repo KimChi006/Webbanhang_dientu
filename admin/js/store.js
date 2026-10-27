@@ -348,6 +348,18 @@
     };
   }
   function saveCategory(db, input, id) {
+    const code = text(input.id ?? (id || uid("L")), "Mã loại", 30);
+    requireValue(
+      /^[a-z0-9_-]+$/i.test(code),
+      "Mã loại chỉ gồm chữ không dấu, số, gạch ngang hoặc gạch dưới.",
+    );
+    requireValue(
+      !db.categories.some(
+        (c) => c.id !== id && normalize(c.id) === normalize(code),
+      ),
+      "Mã loại sản phẩm đã tồn tại.",
+    );
+    if (id) requireValue(code === id, "Không đổi mã loại sau khi tạo.");
     const name = text(input.name, "Tên loại", 80);
     requireValue(
       !db.categories.some(
@@ -364,7 +376,7 @@
       const c = db.categories.find((c) => c.id === id);
       requireValue(c, "Không tìm thấy loại sản phẩm.");
       Object.assign(c, data);
-    } else db.categories.push({ id: uid("L"), ...data, hidden: false });
+    } else db.categories.push({ id: code, ...data, hidden: false });
   }
   function deleteCategory(db, id) {
     requireValue(

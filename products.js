@@ -1149,4 +1149,4 @@ var list_products = [{
     "masp": "Hua3"
 }]
 
-module.exports = list_products;
+if (typeof module !== 'undefined' && module.exports) module.exports = list_products;

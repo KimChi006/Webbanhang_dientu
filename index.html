@@ -800,7 +800,7 @@
         }
 
     </style>
-</head>
+    <link rel="stylesheet" href="css/catalog.css"></head>
 
 <body>
 
@@ -887,7 +887,7 @@
             <div>
                 <h3>Hỗ trợ khách hàng</h3>
                 <p><a href="#san-pham">Danh sách sản phẩm</a></p>
-                <p><a href="don-hang.html">Giỏ hàng và đơn hàng</a></p>
+                <p><a id="footerCartLink" href="don-hang.html">Giỏ hàng và đơn hàng</a></p>
                 <p><a href="#" onclick="openModal('login'); return false;">
                     Tài khoản khách hàng
                 </a></p>
@@ -1083,288 +1083,83 @@
 
     <!-- Đặt file này cùng thư mục với products.js và don-hang.html. -->
     <!-- DỮ LIỆU SẢN PHẨM CÓ SẴN -->
-    <script src="products.js"></script>
+    <script src="products.js"></script><script src="admin/js/store.js"></script>
 
     <script>
-        // ===== HIỂN THỊ DANH SÁCH SẢN PHẨM =====
-        const productList = document.getElementById("productList");
+        // ===== TV4: CHẾ ĐỘ PROTOTYPE LOCAL VÀ CẦU NỐI GIỮ DỮ LIỆU =====
+        const TV4_LOCAL_MODE = window.location.protocol === "file:";
+        const TV4_DEMO_USERS_KEY = "techstore_demo_users_v1";
+        const TV4_DEMO_ACCOUNT_KEY = "techstore_demo_current_account_v1";
+        const TV4_CART_KEY = "techstore_customer_carts_v1";
+        const TV4_DB_KEY = "techstore_admin_v2";
+        let TV4_INCOMING_STATE = null;
+        try {
+            if (window.location.hash.startsWith("#tv4=")) {
+                TV4_INCOMING_STATE = JSON.parse(decodeURIComponent(window.location.hash.slice(5)));
+            }
+        } catch (error) { console.warn("Không đọc được dữ liệu chuyển trang:", error); }
 
-        function formatPrice(price) {
-            const number = Number(String(price).replace(/[^\d.-]/g, ""));
-            if (!Number.isFinite(number)) return String(price ?? "");
-            return number.toLocaleString("vi-VN") + " ₫";
+        function tv4ReadJSON(key, fallback) {
+            try { const value = localStorage.getItem(key); return value ? JSON.parse(value) : fallback; }
+            catch (_) { return fallback; }
         }
-
-        async function loadProductsFromAPI() {
-            productList.innerHTML =
-                '<div class="empty-products">Đang tải sản phẩm...</div>';
-
-            // Ưu tiên dữ liệu mới nhất từ backend. Nếu API chưa chạy,
-            // dùng list_products trong products.js để vẫn xem được giao diện.
+        function tv4AccountId(account) {
+            return String(account?.maKH ?? account?.MaTaiKhoan ?? account?.id ?? "");
+        }
+        function tv4CurrentAccount() {
+            return window.__techStoreAccount || tv4ReadJSON(TV4_DEMO_ACCOUNT_KEY, null);
+        }
+        function tv4SaveCurrentAccount(account) {
+            window.__techStoreAccount = account || null;
             try {
-                const response = await fetch("/api/products", {
-                    credentials: "same-origin"
-                });
-
-                if (!response.ok) {
-                    throw new Error("API sản phẩm chưa sẵn sàng.");
-                }
-
-                const result = await response.json();
-                const apiProducts = Array.isArray(result)
-                    ? result
-                    : result.products;
-
-                if (!Array.isArray(apiProducts)) {
-                    throw new Error("Dữ liệu sản phẩm từ API không hợp lệ.");
-                }
-
-                window.__customerProducts = apiProducts.map(product => ({
-                    maSanPham: product.maSanPham,
-                    masp: product.maSP,
-                    name: product.tenSanPham ?? product.name ?? "Sản phẩm",
-                    company: product.hang ?? product.company ?? "Điện tử",
-                    img: product.hinhAnh ?? product.img ?? "",
-                    price: product.gia ?? product.price ?? 0,
-                    star: product.soSao ?? product.star ?? 0,
-                    rateCount: product.soLuotDanhGia ?? product.rateCount ?? 0,
-                    promo: {
-                        name: product.loaiKhuyenMai || "",
-                        value: product.giaTriKhuyenMai ?? ""
-                    },
-                    detail: product.detail || {
-                        screen: product.manHinh,
-                        os: product.heDieuHanh,
-                        camara: product.cameraSau,
-                        camaraFront: product.cameraTruoc,
-                        cpu: product.cpu,
-                        ram: product.ram,
-                        rom: product.rom,
-                        microUSB: product.theNho,
-                        battery: product.pin
-                    }
-                }));
-
-                renderProducts();
-            } catch (error) {
-                console.warn("Không tải được sản phẩm từ API; dùng dữ liệu products.js nếu có.", error);
-
-                if (typeof list_products !== "undefined" &&
-                    Array.isArray(list_products) &&
-                    list_products.length > 0) {
-                    window.__customerProducts = list_products;
-                    renderProducts();
-                } else {
-                    productList.innerHTML =
-                        '<div class="empty-products">Không tải được sản phẩm. Hãy khởi động backend hoặc kiểm tra file products.js.</div>';
-                    document.getElementById("productCount").textContent = "";
-                }
+                if (account) localStorage.setItem(TV4_DEMO_ACCOUNT_KEY, JSON.stringify(account));
+                else localStorage.removeItem(TV4_DEMO_ACCOUNT_KEY);
+            } catch (error) { console.warn("Không lưu được trạng thái tài khoản prototype:", error); }
+        }
+        function tv4DemoUsers() {
+            const value = tv4ReadJSON(TV4_DEMO_USERS_KEY, []);
+            return Array.isArray(value) ? value : [];
+        }
+        function tv4SaveDemoUsers(users) { localStorage.setItem(TV4_DEMO_USERS_KEY, JSON.stringify(users)); }
+        function tv4TransferURL(target, accountOverride) {
+            const account = accountOverride === undefined ? tv4CurrentAccount() : accountOverride;
+            const id = tv4AccountId(account);
+            const carts = tv4ReadJSON(TV4_CART_KEY, {});
+            let db = tv4ReadJSON(TV4_DB_KEY, null);
+            if (!db && window.TechStore && Array.isArray(window.list_products)) {
+                try { db = window.TechStore.load(window.list_products); } catch (_) {}
+            }
+            const profile = account ? {
+                hoTen: account.hoTen || "", email: account.email || "",
+                soDienThoai: account.soDienThoai || account.phone || "",
+                ngaySinh: account.ngaySinh || account.birthDate || "", diaChi: account.diaChi || account.address || ""
+            } : {};
+            if (db && account) {
+                db.demoCurrentAccount = account;
+                db.demoCurrentProfile = profile;
+            }
+            const payload = { v: 1, account: account || null, profile, cart: id && Array.isArray(carts[id]) ? carts[id] : [], db: db || null };
+            return target + "#tv4=" + encodeURIComponent(JSON.stringify(payload));
+        }
+        function tv4HydrateIncomingState() {
+            if (!TV4_LOCAL_MODE || !TV4_INCOMING_STATE) return;
+            const state = TV4_INCOMING_STATE;
+            if (state.account) tv4SaveCurrentAccount(state.account);
+            if (state.account && Array.isArray(state.cart)) {
+                const carts = tv4ReadJSON(TV4_CART_KEY, {});
+                carts[tv4AccountId(state.account)] = state.cart;
+                try { localStorage.setItem(TV4_CART_KEY, JSON.stringify(carts)); } catch (_) {}
+            }
+            if (state.db && state.db.schema === 2 && Array.isArray(state.db.orders)) {
+                try { localStorage.setItem(TV4_DB_KEY, JSON.stringify(state.db)); } catch (_) {}
             }
         }
-
-        function renderProducts() {
-            const products = window.__customerProducts ||
-                (typeof list_products !== "undefined" && Array.isArray(list_products) ? list_products : []);
-            if (!Array.isArray(products) || products.length === 0) {
-                productList.innerHTML = `
-                    <div class="empty-products">
-                        Chưa có dữ liệu sản phẩm.
-                        Hãy kiểm tra file products.js.
-                    </div>`;
-                document.getElementById("productCount").textContent = "";
-                return;
-            }
-
-            document.getElementById("productCount").textContent =
-                products.length + " sản phẩm";
-
-            productList.innerHTML = products.map((product, index) => {
-                const name = String(product.name ?? "Sản phẩm");
-                const company = String(product.company ?? "Điện tử");
-                const image = String(product.img ?? "");
-                const price = formatPrice(product.price);
-                const stars = Math.max(
-                    0, Math.min(5, Math.round(Number(product.star) || 0))
-                );
-
-                return `
-                    <article class="product-card">
-                        <div class="product-image">
-                            <img src="${escapeHTML(image)}"
-                                 alt="${escapeHTML(name)}"
-                                 loading="lazy"
-                                 onerror="this.style.display='none'">
-                        </div>
-
-                        <div class="product-company">
-                            ${escapeHTML(company)}
-                        </div>
-
-                        <h3 class="product-name">
-                            ${escapeHTML(name)}
-                        </h3>
-
-                        <div class="product-rating">
-                            ${"★".repeat(stars)}${"☆".repeat(5 - stars)}
-                            <span style="color:#718096">
-                                (${Number(product.rateCount) || 0})
-                            </span>
-                        </div>
-
-                        <div class="product-price">${escapeHTML(price)}</div>
-
-                        <button class="btn btn-primary"
-                                onclick="viewProduct(${index})">
-                            Xem chi tiết
-                        </button>
-                    </article>`;
-            }).join("");
-        }
-
-        function escapeHTML(value) {
-            return String(value).replace(/[&<>"']/g, character => ({
-                "&": "&amp;",
-                "<": "&lt;",
-                ">": "&gt;",
-                '"': "&quot;",
-                "'": "&#39;"
-            })[character]);
-        }
-
-        function viewProduct(index) {
-            const products = window.__customerProducts ||
-                (typeof list_products !== "undefined" && Array.isArray(list_products) ? list_products : []);
-            const product = products[index];
-
-            if (!product) return;
-
-            // Ẩn danh sách, giữ nguyên thanh điều hướng và chân trang.
-            document.querySelector(".hero").style.display = "none";
-            document.querySelector(".products-section").style.display = "none";
-
-            // Tạo vùng chi tiết nếu chưa có.
-            let detailPage = document.getElementById("productDetailPage");
-
-            if (!detailPage) {
-                detailPage = document.createElement("section");
-                detailPage.id = "productDetailPage";
-                detailPage.className = "product-detail-page";
-
-                document.querySelector(".navbar").after(detailPage);
-            }
-
-            detailPage.style.display = "block";
-
-            const d = product.detail || {};
-
-            // Các thuộc tính tương ứng với cấu trúc detail trong products.js.
-            const specs = [
-                ["Màn hình", d.screen],
-                ["Hệ điều hành", d.os],
-                ["Camera sau", d.camara],
-                ["Camera trước", d.camaraFront],
-                ["CPU", d.cpu],
-                ["RAM", d.ram],
-                ["Bộ nhớ trong", d.rom],
-                ["Cổng kết nối", d.microUSB],
-                ["Dung lượng pin", d.battery]
-            ];
-
-            const specRows = specs
-                .filter(([label, value]) =>
-                    value !== undefined &&
-                    value !== null &&
-                    String(value).trim() !== ""
-                )
-                .map(([label, value]) => `
-                    <tr>
-                        <td>${escapeHTML(label)}</td>
-                        <td>${escapeHTML(value)}</td>
-                    </tr>
-                `)
-                .join("");
-
-            const stars = Math.max(
-                0,
-                Math.min(5, Math.round(Number(product.star) || 0))
-            );
-
-            detailPage.innerHTML = `
-                <button class="detail-back" onclick="backToProducts()">
-                    ← Quay lại danh sách sản phẩm
-                </button>
-
-                <div class="detail-container">
-                    <div class="detail-image">
-                        <img
-                            src="${escapeHTML(product.img || "")}"
-                            alt="${escapeHTML(product.name || "Sản phẩm")}"
-                            onerror="this.style.display='none'"
-                        >
-                    </div>
-
-                    <div class="detail-info">
-                        <div class="detail-company">
-                            ${escapeHTML(product.company || "Điện tử")}
-                        </div>
-
-                        <h1>${escapeHTML(product.name || "Sản phẩm")}</h1>
-
-                        <div class="detail-rating">
-                            ${"★".repeat(stars)}${"☆".repeat(5 - stars)}
-                            <span style="color:#718096">
-                                (${Number(product.rateCount) || 0} đánh giá)
-                            </span>
-                        </div>
-
-                        <div class="detail-price">
-                            ${escapeHTML(formatPrice(product.price))}
-                        </div>
-
-                        <div class="detail-actions">
-                            <button class="btn btn-primary"
-                                    onclick="addToCart(${index})">
-                                🛒 Thêm vào giỏ hàng
-                            </button>
-
-                            <button class="btn btn-outline"
-                                    onclick="backToProducts()">
-                                Tiếp tục mua sắm
-                            </button>
-                        </div>
-
-                        <div class="detail-specs">
-                            <h2>Thông số kỹ thuật</h2>
-
-                            ${
-                                specRows
-                                    ? `<table class="spec-table">
-                                        <tbody>${specRows}</tbody>
-                                    </table>`
-                                    : `<p>Chưa có thông số kỹ thuật.</p>`
-                            }
-                        </div>
-                    </div>
-                </div>
-            `;
-
-            window.scrollTo({ top: 0, behavior: "smooth" });
-        }
-
-        function backToProducts() {
-            const detailPage = document.getElementById("productDetailPage");
-
-            if (detailPage) {
-                detailPage.style.display = "none";
-            }
-
-            document.querySelector(".hero").style.display = "";
-            document.querySelector(".products-section").style.display = "";
-
-            window.scrollTo({ top: 0, behavior: "smooth" });
-        }
-
-        loadProductsFromAPI();
+        tv4HydrateIncomingState();
+        window.TechStoreDemo = {
+            localMode: TV4_LOCAL_MODE, getAccount: tv4CurrentAccount, saveCurrentAccount: tv4SaveCurrentAccount,
+            accountId: tv4AccountId, readJSON: tv4ReadJSON, transferURL: tv4TransferURL,
+            users: tv4DemoUsers, saveUsers: tv4SaveDemoUsers, cartKey: TV4_CART_KEY
+        };
 
         // ===== GIAO DIỆN FORM TÀI KHOẢN =====
         let authMode = "login";
@@ -1466,10 +1261,18 @@
 
             // Giỏ hàng luôn nằm bên trái tài khoản
             const cartLink = document.createElement("a");
-            cartLink.href = "don-hang.html";
+            cartLink.href = TV4_LOCAL_MODE ? tv4TransferURL("don-hang.html", account) : "don-hang.html";
             cartLink.className = "btn btn-cart";
-            cartLink.textContent = "🛒 Giỏ hàng";
+            let cartCount = 0;
+            if (TV4_LOCAL_MODE && account) {
+                const carts = tv4ReadJSON(TV4_CART_KEY, {});
+                const items = carts[tv4AccountId(account)];
+                if (Array.isArray(items)) cartCount = items.reduce((sum, item) => sum + (Number(item.quantity) || 0), 0);
+            }
+            cartLink.textContent = cartCount ? `🛒 Giỏ hàng (${cartCount})` : "🛒 Giỏ hàng";
             actions.appendChild(cartLink);
+            const footerCartLink = document.getElementById("footerCartLink");
+            if (footerCartLink) footerCartLink.href = cartLink.href;
 
             if (account) {
                 // Đã đăng nhập: hiện tên tài khoản
@@ -1548,6 +1351,23 @@
             message.style.color = "#64748b";
             submit.disabled = true;
 
+            if (TV4_LOCAL_MODE) {
+                const p = tv4CurrentAccount();
+                if (!p) {
+                    message.textContent = "Vui lòng đăng nhập lại trước khi xem hồ sơ.";
+                    message.style.color = "#d14343";
+                    submit.disabled = false;
+                    return;
+                }
+                document.getElementById("profileName").value = p.hoTen || "";
+                document.getElementById("profileEmail").value = p.email || "";
+                document.getElementById("profilePhone").value = p.soDienThoai || "";
+                document.getElementById("profileBirth").value = String(p.ngaySinh || "").slice(0, 10);
+                document.getElementById("profileAddress").value = p.diaChi || "";
+                message.textContent = "Dữ liệu hồ sơ prototype lưu trong trình duyệt.";
+                submit.disabled = false;
+                return;
+            }
             try {
                 const response = await fetch("/api/profile", {
                     credentials: "same-origin"
@@ -1591,6 +1411,27 @@
                 soDienThoai: document.getElementById("profilePhone").value.trim(),
                 diaChi: document.getElementById("profileAddress").value.trim()
             };
+
+            if (TV4_LOCAL_MODE) {
+                const current = tv4CurrentAccount();
+                if (!current) { message.style.color = "#d14343"; message.textContent = "Vui lòng đăng nhập lại trước khi sửa hồ sơ."; return; }
+                if (!data.hoTen || !data.email || !data.ngaySinh || !data.soDienThoai || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+                    message.style.color = "#d14343"; message.textContent = "Vui lòng nhập họ tên, email, số điện thoại và ngày sinh hợp lệ."; return;
+                }
+                if (!/^[0-9+() .-]{9,20}$/.test(data.soDienThoai)) { message.style.color = "#d14343"; message.textContent = "Số điện thoại không hợp lệ."; return; }
+                const updated = { ...current, ...data };
+                const users = tv4DemoUsers();
+                const index = users.findIndex(user => user.id === current.id || String(user.email).toLowerCase() === String(current.email).toLowerCase());
+                if (index >= 0) users[index] = { ...users[index], ...updated };
+                try { tv4SaveDemoUsers(users); } catch (_) {}
+                tv4SaveCurrentAccount(updated);
+                const db = tv4ReadJSON(TV4_DB_KEY, null);
+                if (db && db.schema === 2) { db.demoCurrentAccount = updated; db.demoCurrentProfile = data; try { localStorage.setItem(TV4_DB_KEY, JSON.stringify(db)); } catch (_) {} }
+                updateAccountActions(updated);
+                message.style.color = "#16803d"; message.textContent = "Đã lưu thông tin cá nhân trong prototype.";
+                submit.disabled = false;
+                return;
+            }
 
             submit.disabled = true;
             message.style.color = "#64748b";
@@ -1711,7 +1552,28 @@
             formMessage.textContent = "Đang xử lý...";
 
             try {
-                if (authMode === "register") {
+                if (TV4_LOCAL_MODE) {
+                    const users = tv4DemoUsers();
+                    if (authMode === "register") {
+                        if (users.some(user => String(user.email || "").toLowerCase() === email.toLowerCase())) throw new Error("Email đã được đăng ký. Vui lòng đăng nhập.");
+                        const demoAccount = {
+                            id: "LOCAL-" + Date.now().toString(36).toUpperCase(),
+                            maKH: "LOCAL-" + Date.now().toString(36).toUpperCase(),
+                            vaiTro: "CUSTOMER", hoTen: document.getElementById("fullName").value.trim(), email,
+                            soDienThoai: document.getElementById("authPhone").value.trim(),
+                            ngaySinh: document.getElementById("authBirthDate").value, diaChi: "", password: matKhau
+                        };
+                        users.push(demoAccount); tv4SaveDemoUsers(users);
+                        formMessage.style.color = "#16803d"; formMessage.textContent = "Đăng ký prototype thành công. Mời bạn đăng nhập.";
+                        document.getElementById("authPassword").value = ""; authMode = "login"; updateAuthForm(); document.getElementById("authEmail").value = email;
+                    } else {
+                        const found = users.find(user => String(user.email || "").toLowerCase() === email.toLowerCase() && user.password === matKhau);
+                        if (!found) throw new Error("Email hoặc mật khẩu không đúng. Nếu chưa có tài khoản, hãy đăng ký trước.");
+                        const { password: _password, ...safeAccount } = found;
+                        safeAccount.vaiTro = "CUSTOMER";
+                        tv4SaveCurrentAccount(safeAccount); updateAccountActions(safeAccount); closeModal(); authForm.reset(); formMessage.textContent = "";
+                    }
+                } else if (authMode === "register") {
                     const result = await callAPI("/api/register", data);
 
                     formMessage.style.color = "#16803d";
@@ -1747,6 +1609,12 @@
 
         // Đăng xuất
         async function logoutAccount() {
+            if (TV4_LOCAL_MODE) {
+                tv4SaveCurrentAccount(null);
+                updateAccountActions(null);
+                alert("Đã đăng xuất khỏi prototype.");
+                return;
+            }
             try {
                 const result = await callAPI("/api/logout", {});
 
@@ -1759,6 +1627,14 @@
 
         // Khôi phục trạng thái đăng nhập khi tải lại trang
         async function restoreAccount() {
+            if (TV4_LOCAL_MODE) {
+                const account = TV4_INCOMING_STATE?.account || tv4CurrentAccount();
+                if (account) tv4SaveCurrentAccount(account);
+                updateAccountActions(account || null);
+                const loginRequested = new URLSearchParams(location.search).has("login");
+                if (loginRequested && !account) openModal("login");
+                return;
+            }
             try {
                 const response = await fetch("/api/me", {
                     credentials: "same-origin"
@@ -1777,10 +1653,17 @@
             }
         }
 
+        // Đồng bộ nhãn giỏ hàng sau khi TV4 thêm/cập nhật sản phẩm.
+        window.addEventListener("techstore:cart-changed", () => {
+            if (TV4_LOCAL_MODE) updateAccountActions(tv4CurrentAccount());
+        });
+
         // Khởi tạo trạng thái tài khoản
         updateAccountActions(null);
         restoreAccount();
     </script>
 
-</body>
+<script src="js/cart-bridge.js"></script><script src="js/catalog.js"></script></body>
 </html>
+
+
