@@ -1,0 +1,1508 @@
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechStore - Trang khách hàng</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: #f5f7fb;
+            color: #263247;
+        }
+
+        a {
+            text-decoration: none;
+            color: inherit;
+        }
+
+        button {
+            font-family: inherit;
+            cursor: pointer;
+        }
+
+        /* ===== THANH ĐIỀU HƯỚNG ===== */
+        .navbar {
+            background: #ffffff;
+            border-bottom: 1px solid #e5eaf2;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            min-height: 76px;
+            margin: auto;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 24px;
+        }
+
+        .logo {
+            font-size: 25px;
+            font-weight: 800;
+            color: #1769d2;
+            white-space: nowrap;
+        }
+
+        .logo span {
+            color: #263247;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+        }
+
+        .nav-menu a {
+            color: #475569;
+            font-size: 15px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .nav-menu a:hover {
+            color: #1769d2;
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;
+        }
+
+        .btn {
+            border: none;
+            border-radius: 8px;
+            padding: 10px 15px;
+            font-size: 14px;
+            font-weight: 600;
+            transition: 0.2s;
+        }
+
+        .btn-outline {
+            background: white;
+            color: #1769d2;
+            border: 1px solid #1769d2;
+        }
+
+        .btn-outline:hover {
+            background: #eef5ff;
+        }
+
+        .btn-primary {
+            background: #1769d2;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #1055b0;
+        }
+
+        .btn-cart {
+            background: #edf4ff;
+            color: #1769d2;
+        }
+
+        .btn-cart:hover {
+            background: #dceaff;
+        }
+
+        /* ===== KHU VỰC GIỚI THIỆU ===== */
+        .hero {
+            max-width: 1200px;
+            margin: 28px auto;
+            padding: 0 24px;
+        }
+
+        .hero-content {
+            background: linear-gradient(120deg, #1769d2, #3989f5);
+            color: white;
+            padding: 38px 42px;
+            border-radius: 16px;
+        }
+
+        .hero-content h1 {
+            font-size: 30px;
+            margin-bottom: 12px;
+        }
+
+        .hero-content p {
+            font-size: 15px;
+            line-height: 1.7;
+            color: #edf5ff;
+        }
+
+        /* ===== DANH SÁCH SẢN PHẨM ===== */
+        .products-section {
+            max-width: 1200px;
+            margin: 35px auto 55px;
+            padding: 0 24px;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 22px;
+        }
+
+        .section-heading h2 {
+            font-size: 25px;
+            color: #1e293b;
+        }
+
+        .section-heading p {
+            color: #718096;
+            font-size: 14px;
+            margin-top: 6px;
+        }
+
+        .product-count {
+            color: #64748b;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 20px;
+        }
+
+        .product-card {
+            background: white;
+            border: 1px solid #e8edf5;
+            border-radius: 13px;
+            padding: 18px;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 9px 24px rgba(34, 68, 120, 0.09);
+        }
+
+        .product-image {
+            height: 175px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .product-image img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+
+        .product-company {
+            font-size: 12px;
+            color: #1769d2;
+            font-weight: 700;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+        }
+
+        .product-name {
+            font-size: 15px;
+            line-height: 1.5;
+            min-height: 45px;
+            margin-bottom: 10px;
+            color: #273449;
+        }
+
+        .product-rating {
+            color: #e9a21a;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        .product-price {
+            font-size: 19px;
+            font-weight: 800;
+            color: #e04747;
+            margin-top: auto;
+            margin-bottom: 14px;
+        }
+
+        .product-card .btn {
+            width: 100%;
+        }
+
+        .empty-products {
+            grid-column: 1 / -1;
+            background: white;
+            padding: 40px;
+            text-align: center;
+            color: #64748b;
+            border-radius: 12px;
+        }
+
+        /* ===== CHÂN TRANG ===== */
+        .footer {
+            background: #17263c;
+            color: #dbe4f0;
+            padding: 40px 24px 20px;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: 1.4fr 1fr 1fr;
+            gap: 40px;
+        }
+
+        .footer h3 {
+            color: white;
+            font-size: 17px;
+            margin-bottom: 16px;
+        }
+
+        .footer p,
+        .footer a {
+            font-size: 14px;
+            line-height: 1.9;
+            color: #c4d0df;
+        }
+
+        .footer a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 28px auto 0;
+            padding-top: 18px;
+            border-top: 1px solid #34445a;
+            text-align: center;
+            font-size: 13px;
+            color: #9fb0c5;
+        }
+
+        /* ===== FORM ĐĂNG NHẬP / ĐĂNG KÝ ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.55);
+            z-index: 200;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            overflow-y: auto;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            width: 100%;
+            max-width: 620px;
+            background: white;
+            border-radius: 18px;
+            padding: 36px 40px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .modal-header {
+            margin-bottom: 28px;
+        }
+
+        .modal-header h2 {
+            color: #1769d2;
+            font-size: 26px;
+            margin-bottom: 10px;
+        }
+
+        .modal-header p {
+            color: #718096;
+            font-size: 15px;
+        }
+
+        .close-modal {
+            position: absolute;
+            right: 18px;
+            top: 15px;
+            border: none;
+            background: none;
+            font-size: 25px;
+            color: #718096;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 9px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 13px 14px;;
+            border: 1px solid #d6deea;
+            border-radius: 8px;
+            outline: none;
+            font-size: 15px;
+        }
+
+        .form-group input:focus {
+            border-color: #1769d2;
+            box-shadow: 0 0 0 3px #1769d21a;
+        }
+
+        .form-submit {
+            width: 100%;
+            padding: 12px;
+            margin-top: 5px;
+        }
+
+        .form-switch {
+            text-align: center;
+            font-size: 14px;
+            margin-top: 18px;
+            color: #64748b;
+        }
+
+        .form-switch button {
+            border: none;
+            background: none;
+            color: #1769d2;
+            font-weight: 700;
+        }
+
+        .form-message {
+            font-size: 13px;
+            margin-top: 12px;
+            line-height: 1.5;
+            color: #d14343;
+        }
+
+        .account-name {
+            color: #1769d2;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        /* ===== MENU TÀI KHOẢN ===== */
+        .account-menu {
+            position: relative;
+        }
+
+        .account-trigger {
+            border: 1px solid #d6deea;
+            background: #fff;
+            color: #1769d2;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 14px;
+            font-weight: 600;
+            max-width: 220px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .account-trigger:hover,
+        .account-menu:focus-within .account-trigger {
+            background: #eef5ff;
+        }
+
+        .account-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 230px;
+            padding-top: 8px;
+            z-index: 300;
+        }
+
+        .account-menu:hover .account-dropdown,
+        .account-menu:focus-within .account-dropdown {
+            display: block;
+        }
+
+        .account-dropdown-inner {
+            background: #fff;
+            border: 1px solid #e5eaf2;
+            border-radius: 10px;
+            padding: 6px;
+            box-shadow: 0 12px 30px rgba(15, 23, 42, 0.14);
+        }
+
+        .account-dropdown button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 7px;
+            background: #fff;
+            text-align: left;
+            font-size: 14px;
+            color: #263247;
+        }
+
+        .account-dropdown button:hover {
+            background: #eef5ff;
+            color: #1769d2;
+        }
+
+        .account-dropdown button.logout-option {
+            color: #d14343;
+            border-top: 1px solid #e8edf5;
+            margin-top: 4px;
+        }
+        
+        /* ===== FORM ĐĂNG NHẬP ===== */
+        #authForm:not(.register-layout) {
+            display: flex;
+            flex-direction: column;
+            gap: 0;
+        }
+
+        #authForm:not(.register-layout) .form-group[hidden] {
+            display: none;
+        }
+
+        /* ===== FORM ĐĂNG KÝ ===== */
+        #authForm.register-layout {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            column-gap: 22px;
+            row-gap: 4px;
+        }
+
+        #authForm.register-layout .form-group {
+            min-width: 0;
+            margin-bottom: 18px;
+        }
+
+        #authForm.register-layout .form-group[hidden] {
+            display: none;
+        }
+
+        #authForm.register-layout #formSubmit,
+        #authForm.register-layout #formMessage {
+            grid-column: 1 / -1;
+        }
+
+        #authForm.register-layout #formSubmit {
+            width: 150px;
+            justify-self: center;
+            margin-top: 4px;
+        }
+
+        @media (max-width: 560px) {
+            #authForm.register-layout {
+                grid-template-columns: 1fr;
+                column-gap: 0;
+            }
+
+            #authForm.register-layout #formSubmit,
+            #authForm.register-layout #formMessage {
+                grid-column: 1;
+            }
+        }
+
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 1000px) {
+            .nav-container {
+                flex-wrap: wrap;
+            }
+
+            .nav-menu {
+                order: 3;
+                width: 100%;
+                justify-content: center;
+                padding-top: 8px;
+            }
+
+            .product-grid {
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+            }
+        }
+
+        @media (max-width: 700px) {
+            .nav-container {
+                padding: 14px 16px;
+                gap: 14px;
+            }
+
+            .logo {
+                font-size: 21px;
+            }
+
+            .nav-actions {
+                gap: 6px;
+            }
+
+            .nav-actions .btn {
+                padding: 9px;
+                font-size: 12px;
+            }
+
+            .nav-menu {
+                gap: 17px;
+                overflow-x: auto;
+                justify-content: flex-start;
+            }
+
+            .nav-menu a {
+                white-space: nowrap;
+                font-size: 13px;
+            }
+
+            .hero,
+            .products-section {
+                padding: 0 16px;
+            }
+
+            .hero-content {
+                padding: 28px 22px;
+            }
+
+            .hero-content h1 {
+                font-size: 24px;
+            }
+
+            .product-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 12px;
+            }
+
+            .product-card {
+                padding: 12px;
+            }
+
+            .product-image {
+                height: 130px;
+            }
+
+            .product-name {
+                font-size: 13px;
+            }
+
+            .product-price {
+                font-size: 16px;
+            }
+
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+        }
+
+        #profileModal .modal-content,
+        #notificationModal .modal-content {
+            max-height: calc(100vh - 48px);
+            overflow-y: auto;
+        }
+
+        #profileForm .form-submit {
+            max-width: 220px;
+            display: block;
+            margin: 16px auto 0;
+        }
+
+        #notificationList {
+            display: grid;
+            gap: 12px;
+        }
+
+        .notification-item {
+            padding: 14px;
+            border: 1px solid #e5eaf2;
+            border-radius: 10px;
+            background: #f8fafc;
+        }
+
+        .notification-item h3 {
+            font-size: 15px;
+            margin-bottom: 6px;
+        }
+
+        .notification-item p {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #64748b;
+        }
+
+        .notification-item small {
+            display: block;
+            margin-top: 8px;
+            color: #94a3b8;
+        }
+
+        /* ===== TRANG CHI TIẾT SẢN PHẨM ===== */
+        .product-detail-page {
+            max-width: 1200px;
+            margin: 30px auto 55px;
+            padding: 0 24px;
+        }
+
+        .detail-back {
+            display: inline-block;
+            margin-bottom: 22px;
+            color: #1769d2;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+        }
+
+        .detail-back:hover {
+            text-decoration: underline;
+        }
+
+        .detail-container {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 42px;
+            padding: 32px;
+            background: #fff;
+            border: 1px solid #e5eaf2;
+            border-radius: 15px;
+        }
+
+        .detail-image {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 320px;
+            background: #f8fafc;
+            border-radius: 12px;
+            padding: 25px;
+        }
+
+        .detail-image img {
+            max-width: 100%;
+            max-height: 350px;
+            object-fit: contain;
+        }
+
+        .detail-info h1 {
+            font-size: 27px;
+            line-height: 1.4;
+            color: #1e293b;
+            margin: 8px 0 14px;
+        }
+
+        .detail-company {
+            color: #1769d2;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .detail-rating {
+            color: #e9a21a;
+            margin-bottom: 18px;
+        }
+
+        .detail-price {
+            font-size: 28px;
+            font-weight: 800;
+            color: #e04747;
+            margin-bottom: 22px;
+        }
+
+        .detail-actions {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 28px;
+        }
+
+        .detail-actions .btn {
+            padding: 12px 20px;
+        }
+
+        .detail-specs {
+            margin-top: 25px;
+        }
+
+        .detail-specs h2 {
+            font-size: 21px;
+            margin-bottom: 16px;
+        }
+
+        .spec-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        .spec-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e8edf5;
+            line-height: 1.5;
+        }
+
+        .spec-table td:first-child {
+            width: 38%;
+            color: #64748b;
+            background: #f8fafc;
+            font-weight: 600;
+        }
+
+        .spec-table td:last-child {
+            color: #263247;
+            overflow-wrap: anywhere;
+        }
+
+        @media (max-width: 760px) {
+            .detail-container {
+                grid-template-columns: 1fr;
+                gap: 24px;
+                padding: 18px;
+            }
+
+            .detail-image {
+                min-height: 230px;
+            }
+
+            .detail-info h1 {
+                font-size: 22px;
+            }
+
+            .detail-price {
+                font-size: 24px;
+            }
+
+            .product-detail-page {
+                padding: 0 16px;
+            }
+        }
+
+    </style>
+    <link rel="stylesheet" href="css/catalog.css"></head>
+
+<body>
+
+    <!-- THANH ĐIỀU HƯỚNG -->
+    <header class="navbar">
+        <div class="nav-container">
+
+            <a href="index.html" class="logo">
+                Tech<span>Store.</span>
+            </a>
+
+            <nav class="nav-menu">
+                <a href="index.html">Trang chủ</a>
+                <a href="#san-pham">Sản phẩm</a>
+                <a href="#lien-he">Liên hệ</a>
+            </nav>
+
+            <div class="nav-actions" id="accountActions">
+                <button class="btn btn-outline" onclick="openModal('register')">
+                    Đăng ký
+                </button>
+
+                <button class="btn btn-primary" onclick="openModal('login')">
+                    Đăng nhập
+                </button>
+
+                <a href="don-hang.html" class="btn btn-cart">
+                    🛒 Giỏ hàng
+                </a>
+            </div>
+
+        </div>
+    </header>
+
+    <!-- GIỚI THIỆU -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Chào mừng đến với TechStore</h1>
+            <p>
+                Khám phá các sản phẩm điện tử nổi bật với thông tin rõ ràng,
+                giá cả minh bạch và trải nghiệm mua sắm thuận tiện.
+            </p>
+        </div>
+    </section>
+
+    <!-- DANH SÁCH SẢN PHẨM -->
+    <main class="products-section" id="san-pham">
+
+        <div class="section-heading">
+            <div>
+                <h2>Sản phẩm nổi bật</h2>
+                <p>Lựa chọn thiết bị phù hợp với nhu cầu của bạn</p>
+            </div>
+
+            <span class="product-count" id="productCount"></span>
+        </div>
+
+        <div class="product-grid" id="productList">
+            <div class="empty-products">Đang tải sản phẩm...</div>
+        </div>
+
+    </main>
+
+    <!-- THÔNG TIN LIÊN HỆ -->
+    <footer class="footer" id="lien-he">
+        <div class="footer-container">
+
+            <div>
+                <h3>TechStore</h3>
+                <p>
+                    Cửa hàng kinh doanh thiết bị điện tử.
+                    Mang đến trải nghiệm mua sắm tiện lợi
+                    và thông tin sản phẩm minh bạch.
+                </p>
+            </div>
+
+            <div>
+                <h3>Thông tin liên hệ</h3>
+                <p>Địa chỉ: Cập nhật địa chỉ cửa hàng</p>
+                <p>Email: support@techstore.vn</p>
+                <p>Điện thoại: 0123 456 789</p>
+            </div>
+
+            <div>
+                <h3>Hỗ trợ khách hàng</h3>
+                <p><a href="#san-pham">Danh sách sản phẩm</a></p>
+                <p><a href="don-hang.html">Giỏ hàng và đơn hàng</a></p>
+                <p><a href="#" onclick="openModal('login'); return false;">
+                    Tài khoản khách hàng
+                </a></p>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            © 2026 TechStore. Website bán hàng điện tử.
+        </div>
+    </footer>
+
+    <!-- FORM ĐĂNG NHẬP / ĐĂNG KÝ -->
+    <div class="modal" id="authModal" onclick="closeModalOutside(event)">
+        <div class="modal-content">
+
+            <button class="close-modal" onclick="closeModal()" aria-label="Đóng">
+                &times;
+            </button>
+
+            <div class="modal-header">
+                <h2 id="formTitle">Đăng nhập</h2>
+                <p id="formSubtitle">Đăng nhập để sử dụng tài khoản của bạn.</p>
+            </div>
+
+            <form id="authForm">
+                <!-- Họ và tên -->
+                <div class="form-group" id="nameGroup" hidden>
+                    <label for="fullName">Họ và tên</label>
+                    <input
+                        id="fullName"
+                        type="text"
+                        autocomplete="name"
+                        maxlength="100"
+                        placeholder="Nhập họ và tên"
+                    >
+                </div>
+
+                <!-- Số điện thoại -->
+                <div class="form-group" id="phoneGroup" hidden>
+                    <label for="authPhone">Số điện thoại</label>
+                    <input
+                        id="authPhone"
+                        type="tel"
+                        autocomplete="tel"
+                        maxlength="20"
+                        pattern="[0-9+() .-]{9,20}"
+                        placeholder="Nhập số điện thoại"
+                    >
+                </div>
+
+                <!-- Email -->
+                <div class="form-group">
+                    <label for="authEmail">Email</label>
+                    <input
+                        id="authEmail"
+                        type="email"
+                        required
+                        maxlength="254"
+                        autocomplete="email"
+                        placeholder="Nhập email"
+                    >
+                </div>
+
+                <!-- Ngày sinh -->
+                <div class="form-group" id="birthGroup" hidden>
+                    <label for="authBirthDate">Ngày sinh</label>
+                    <input
+                        id="authBirthDate"
+                        type="date"
+                        autocomplete="bday"
+                    >
+                </div>
+
+                <!-- Mật khẩu -->
+                <div class="form-group">
+                    <label for="authPassword">Mật khẩu</label>
+                    <input
+                        id="authPassword"
+                        type="password"
+                        required
+                        minlength="8"
+                        autocomplete="new-password"
+                        placeholder="Nhập mật khẩu (ít nhất 8 ký tự)"
+                    >
+                </div>
+
+                <!-- Nhập lại mật khẩu -->
+                <div class="form-group" id="confirmPasswordGroup" hidden>
+                    <label for="confirmPassword">Nhập lại mật khẩu</label>
+                    <input
+                        id="confirmPassword"
+                        type="password"
+                        minlength="8"
+                        autocomplete="new-password"
+                        placeholder="Nhập lại mật khẩu"
+                    >
+                </div>
+
+                <button type="submit"
+                        class="btn btn-primary form-submit"
+                        id="formSubmit">
+                    Đăng nhập
+                </button>
+
+                <p class="form-message" id="formMessage"></p>
+            </form>
+
+            <div class="form-switch">
+                <span id="switchText">Chưa có tài khoản?</span>
+                <button type="button" id="switchButton"
+                        onclick="switchAuthMode()">
+                    Đăng ký
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- MODAL THÔNG TIN CÁ NHÂN -->
+    <div class="modal" id="profileModal" onclick="closeOverlayOutside(event)">
+        <div class="modal-content">
+            <button class="close-modal"
+                    type="button"
+                    onclick="closeOverlay('profileModal')"
+                    aria-label="Đóng">&times;</button>
+
+            <div class="modal-header">
+                <h2>Thông tin cá nhân</h2>
+                <p>Xem và cập nhật thông tin tài khoản của bạn.</p>
+            </div>
+
+            <form id="profileForm">
+                <div class="form-group">
+                    <label for="profileName">Họ và tên</label>
+                    <input id="profileName" type="text"
+                        maxlength="100" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="profileEmail">Email</label>
+                    <input id="profileEmail" type="email"
+                        maxlength="254" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="profilePhone">Số điện thoại</label>
+                    <input id="profilePhone" type="tel"
+                        maxlength="20" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="profileBirth">Ngày sinh</label>
+                    <input id="profileBirth" type="date" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="profileAddress">Địa chỉ</label>
+                    <input id="profileAddress" type="text"
+                        maxlength="300"
+                        placeholder="Nhập địa chỉ (không bắt buộc)">
+                </div>
+
+                <p class="form-message" id="profileMessage"></p>
+
+                <button class="btn btn-primary form-submit"
+                        id="profileSubmit" type="submit">
+                    Lưu thay đổi
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL THÔNG BÁO -->
+    <div class="modal" id="notificationModal"
+        onclick="closeOverlayOutside(event)">
+        <div class="modal-content">
+            <button class="close-modal"
+                    type="button"
+                    onclick="closeOverlay('notificationModal')"
+                    aria-label="Đóng">&times;</button>
+
+            <div class="modal-header">
+                <h2>Thông báo</h2>
+                <p>Cập nhật về đơn hàng và tài khoản của bạn.</p>
+            </div>
+
+            <div id="notificationList">
+                <p>Đang tải thông báo...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Đặt file này cùng thư mục với products.js và don-hang.html. -->
+    <!-- DỮ LIỆU SẢN PHẨM CÓ SẴN -->
+    <script src="products.js"></script><script src="admin/js/store.js"></script>
+
+    <script>
+        // ===== GIAO DIỆN FORM TÀI KHOẢN =====
+        let authMode = "login";
+
+        function openModal(mode) {
+            authMode = mode;
+            updateAuthForm();
+            document.getElementById("authModal").classList.add("show");
+            document.getElementById("formMessage").textContent = "";
+        }
+
+        function closeModal() {
+            document.getElementById("authModal").classList.remove("show");
+        }
+
+        function closeModalOutside(event) {
+            if (event.target.id === "authModal") {
+                closeModal();
+            }
+        }
+
+        function switchAuthMode() {
+            authMode = authMode === "login" ? "register" : "login";
+            updateAuthForm();
+            document.getElementById("formMessage").textContent = "";
+        }
+
+        function updateAuthForm() {
+            const isRegister = authMode === "register";
+
+            document.getElementById("authForm").classList.toggle(
+                "register-layout",
+                isRegister
+            );
+
+            document.getElementById("formTitle").textContent =
+                isRegister ? "Tạo tài khoản" : "Đăng nhập";
+
+            document.getElementById("formSubtitle").textContent =
+                isRegister
+                    ? "Điền đầy đủ thông tin để đăng ký khách hàng."
+                    : "Đăng nhập để sử dụng tài khoản của bạn.";
+
+            document.getElementById("nameGroup").hidden = !isRegister;
+            document.getElementById("phoneGroup").hidden = !isRegister;
+            document.getElementById("birthGroup").hidden = !isRegister;
+            document.getElementById("confirmPasswordGroup").hidden = !isRegister;
+
+            document.getElementById("fullName").required = isRegister;
+            document.getElementById("authPhone").required = isRegister;
+            document.getElementById("authBirthDate").required = isRegister;
+            document.getElementById("confirmPassword").required = isRegister;
+
+            document.getElementById("formSubmit").textContent =
+                isRegister ? "Đăng ký" : "Đăng nhập";
+
+            document.getElementById("switchText").textContent =
+                isRegister ? "Đã có tài khoản?" : "Chưa có tài khoản?";
+
+            document.getElementById("switchButton").textContent =
+                isRegister ? "Đăng nhập" : "Đăng ký";
+
+            document.getElementById("authPassword").autocomplete =
+                isRegister ? "new-password" : "current-password";
+
+            document.getElementById("authPassword").placeholder =
+                isRegister
+                    ? "Nhập mật khẩu (ít nhất 8 ký tự)"
+                    : "Nhập mật khẩu";
+        }
+
+                const authForm = document.getElementById("authForm");
+        const formMessage = document.getElementById("formMessage");
+
+        // Gửi yêu cầu đến server.js
+        async function callAPI(url, data) {
+            const response = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "same-origin",
+                body: JSON.stringify(data)
+            });
+
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.message || "Đã xảy ra lỗi.");
+            }
+
+            return result;
+        }
+
+        // Hiển thị trạng thái tài khoản trên thanh điều hướng
+        function updateAccountActions(account = null) {
+            const actions = document.getElementById("accountActions");
+            actions.replaceChildren();
+
+            // Giỏ hàng luôn nằm bên trái tài khoản
+            const cartLink = document.createElement("a");
+            cartLink.href = "don-hang.html";
+            cartLink.className = "btn btn-cart";
+            cartLink.textContent = "🛒 Giỏ hàng";
+            actions.appendChild(cartLink);
+
+            if (account) {
+                // Đã đăng nhập: hiện tên tài khoản
+                const menu = document.createElement("div");
+                menu.className = "account-menu";
+
+                const trigger = document.createElement("button");
+                trigger.type = "button";
+                trigger.className = "account-trigger";
+                trigger.textContent = account.hoTen || account.email || "Tài khoản";
+                trigger.title = trigger.textContent;
+                trigger.setAttribute("aria-haspopup", "true");
+
+                const dropdown = document.createElement("div");
+                dropdown.className = "account-dropdown";
+
+                const inner = document.createElement("div");
+                inner.className = "account-dropdown-inner";
+
+                const profileButton = document.createElement("button");
+                profileButton.type = "button";
+                profileButton.textContent = "👤  Thông tin cá nhân";
+                profileButton.addEventListener("click", openProfileModal);
+
+                const notificationButton = document.createElement("button");
+                notificationButton.type = "button";
+                notificationButton.textContent = "🔔  Thông báo";
+                notificationButton.addEventListener("click", openNotifications);
+
+                const logoutButton = document.createElement("button");
+                logoutButton.type = "button";
+                logoutButton.className = "logout-option";
+                logoutButton.textContent = "↪  Đăng xuất";
+                logoutButton.addEventListener("click", logoutAccount);
+
+                inner.append(profileButton, notificationButton, logoutButton);
+                dropdown.appendChild(inner);
+                menu.append(trigger, dropdown);
+                actions.appendChild(menu);
+            } else {
+                // Chưa đăng nhập
+                const registerButton = document.createElement("button");
+                registerButton.type = "button";
+                registerButton.className = "btn btn-outline";
+                registerButton.textContent = "Đăng ký";
+                registerButton.addEventListener("click", () => openModal("register"));
+
+                const loginButton = document.createElement("button");
+                loginButton.type = "button";
+                loginButton.className = "btn btn-primary";
+                loginButton.textContent = "Đăng nhập";
+                loginButton.addEventListener("click", () => openModal("login"));
+
+                actions.append(registerButton, loginButton);
+            }
+        }
+
+        function closeOverlay(id) {
+            document.getElementById(id).classList.remove("show");
+        }
+
+        function closeOverlayOutside(event) {
+            if (event.target.classList.contains("modal")) {
+                event.target.classList.remove("show");
+            }
+        }
+
+        // Mở modal thông tin cá nhân và tải dữ liệu từ SQL Server
+        async function openProfileModal() {
+            const modal = document.getElementById("profileModal");
+            const message = document.getElementById("profileMessage");
+            const submit = document.getElementById("profileSubmit");
+
+            modal.classList.add("show");
+            message.textContent = "Đang tải thông tin...";
+            message.style.color = "#64748b";
+            submit.disabled = true;
+
+            try {
+                const response = await fetch("/api/profile", {
+                    credentials: "same-origin"
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.message || "Không thể tải thông tin.");
+                }
+
+                const p = result.profile;
+
+                document.getElementById("profileName").value = p.hoTen || "";
+                document.getElementById("profileEmail").value = p.email || "";
+                document.getElementById("profilePhone").value = p.soDienThoai || "";
+                document.getElementById("profileBirth").value =
+                    p.ngaySinh ? String(p.ngaySinh).slice(0, 10) : "";
+                document.getElementById("profileAddress").value = p.diaChi || "";
+
+                message.textContent = "";
+            } catch (error) {
+                message.textContent = error.message;
+                message.style.color = "#d14343";
+            } finally {
+                submit.disabled = false;
+            }
+        }
+
+        // Lưu thông tin đã chỉnh sửa
+        document.getElementById("profileForm").addEventListener("submit", async event => {
+            event.preventDefault();
+
+            const message = document.getElementById("profileMessage");
+            const submit = document.getElementById("profileSubmit");
+
+            const data = {
+                hoTen: document.getElementById("profileName").value.trim(),
+                email: document.getElementById("profileEmail").value.trim(),
+                ngaySinh: document.getElementById("profileBirth").value,
+                soDienThoai: document.getElementById("profilePhone").value.trim(),
+                diaChi: document.getElementById("profileAddress").value.trim()
+            };
+
+            submit.disabled = true;
+            message.style.color = "#64748b";
+            message.textContent = "Đang lưu...";
+
+            try {
+                const response = await fetch("/api/profile", {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    credentials: "same-origin",
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.message || "Không thể lưu thông tin.");
+                }
+
+                message.style.color = "#16803d";
+                message.textContent = result.message;
+
+                updateAccountActions(result.account);
+            } catch (error) {
+                message.style.color = "#d14343";
+                message.textContent = error.message;
+            } finally {
+                submit.disabled = false;
+            }
+        });
+
+        // Mở thông báo. Tạm thời chưa có bảng thông báo đơn hàng.
+        async function openNotifications() {
+            const modal = document.getElementById("notificationModal");
+            const list = document.getElementById("notificationList");
+
+            modal.classList.add("show");
+            list.replaceChildren();
+
+            const item = document.createElement("div");
+            item.className = "notification-item";
+
+            const title = document.createElement("h3");
+            title.textContent = "Chưa có thông báo mới";
+
+            const description = document.createElement("p");
+            description.textContent =
+                "Thông báo về xác nhận đơn hàng và giao hàng sẽ hiển thị tại đây khi được kết nối với dữ liệu đơn hàng.";
+
+            item.append(title, description);
+            list.appendChild(item);
+        }
+
+        // Xử lý đăng ký và đăng nhập
+        authForm.addEventListener("submit", async function (event) {
+            event.preventDefault();
+
+            const submitButton = document.getElementById("formSubmit");
+            const email = document.getElementById("authEmail").value.trim();
+            const matKhau = document.getElementById("authPassword").value;
+
+            const data = {
+                email: email,
+                matKhau: matKhau
+            };
+
+            if (authMode === "register") {
+                const hoTen = document.getElementById("fullName").value.trim();
+                const soDienThoai = document.getElementById("authPhone").value.trim();
+                const ngaySinh = document.getElementById("authBirthDate").value;
+                const nhapLaiMatKhau =
+                    document.getElementById("confirmPassword").value;
+
+                if (!hoTen || !soDienThoai || !email || !ngaySinh || !matKhau) {
+                    formMessage.textContent = "Vui lòng nhập đầy đủ thông tin.";
+                    return;
+                }
+
+                if (!/^[0-9+() .-]{9,20}$/.test(soDienThoai)) {
+                    formMessage.textContent = "Số điện thoại không hợp lệ.";
+                    return;
+                }
+
+                if (matKhau.length < 8) {
+                    formMessage.textContent =
+                        "Mật khẩu phải có ít nhất 8 ký tự.";
+                    return;
+                }
+
+                if (matKhau !== nhapLaiMatKhau) {
+                    formMessage.textContent = "Mật khẩu nhập lại không khớp.";
+                    return;
+                }
+
+                const birthDate = new Date(ngaySinh + "T00:00:00");
+                const today = new Date();
+                today.setHours(0, 0, 0, 0);
+
+                if (
+                    Number.isNaN(birthDate.getTime()) ||
+                    birthDate > today
+                ) {
+                    formMessage.textContent =
+                        "Ngày sinh không hợp lệ.";
+                    return;
+                }
+
+                data.hoTen = hoTen;
+                data.soDienThoai = soDienThoai;
+                data.ngaySinh = ngaySinh;
+                data.nhapLaiMatKhau = nhapLaiMatKhau;
+            }
+
+            submitButton.disabled = true;
+            formMessage.style.color = "#64748b";
+            formMessage.textContent = "Đang xử lý...";
+
+            try {
+                if (authMode === "register") {
+                    const result = await callAPI("/api/register", data);
+
+                    formMessage.style.color = "#16803d";
+                    formMessage.textContent =
+                        result.message + " Mời bạn đăng nhập.";
+
+                    // Chuyển sang đăng nhập sau khi đăng ký thành công
+                    document.getElementById("authPassword").value = "";
+                    authMode = "login";
+                    updateAuthForm();
+
+                    // Giữ email vừa đăng ký
+                    document.getElementById("authEmail").value = email;
+
+                } else {
+                    const result = await callAPI("/api/login", data);
+
+                    updateAccountActions(result.account);
+                    closeModal();
+                    authForm.reset();
+
+                    formMessage.textContent = "";
+
+                    // Không cần lưu mật khẩu trong trình duyệt
+                }
+            } catch (error) {
+                formMessage.style.color = "#d14343";
+                formMessage.textContent = error.message;
+            } finally {
+                submitButton.disabled = false;
+            }
+        });
+
+        // Đăng xuất
+        async function logoutAccount() {
+            try {
+                const result = await callAPI("/api/logout", {});
+
+                updateAccountActions(null);
+                alert(result.message);
+            } catch (error) {
+                alert(error.message);
+            }
+        }
+
+        // Khôi phục trạng thái đăng nhập khi tải lại trang
+        async function restoreAccount() {
+            try {
+                const response = await fetch("/api/me", {
+                    credentials: "same-origin"
+                });
+
+                if (!response.ok) {
+                    updateAccountActions(null);
+                    return;
+                }
+
+                const result = await response.json();
+                updateAccountActions(result.account);
+            } catch (error) {
+                console.error("Không thể kiểm tra tài khoản:", error);
+                updateAccountActions(null);
+            }
+        }
+
+        // Khởi tạo trạng thái tài khoản
+        updateAccountActions(null);
+        restoreAccount();
+    </script>
+
+<script src="js/cart-bridge.js"></script><script src="js/catalog.js"></script></body>
+</html>
+
+
