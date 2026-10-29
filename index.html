@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="vi">
 <head>
@@ -77,6 +76,12 @@
             color: #1769d2;
         }
 
+        .nav-product-menu { position: relative; display: flex; align-items: center; height: 100%; }
+        .nav-product-trigger { display: inline-flex; align-items: center; gap: 6px; padding: 18px 0; }
+        .nav-category-dropdown { display: none; position: absolute; top: calc(100% - 2px); left: -14px; min-width: 220px; max-width: 300px; max-height: 65vh; overflow-y: auto; padding: 8px; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 14px 35px rgba(15,23,42,.16); z-index: 1000; }
+        .nav-product-menu:hover .nav-category-dropdown, .nav-product-menu:focus-within .nav-category-dropdown { display: block; }
+        .nav-category-dropdown a { display: block; padding: 10px 12px; border-radius: 7px; color: #334155; white-space: normal; }
+        .nav-category-dropdown a:hover, .nav-category-dropdown a:focus-visible { color: #1769d2; background: #eff6ff; }
         .nav-actions {
             display: flex;
             align-items: center;
@@ -548,6 +553,26 @@
             }
         }
 
+        .mobile-menu-toggle { display: none; border: 1px solid #d8e2f0; border-radius: 9px; background: #fff; color: #1769d2; font-size: 24px; line-height: 1; padding: 8px 11px; }
+        @media (max-width: 700px) {
+            .nav-container { position: relative; flex-wrap: nowrap; gap: 8px; }
+            .logo { order: 1; flex-shrink: 0; }
+            /* Chỉ ẩn lời chào; vẫn giữ Tài khoản, Đăng xuất, Giỏ hàng và nút menu */
+            .nav-actions { order: 2; margin-left: auto; flex-shrink: 1; display: flex; align-items: center; gap: 6px; min-width: 0; }
+            .nav-actions .account-greeting { display: none !important; }
+            .nav-actions > .btn { white-space: nowrap; padding: 8px 9px; font-size: 13px; }
+            .nav-actions .btn-cart { white-space: nowrap; padding: 8px 9px; }
+            .mobile-menu-toggle { display: inline-flex; align-items: center; justify-content: center; order: 3; flex-shrink: 0; padding: 7px 9px; }
+            .nav-menu { display: none; position: absolute; top: calc(100% + 1px); left: 0; right: 0; width: auto; padding: 10px 16px 14px; background: #fff; border-bottom: 1px solid #e2e8f0; box-shadow: 0 12px 20px rgba(15,23,42,.12); flex-direction: column; align-items: stretch; gap: 0; overflow: visible; z-index: 1001; }
+            .nav-menu.mobile-open { display: flex; }
+            .nav-menu > a, .nav-product-trigger { display: flex; width: 100%; padding: 13px 10px; white-space: normal; font-size: 15px; }
+            .nav-product-menu { display: block; height: auto; }
+            .nav-category-dropdown { position: static; min-width: 0; max-width: none; max-height: 40vh; margin: 0 0 6px 10px; box-shadow: none; border-radius: 8px; background: #f8fafc; }
+            .nav-product-menu.mobile-expanded .nav-category-dropdown { display: block; }
+            .nav-product-menu:hover .nav-category-dropdown { display: none; }
+            .nav-product-menu.mobile-expanded:hover .nav-category-dropdown { display: block; }
+        }
+
         @media (max-width: 700px) {
             .nav-container {
                 padding: 14px 16px;
@@ -812,12 +837,13 @@
                 Tech<span>Store.</span>
             </a>
 
-            <nav class="nav-menu">
+            <nav class="nav-menu" id="primaryNav">
                 <a href="index.html">Trang chủ</a>
-                <a href="#san-pham">Sản phẩm</a>
+                <div class="nav-product-menu"><a href="#san-pham" class="nav-product-trigger" aria-haspopup="true" aria-expanded="false">Sản phẩm <span aria-hidden="true">▾</span></a><div class="nav-category-dropdown" id="navCategoryDropdown" role="menu" aria-label="Loại sản phẩm"><a href="index.html#san-pham" data-nav-category="" role="menuitem">Tất cả sản phẩm</a></div></div>
                 <a href="#lien-he">Liên hệ</a>
             </nav>
 
+            <button class="mobile-menu-toggle" id="mobileMenuToggle" type="button" aria-label="Mở menu điều hướng" aria-expanded="false" aria-controls="primaryNav">☰</button>
             <div class="nav-actions" id="accountActions">
                 <button class="btn btn-outline" onclick="openModal('register')">
                     Đăng ký
@@ -887,7 +913,7 @@
             <div>
                 <h3>Hỗ trợ khách hàng</h3>
                 <p><a href="#san-pham">Danh sách sản phẩm</a></p>
-                <p><a href="don-hang.html">Giỏ hàng và đơn hàng</a></p>
+                <p><a id="footerCartLink" href="don-hang.html">Giỏ hàng và đơn hàng</a></p>
                 <p><a href="#" onclick="openModal('login'); return false;">
                     Tài khoản khách hàng
                 </a></p>
@@ -1086,6 +1112,128 @@
     <script src="products.js"></script><script src="admin/js/store.js"></script>
 
     <script>
+        // ===== TV4: CHẾ ĐỘ PROTOTYPE LOCAL VÀ CẦU NỐI GIỮ DỮ LIỆU =====
+        const TV4_LOCAL_MODE = true; // Dự án dùng Local Storage, không gọi backend/SQL Server.
+        const TV4_DEMO_USERS_KEY = "techstore_demo_users_v1";
+        const TV4_DEMO_ACCOUNT_KEY = "techstore_demo_current_account_v1";
+        const TV4_CART_KEY = "techstore_customer_carts_v1";
+        const TV4_DB_KEY = "techstore_admin_v2";
+        let TV4_INCOMING_STATE = null;
+        try {
+            if (window.location.hash.startsWith("#tv4=")) {
+                TV4_INCOMING_STATE = JSON.parse(decodeURIComponent(window.location.hash.slice(5)));
+            }
+        } catch (error) { console.warn("Không đọc được dữ liệu chuyển trang:", error); }
+
+        function tv4ReadJSON(key, fallback) {
+            try { const value = localStorage.getItem(key); return value ? JSON.parse(value) : fallback; }
+            catch (_) { return fallback; }
+        }
+        function tv4AccountId(account) {
+            return String(account?.maKH ?? account?.MaTaiKhoan ?? account?.id ?? "");
+        }
+        function tv4CurrentAccount() {
+            return window.__techStoreAccount || tv4ReadJSON(TV4_DEMO_ACCOUNT_KEY, null);
+        }
+        function tv4SaveCurrentAccount(account) {
+            window.__techStoreAccount = account || null;
+            try {
+                if (account) localStorage.setItem(TV4_DEMO_ACCOUNT_KEY, JSON.stringify(account));
+                else localStorage.removeItem(TV4_DEMO_ACCOUNT_KEY);
+            } catch (error) { console.warn("Không lưu được trạng thái tài khoản prototype:", error); }
+        }
+        function tv4SyncCustomer(account) {
+            if (!account || !window.TechStore) return;
+            try {
+                const current = window.TechStore.load(window.list_products || []);
+                const id = String(account.maKH || account.id || "");
+                window.TechStore.transact(current, state => {
+                    let customer = state.customers.find(c => String(c.id) === id || String(c.email).toLowerCase() === String(account.email).toLowerCase());
+                    const values = {
+                        id, name: account.hoTen || account.name || "Khách hàng",
+                        email: String(account.email || "").trim(), phone: account.soDienThoai || account.phone || "",
+                        address: account.diaChi || account.address || "", createdAt: account.createdAt || window.TechStore.now(),
+                        locked: Boolean(account.locked), password: account.password || "", passwordUpdatedAt: account.passwordUpdatedAt || null
+                    };
+                    if (customer) {
+                        const locked = customer.locked;
+                        Object.assign(customer, values, { locked: Boolean(account.locked || locked) });
+                    } else state.customers.push(values);
+                });
+            } catch (error) { console.warn("Không đồng bộ được khách hàng vào dữ liệu quản trị:", error); }
+        }
+        function tv4DemoUsers() {
+            const value = tv4ReadJSON(TV4_DEMO_USERS_KEY, []);
+            return Array.isArray(value) ? value : [];
+        }
+        function tv4SaveDemoUsers(users) { localStorage.setItem(TV4_DEMO_USERS_KEY, JSON.stringify(users)); }
+        // Tài khoản mẫu để kiểm thử đăng nhập đồng nhất với danh sách khách hàng Admin.
+        // Chỉ thêm tài khoản còn thiếu; không ghi đè mật khẩu của người dùng đã đăng ký.
+        function tv4EnsureDemoAccounts() {
+            const samples = [
+                { id: "KH001", hoTen: "Nguyễn Minh Anh", email: "minhanh@example.com", soDienThoai: "0901234560", diaChi: "12 Nguyễn Trãi, TP. Hồ Chí Minh", locked: false },
+                { id: "KH002", hoTen: "Trần Hoàng Nam", email: "hoangnam@example.com", soDienThoai: "0901234561", diaChi: "20 Nguyễn Trãi, TP. Hồ Chí Minh", locked: false },
+                { id: "KH003", hoTen: "Lê Thu Hà", email: "thuha@example.com", soDienThoai: "0901234562", diaChi: "28 Nguyễn Trãi, TP. Hồ Chí Minh", locked: false },
+                { id: "KH004", hoTen: "Phạm Quốc Bảo", email: "quocbao@example.com", soDienThoai: "0901234563", diaChi: "36 Nguyễn Trãi, TP. Hồ Chí Minh", locked: true },
+                { id: "KH005", hoTen: "Võ Ngọc Linh", email: "ngoclinh@example.com", soDienThoai: "0901234564", diaChi: "44 Nguyễn Trãi, TP. Hồ Chí Minh", locked: false },
+                { id: "KH006", hoTen: "Đặng Gia Huy", email: "giahuy@example.com", soDienThoai: "0901234565", diaChi: "52 Nguyễn Trãi, TP. Hồ Chí Minh", locked: false }
+            ];
+            const users = tv4DemoUsers();
+            let changed = false;
+            for (const sample of samples) {
+                const existing = users.find(user => String(user.email || "").toLowerCase() === sample.email);
+                if (!existing) {
+                    users.push({ ...sample, maKH: sample.id, vaiTro: "CUSTOMER", ngaySinh: "2000-01-01", password: "Khach123!", createdAt: new Date().toISOString().slice(0, 16), passwordUpdatedAt: null });
+                    changed = true;
+                } else {
+                    // Chuẩn hóa tài khoản demo cũ (kể cả bản từng có mã LOCAL-...) để đăng nhập nhất quán.
+                    if (String(existing.id || existing.maKH || "") !== sample.id || existing.password !== "Khach123!" || Boolean(existing.locked) !== sample.locked) changed = true;
+                    existing.id = sample.id;
+                    existing.maKH = sample.id;
+                    existing.password = "Khach123!";
+                    existing.locked = sample.locked;
+                }
+            }
+            if (changed) tv4SaveDemoUsers(users);
+        }
+        tv4EnsureDemoAccounts();
+        // Chuyển mã LOCAL-... từ dữ liệu cũ sang mã KH tăng dần để Admin hiển thị nhất quán.
+        (function normalizeCustomerCodes() {
+            const users = tv4DemoUsers();
+            let next = Math.max(0, ...users.map(u => Number(String(u.maKH || u.id || "").match(/^KH(\d+)$/i)?.[1] || 0))) + 1;
+            let changed = false;
+            for (const user of users) {
+                if (!/^KH\d+$/i.test(String(user.maKH || user.id || ""))) { const code = "KH" + String(next++).padStart(3, "0"); user.id = code; user.maKH = code; changed = true; }
+                else { user.id = String(user.maKH || user.id).toUpperCase(); user.maKH = user.id; }
+            }
+            if (changed) tv4SaveDemoUsers(users);
+            users.forEach(tv4SyncCustomer);
+        })();
+        function tv4TransferURL(target, accountOverride) {
+            // Các trang cùng origin dùng chung Local Storage, không cần truyền snapshot qua URL.
+            return target;
+        }
+
+        function tv4HydrateIncomingState() {
+            if (!TV4_LOCAL_MODE || !TV4_INCOMING_STATE) return;
+            const state = TV4_INCOMING_STATE;
+            if (state.account) tv4SaveCurrentAccount(state.account);
+            if (state.account && Array.isArray(state.cart)) {
+                const carts = tv4ReadJSON(TV4_CART_KEY, {});
+                carts[tv4AccountId(state.account)] = state.cart;
+                try { localStorage.setItem(TV4_CART_KEY, JSON.stringify(carts)); } catch (_) {}
+            }
+            if (state.db && state.db.schema === 2 && Array.isArray(state.db.orders)) {
+                try { localStorage.setItem(TV4_DB_KEY, JSON.stringify(state.db)); } catch (_) {}
+            }
+        }
+        tv4HydrateIncomingState();
+        window.TechStoreDemo = {
+            localMode: TV4_LOCAL_MODE, getAccount: tv4CurrentAccount, saveCurrentAccount: tv4SaveCurrentAccount,
+            accountId: tv4AccountId, readJSON: tv4ReadJSON, transferURL: tv4TransferURL,
+            users: tv4DemoUsers, saveUsers: tv4SaveDemoUsers, cartKey: TV4_CART_KEY
+        };
+
         // ===== GIAO DIỆN FORM TÀI KHOẢN =====
         let authMode = "login";
 
@@ -1101,9 +1249,8 @@
         }
 
         function closeModalOutside(event) {
-            if (event.target.id === "authModal") {
-                closeModal();
-            }
+            // Chỉ đóng khi bấm đúng vùng nền bên ngoài hộp thoại, không đóng khi thao tác trong form.
+            if (event.target === document.getElementById("authModal")) closeModal();
         }
 
         function switchAuthMode() {
@@ -1159,151 +1306,35 @@
                 const authForm = document.getElementById("authForm");
         const formMessage = document.getElementById("formMessage");
 
-        // Gửi yêu cầu đến server.js
-        async function callAPI(url, data) {
-            const response = await fetch(url, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                credentials: "same-origin",
-                body: JSON.stringify(data)
-            });
-
-            const result = await response.json();
-
-            if (!response.ok) {
-                throw new Error(result.message || "Đã xảy ra lỗi.");
-            }
-
-            return result;
-        }
-
-        // Hiển thị trạng thái tài khoản trên thanh điều hướng
-        function updateAccountActions(account = null) {
-            const actions = document.getElementById("accountActions");
-            actions.replaceChildren();
-
-            // Giỏ hàng luôn nằm bên trái tài khoản
-            const cartLink = document.createElement("a");
-            cartLink.href = "don-hang.html";
-            cartLink.className = "btn btn-cart";
-            cartLink.textContent = "🛒 Giỏ hàng";
-            actions.appendChild(cartLink);
-
-            if (account) {
-                // Đã đăng nhập: hiện tên tài khoản
-                const menu = document.createElement("div");
-                menu.className = "account-menu";
-
-                const trigger = document.createElement("button");
-                trigger.type = "button";
-                trigger.className = "account-trigger";
-                trigger.textContent = account.hoTen || account.email || "Tài khoản";
-                trigger.title = trigger.textContent;
-                trigger.setAttribute("aria-haspopup", "true");
-
-                const dropdown = document.createElement("div");
-                dropdown.className = "account-dropdown";
-
-                const inner = document.createElement("div");
-                inner.className = "account-dropdown-inner";
-
-                const profileButton = document.createElement("button");
-                profileButton.type = "button";
-                profileButton.textContent = "👤  Thông tin cá nhân";
-                profileButton.addEventListener("click", openProfileModal);
-
-                const notificationButton = document.createElement("button");
-                notificationButton.type = "button";
-                notificationButton.textContent = "🔔  Thông báo";
-                notificationButton.addEventListener("click", openNotifications);
-
-                const logoutButton = document.createElement("button");
-                logoutButton.type = "button";
-                logoutButton.className = "logout-option";
-                logoutButton.textContent = "↪  Đăng xuất";
-                logoutButton.addEventListener("click", logoutAccount);
-
-                inner.append(profileButton, notificationButton, logoutButton);
-                dropdown.appendChild(inner);
-                menu.append(trigger, dropdown);
-                actions.appendChild(menu);
-            } else {
-                // Chưa đăng nhập
-                const registerButton = document.createElement("button");
-                registerButton.type = "button";
-                registerButton.className = "btn btn-outline";
-                registerButton.textContent = "Đăng ký";
-                registerButton.addEventListener("click", () => openModal("register"));
-
-                const loginButton = document.createElement("button");
-                loginButton.type = "button";
-                loginButton.className = "btn btn-primary";
-                loginButton.textContent = "Đăng nhập";
-                loginButton.addEventListener("click", () => openModal("login"));
-
-                actions.append(registerButton, loginButton);
-            }
-        }
-
-        function closeOverlay(id) {
-            document.getElementById(id).classList.remove("show");
-        }
-
-        function closeOverlayOutside(event) {
-            if (event.target.classList.contains("modal")) {
-                event.target.classList.remove("show");
-            }
-        }
-
-        // Mở modal thông tin cá nhân và tải dữ liệu từ SQL Server
-        async function openProfileModal() {
+        // Đọc thông tin cá nhân từ tài khoản đang đăng nhập trong Local Storage.
+        function openProfileModal() {
             const modal = document.getElementById("profileModal");
             const message = document.getElementById("profileMessage");
             const submit = document.getElementById("profileSubmit");
-
+            const p = tv4CurrentAccount();
             modal.classList.add("show");
-            message.textContent = "Đang tải thông tin...";
-            message.style.color = "#64748b";
-            submit.disabled = true;
-
-            try {
-                const response = await fetch("/api/profile", {
-                    credentials: "same-origin"
-                });
-
-                const result = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(result.message || "Không thể tải thông tin.");
-                }
-
-                const p = result.profile;
-
-                document.getElementById("profileName").value = p.hoTen || "";
-                document.getElementById("profileEmail").value = p.email || "";
-                document.getElementById("profilePhone").value = p.soDienThoai || "";
-                document.getElementById("profileBirth").value =
-                    p.ngaySinh ? String(p.ngaySinh).slice(0, 10) : "";
-                document.getElementById("profileAddress").value = p.diaChi || "";
-
-                message.textContent = "";
-            } catch (error) {
-                message.textContent = error.message;
+            if (!p) {
+                message.textContent = "Vui lòng đăng nhập trước khi xem hồ sơ.";
                 message.style.color = "#d14343";
-            } finally {
-                submit.disabled = false;
+                submit.disabled = true;
+                return;
             }
+            document.getElementById("profileName").value = p.hoTen || "";
+            document.getElementById("profileEmail").value = p.email || "";
+            document.getElementById("profilePhone").value = p.soDienThoai || "";
+            document.getElementById("profileBirth").value = String(p.ngaySinh || "").slice(0, 10);
+            document.getElementById("profileAddress").value = p.diaChi || "";
+            message.textContent = "Thông tin được lưu trên trình duyệt này.";
+            message.style.color = "#64748b";
+            submit.disabled = false;
         }
 
-        // Lưu thông tin đã chỉnh sửa
-        document.getElementById("profileForm").addEventListener("submit", async event => {
+        document.getElementById("profileForm").addEventListener("submit", event => {
             event.preventDefault();
-
             const message = document.getElementById("profileMessage");
             const submit = document.getElementById("profileSubmit");
-
+            const current = tv4CurrentAccount();
+            if (!current) { message.style.color = "#d14343"; message.textContent = "Vui lòng đăng nhập lại trước khi sửa hồ sơ."; return; }
             const data = {
                 hoTen: document.getElementById("profileName").value.trim(),
                 email: document.getElementById("profileEmail").value.trim(),
@@ -1311,37 +1342,23 @@
                 soDienThoai: document.getElementById("profilePhone").value.trim(),
                 diaChi: document.getElementById("profileAddress").value.trim()
             };
-
-            submit.disabled = true;
-            message.style.color = "#64748b";
-            message.textContent = "Đang lưu...";
-
-            try {
-                const response = await fetch("/api/profile", {
-                    method: "PATCH",
-                    headers: {
-                        "Content-Type": "application/json"
-                    },
-                    credentials: "same-origin",
-                    body: JSON.stringify(data)
-                });
-
-                const result = await response.json();
-
-                if (!response.ok) {
-                    throw new Error(result.message || "Không thể lưu thông tin.");
-                }
-
-                message.style.color = "#16803d";
-                message.textContent = result.message;
-
-                updateAccountActions(result.account);
-            } catch (error) {
-                message.style.color = "#d14343";
-                message.textContent = error.message;
-            } finally {
-                submit.disabled = false;
+            if (!data.hoTen || !data.email || !data.ngaySinh || !data.soDienThoai || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
+                message.style.color = "#d14343"; message.textContent = "Vui lòng nhập họ tên, email, số điện thoại và ngày sinh hợp lệ."; return;
             }
+            if (!/^[0-9+() .-]{9,20}$/.test(data.soDienThoai)) { message.style.color = "#d14343"; message.textContent = "Số điện thoại không hợp lệ."; return; }
+            const users = tv4DemoUsers();
+            if (users.some(user => String(user.email).toLowerCase() === data.email.toLowerCase() && String(user.email).toLowerCase() !== String(current.email).toLowerCase())) {
+                message.style.color = "#d14343"; message.textContent = "Email này đã được tài khoản khác sử dụng."; return;
+            }
+            const updated = { ...current, ...data };
+            const index = users.findIndex(user => String(user.email).toLowerCase() === String(current.email).toLowerCase());
+            if (index >= 0) users[index] = { ...users[index], ...updated };
+            try { tv4SaveDemoUsers(users); } catch (_) {}
+            tv4SaveCurrentAccount(updated);
+            tv4SyncCustomer(updated);
+            updateAccountActions(updated);
+            message.style.color = "#16803d"; message.textContent = "Đã lưu thông tin cá nhân vào Local Storage.";
+            submit.disabled = false;
         });
 
         // Mở thông báo. Tạm thời chưa có bảng thông báo đơn hàng.
@@ -1366,136 +1383,111 @@
             list.appendChild(item);
         }
 
-        // Xử lý đăng ký và đăng nhập
-        authForm.addEventListener("submit", async function (event) {
+        // Đăng ký, đăng nhập khách hàng: chỉ sử dụng Local Storage.
+        authForm.addEventListener("submit", event => {
             event.preventDefault();
-
             const submitButton = document.getElementById("formSubmit");
             const email = document.getElementById("authEmail").value.trim();
-            const matKhau = document.getElementById("authPassword").value;
-
-            const data = {
-                email: email,
-                matKhau: matKhau
-            };
-
-            if (authMode === "register") {
-                const hoTen = document.getElementById("fullName").value.trim();
-                const soDienThoai = document.getElementById("authPhone").value.trim();
-                const ngaySinh = document.getElementById("authBirthDate").value;
-                const nhapLaiMatKhau =
-                    document.getElementById("confirmPassword").value;
-
-                if (!hoTen || !soDienThoai || !email || !ngaySinh || !matKhau) {
-                    formMessage.textContent = "Vui lòng nhập đầy đủ thông tin.";
-                    return;
-                }
-
-                if (!/^[0-9+() .-]{9,20}$/.test(soDienThoai)) {
-                    formMessage.textContent = "Số điện thoại không hợp lệ.";
-                    return;
-                }
-
-                if (matKhau.length < 8) {
-                    formMessage.textContent =
-                        "Mật khẩu phải có ít nhất 8 ký tự.";
-                    return;
-                }
-
-                if (matKhau !== nhapLaiMatKhau) {
-                    formMessage.textContent = "Mật khẩu nhập lại không khớp.";
-                    return;
-                }
-
-                const birthDate = new Date(ngaySinh + "T00:00:00");
-                const today = new Date();
-                today.setHours(0, 0, 0, 0);
-
-                if (
-                    Number.isNaN(birthDate.getTime()) ||
-                    birthDate > today
-                ) {
-                    formMessage.textContent =
-                        "Ngày sinh không hợp lệ.";
-                    return;
-                }
-
-                data.hoTen = hoTen;
-                data.soDienThoai = soDienThoai;
-                data.ngaySinh = ngaySinh;
-                data.nhapLaiMatKhau = nhapLaiMatKhau;
-            }
-
+            const password = document.getElementById("authPassword").value;
             submitButton.disabled = true;
-            formMessage.style.color = "#64748b";
-            formMessage.textContent = "Đang xử lý...";
-
             try {
+                const users = tv4DemoUsers();
                 if (authMode === "register") {
-                    const result = await callAPI("/api/register", data);
-
-                    formMessage.style.color = "#16803d";
-                    formMessage.textContent =
-                        result.message + " Mời bạn đăng nhập.";
-
-                    // Chuyển sang đăng nhập sau khi đăng ký thành công
-                    document.getElementById("authPassword").value = "";
-                    authMode = "login";
-                    updateAuthForm();
-
-                    // Giữ email vừa đăng ký
-                    document.getElementById("authEmail").value = email;
-
+                    const hoTen = document.getElementById("fullName").value.trim();
+                    const soDienThoai = document.getElementById("authPhone").value.trim();
+                    const ngaySinh = document.getElementById("authBirthDate").value;
+                    const confirmPassword = document.getElementById("confirmPassword").value.trim();
+                    if (!hoTen || !soDienThoai || !email || !ngaySinh || !password) throw new Error("Vui lòng nhập đầy đủ thông tin.");
+                    if (!/^[0-9+() .-]{9,20}$/.test(soDienThoai)) throw new Error("Số điện thoại không hợp lệ.");
+                    if (password.length < 8) throw new Error("Mật khẩu phải có ít nhất 8 ký tự.");
+                    if (password !== confirmPassword) throw new Error("Mật khẩu nhập lại không khớp.");
+                    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error("Email không hợp lệ.");
+                    const birthDate = new Date(ngaySinh + "T00:00:00");
+                    const today = new Date(); today.setHours(0, 0, 0, 0);
+                    if (Number.isNaN(birthDate.getTime()) || birthDate > today) throw new Error("Ngày sinh không hợp lệ.");
+                    if (users.some(user => String(user.email || "").trim().toLowerCase() === email.toLowerCase())) throw new Error("Email đã được đăng ký. Vui lòng đăng nhập.");
+                    // Tạo mã KH tuần tự, kể cả khi dữ liệu cũ từng có mã LOCAL-...
+                    const usedNumbers = users.map(user => String(user.maKH || user.id || "").match(/^KH(\d+)$/i)).filter(Boolean).map(match => Number(match[1]));
+                    const nextNumber = Math.max(0, ...usedNumbers) + 1;
+                    const id = "KH" + String(nextNumber).padStart(3, "0");
+                    const account = { id, maKH: id, vaiTro: "CUSTOMER", hoTen, email, soDienThoai, ngaySinh, diaChi: "", password, locked: false, createdAt: new Date().toISOString().slice(0,16) };
+                    users.push(account); tv4SaveDemoUsers(users); tv4SyncCustomer(account);
+                    formMessage.style.color = "#16803d"; formMessage.textContent = "Đăng ký thành công. Mời bạn đăng nhập.";
+                    document.getElementById("authPassword").value = ""; authMode = "login"; updateAuthForm(); document.getElementById("authEmail").value = email;
                 } else {
-                    const result = await callAPI("/api/login", data);
-
-                    updateAccountActions(result.account);
-                    closeModal();
-                    authForm.reset();
-
-                    formMessage.textContent = "";
-
-                    // Không cần lưu mật khẩu trong trình duyệt
+                    const found = users.find(user => String(user.email || "").trim().toLowerCase() === email.toLowerCase() && String(user.password ?? "").trim() === password.trim());
+                    if (!found) throw new Error("Email hoặc mật khẩu không đúng. Nếu chưa có tài khoản, hãy đăng ký trước.");
+                    if (found.locked) throw new Error("Tài khoản đã bị khóa. Vui lòng liên hệ quản trị viên.");
+                    const { password: _password, ...safeAccount } = found;
+                    safeAccount.vaiTro = "CUSTOMER";
+                    tv4SyncCustomer(found); tv4SaveCurrentAccount(safeAccount); updateAccountActions(safeAccount); closeModal(); authForm.reset(); formMessage.textContent = "";
                 }
             } catch (error) {
-                formMessage.style.color = "#d14343";
-                formMessage.textContent = error.message;
-            } finally {
-                submitButton.disabled = false;
-            }
+                formMessage.style.color = "#d14343"; formMessage.textContent = error.message;
+            } finally { submitButton.disabled = false; }
         });
 
-        // Đăng xuất
-        async function logoutAccount() {
-            try {
-                const result = await callAPI("/api/logout", {});
-
-                updateAccountActions(null);
-                alert(result.message);
-            } catch (error) {
-                alert(error.message);
+        // Cập nhật nút tài khoản sau đăng nhập/đăng xuất. Trước đây hàm này bị thiếu nên đăng nhập thành công vẫn hiện lỗi.
+        function updateAccountActions(account) {
+            const host = document.getElementById("accountActions");
+            if (!host) return;
+            const cart = '<a href="don-hang.html" class="btn btn-cart">🛒 Giỏ hàng</a>';
+            if (!account) {
+                host.innerHTML = '<button class="btn btn-outline" type="button" onclick="openModal(\'register\')">Đăng ký</button><button class="btn btn-primary" type="button" onclick="openModal(\'login\')">Đăng nhập</button>' + cart;
+                return;
             }
+            const name = String(account.hoTen || account.name || account.email || "Khách hàng").replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
+            host.innerHTML = '<span class="account-greeting" title="' + name + '">Xin chào, ' + name + '</span><button class="btn btn-outline" type="button" onclick="openProfileModal()">Tài khoản</button><button class="btn btn-primary" type="button" onclick="logoutAccount()">Đăng xuất</button>' + cart;
         }
 
-        // Khôi phục trạng thái đăng nhập khi tải lại trang
-        async function restoreAccount() {
-            try {
-                const response = await fetch("/api/me", {
-                    credentials: "same-origin"
-                });
+        (function setupMobileMenu() {
+            const toggle = document.getElementById("mobileMenuToggle");
+            const nav = document.getElementById("primaryNav");
+            const productMenu = document.querySelector(".nav-product-menu");
+            const productTrigger = document.querySelector(".nav-product-trigger");
+            if (!toggle || !nav) return;
+            toggle.addEventListener("click", () => { const open = !nav.classList.contains("mobile-open"); nav.classList.toggle("mobile-open", open); toggle.setAttribute("aria-expanded", String(open)); toggle.textContent = open ? "×" : "☰"; });
+            if (productTrigger && productMenu) productTrigger.addEventListener("click", event => { if (window.matchMedia("(max-width: 700px)").matches) { event.preventDefault(); productMenu.classList.toggle("mobile-expanded"); } });
+            const closeMobileNav = () => {
+                if (!window.matchMedia("(max-width: 700px)").matches) return;
+                nav.classList.remove("mobile-open");
+                if (productMenu) productMenu.classList.remove("mobile-expanded");
+                toggle.setAttribute("aria-expanded", "false");
+                toggle.textContent = "☰";
+            };
+            nav.addEventListener("click", event => { if (event.target.closest("a") && !event.target.closest(".nav-product-trigger")) closeMobileNav(); });
+            // Đóng menu khi rê chuột ra khỏi toàn bộ menu, không để nó che khu vực sản phẩm.
+            nav.addEventListener("pointerleave", closeMobileNav);
+            // Chỉ đóng danh sách loại khi rời mục Sản phẩm; vẫn có thể rê vào các loại bên trong.
+            if (productMenu) productMenu.addEventListener("pointerleave", () => {
+                if (window.matchMedia("(max-width: 700px)").matches) productMenu.classList.remove("mobile-expanded");
+            });
+        })();
 
-                if (!response.ok) {
-                    updateAccountActions(null);
-                    return;
-                }
-
-                const result = await response.json();
-                updateAccountActions(result.account);
-            } catch (error) {
-                console.error("Không thể kiểm tra tài khoản:", error);
-                updateAccountActions(null);
-            }
+        function logoutAccount() {
+            tv4SaveCurrentAccount(null);
+            updateAccountActions(null);
+            alert("Đã đăng xuất.");
         }
+
+        function restoreAccount() {
+            let account = tv4CurrentAccount();
+            if (account) {
+                const registered = tv4DemoUsers().find(user => String(user.email).toLowerCase() === String(account.email).toLowerCase());
+                if (registered?.locked) {
+                    account = null;
+                    tv4SaveCurrentAccount(null);
+                } else tv4SyncCustomer(account);
+            }
+            updateAccountActions(account || null);
+            const loginRequested = new URLSearchParams(location.search).has("login");
+            if (loginRequested && !account) openModal("login");
+        }
+
+        // Đồng bộ nhãn giỏ hàng sau khi TV4 thêm/cập nhật sản phẩm.
+        window.addEventListener("techstore:cart-changed", () => {
+            updateAccountActions(tv4CurrentAccount());
+        });
 
         // Khởi tạo trạng thái tài khoản
         updateAccountActions(null);
