@@ -6,7 +6,8 @@
   const money = v => Number(v).toLocaleString('vi-VN') + ' ₫';
   const image = p => S.safeImage(p.img) ? p.img.replace(/^\.\.\//, '') : '';
   const size = 8;
-  let db, dataError = '', sqlLoaded = false;
+  const categoryMenu = document.getElementById('navCategoryDropdown');
+  let db, dataError = ''; 
   const root = document.querySelector('.products-section');
   if (!root) return;
   const params = new URLSearchParams(location.search);
@@ -21,10 +22,14 @@
   const stock = p => Number.isInteger(p?.sqlStock) ? p.sqlStock : S.stock(db,typeof p === 'string' ? p : p.masp);
   function reload() {
     db = S.load(list_products);
-    if (!sqlLoaded) window.__customerProducts = db.products;
+    window.__customerProducts = db.products;
     const selected = filters.elements.category.value || params.get('category') || '';
     filters.elements.category.innerHTML = '<option value="">Tất cả loại</option>' + db.categories.filter(c => !c.hidden).map(c => `<option value="${esc(c.id)}">${esc(c.name)}</option>`).join('');
     filters.elements.category.value = selected;
+    if (categoryMenu) {
+      categoryMenu.innerHTML = '<a href="index.html#san-pham" data-nav-category="" role="menuitem">Tất cả sản phẩm</a>' +
+        db.categories.filter(c => !c.hidden).map(c => `<a href="index.html?category=${encodeURIComponent(c.id)}#san-pham" data-nav-category="${esc(c.id)}" role="menuitem">${esc(c.name)}</a>`).join('');
+    }
   }
   function render() {
     reload();
@@ -44,7 +49,13 @@
     if (params.has('id')) detail(params.get('id'));
     if (dataError) notice.textContent = dataError;
   }
-  function detailURL(id) { const q = new URLSearchParams(params); q.set('id',id); const target = 'chi_tiet_sp.html?' + q.toString(); return window.TechStoreDemo?.localMode ? window.TechStoreDemo.transferURL(target) : target; }
+  function detailURL(id) {
+    const q = new URLSearchParams(params);
+    q.set('id', id);
+    const target = 'chi_tiet_sp.html?' + q.toString();
+    return window.TechStoreDemo?.localMode ? window.TechStoreDemo.transferURL(target) : target;
+  }
+
   function detail(id) {
     document.querySelector('.hero').style.display='none'; root.style.display='none';
     let section = document.getElementById('productDetailPage');
@@ -58,58 +69,66 @@
     document.title = p.name + ' | TechStore';
     const labels = {screen:'Màn hình',os:'Hệ điều hành',camara:'Camera sau',camaraFront:'Camera trước',cpu:'Bộ xử lý',ram:'RAM',rom:'Bộ nhớ',microUSB:'Thẻ nhớ / kết nối',battery:'Pin'};
     const qty = stock(p.masp), amount = price(p);
-    section.innerHTML = link + `<div class="detail-container"><div class="detail-image"><img src="${esc(image(p))}" alt="${esc(p.name)}"></div><div class="detail-info"><p>${esc(p.company)} · Mã ${esc(p.masp)}</p><h1>${esc(p.name)}</h1><div class="detail-price">${money(amount)}</div><p>${qty>0?'Còn '+qty+' sản phẩm':'Hết hàng'}</p><p class="catalog-description">${esc(p.description)}</p><button class="btn btn-primary" data-buy="${esc(p.masp)}" ${qty<=0 || amount<=0?'disabled':''}>Thêm vào giỏ hàng</button><p class="catalog-feedback" role="status"></p><h2>Thông số kỹ thuật</h2><table class="spec-table"><tbody>${Object.entries(p.detail || {}).filter(([,v])=>v).map(([k,v])=>`<tr><td>${esc(labels[k] || k)}</td><td>${esc(v)}</td></tr>`).join('') || '<tr><td>Thông số đang cập nhật</td></tr>'}</tbody></table></div></div>`;
+    section.innerHTML = link + `<div class="detail-container"><div class="detail-image"><img src="${esc(image(p))}" alt="${esc(p.name)}"></div><div class="detail-info"><p>${esc(p.company)} · Mã ${esc(p.masp)}</p><h1>${esc(p.name)}</h1><div class="detail-price">${money(amount)}</div><p>${qty>0?'Còn '+qty+' sản phẩm':'Hết hàng'}</p><p class="catalog-description">${esc(p.description)}</p><div class="detail-purchase-actions"><button class="btn btn-primary" data-buy="${esc(p.masp)}" ${qty<=0 || amount<=0?'disabled':''}>Thêm vào giỏ hàng</button><button class="btn btn-outline" data-buy-now="${esc(p.masp)}" ${qty<=0 || amount<=0?'disabled':''}>Mua ngay</button></div><p class="catalog-feedback" role="status"></p><h2>Thông số kỹ thuật</h2><table class="spec-table"><tbody>${Object.entries(p.detail || {}).filter(([,v])=>v).map(([k,v])=>`<tr><td>${esc(labels[k] || k)}</td><td>${esc(v)}</td></tr>`).join('') || '<tr><td>Thông số đang cập nhật</td></tr>'}</tbody></table></div></div>`;
+  }
+  const productMenu = document.querySelector('.nav-product-menu');
+  const productTrigger = document.querySelector('.nav-product-trigger');
+  if (productMenu && productTrigger) {
+    productMenu.addEventListener('mouseenter', () => productTrigger.setAttribute('aria-expanded', 'true'));
+    productMenu.addEventListener('mouseleave', () => productTrigger.setAttribute('aria-expanded', 'false'));
+    productMenu.addEventListener('focusin', () => productTrigger.setAttribute('aria-expanded', 'true'));
+    productMenu.addEventListener('focusout', e => { if (!productMenu.contains(e.relatedTarget)) productTrigger.setAttribute('aria-expanded', 'false'); });
   }
   filters.addEventListener('submit', e => { e.preventDefault(); params.delete('page'); params.delete('id'); for (const key of ['q','category','min','max']) { const v=filters.elements[key].value.trim(); v?params.set(key,v):params.delete(key); } history.pushState(null,'','?'+params.toString()+'#san-pham'); render(); });
   filters.elements.category.addEventListener('change', () => filters.requestSubmit());
   document.addEventListener('click', async e => {
+    const categoryLink = e.target.closest('[data-nav-category]');
+    if (categoryLink) {
+      e.preventDefault();
+      const categoryId = categoryLink.dataset.navCategory || '';
+      params.delete('id'); params.delete('page');
+      categoryId ? params.set('category', categoryId) : params.delete('category');
+      history.pushState(null, '', 'index.html' + (params.toString() ? '?' + params.toString() : '') + '#san-pham');
+      render();
+      root.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      const trigger = document.querySelector('.nav-product-trigger');
+      if (trigger) trigger.setAttribute('aria-expanded', 'false');
+      return;
+    }
     const page=e.target.closest('[data-page]');
     if (page) { params.set('page',page.dataset.page); history.pushState(null,'','?'+params.toString()+'#san-pham'); render(); root.scrollIntoView(); }
-    const buy=e.target.closest('[data-buy]');
+    const buyNow = e.target.closest('[data-buy-now]');
+    const buy = e.target.closest('[data-buy]') || buyNow;
     if (!buy) return;
     const feedback = document.querySelector('.catalog-feedback') || notice;
     buy.disabled = true;
     try {
-      reload(); const p=(window.__customerProducts||db.products).find(p=>p.masp===buy.dataset.buy && active(p));
+      reload(); const requestedId = buy.dataset.buy ?? buy.dataset.buyNow; const p=(window.__customerProducts||db.products).find(p=>String(p.masp)===String(requestedId) && active(p));
       if (!p || stock(p)<=0 || price(p)<=0) throw Error('Sản phẩm không còn khả dụng. Vui lòng tải lại danh sách.');
-      // TV4 có thể đăng ký adapter: xác thực và lưu giỏ bằng hệ thống của nhóm.
-      if (window.TechStoreCart?.add) { await window.TechStoreCart.add({productId:p.masp,quantity:1}); feedback.textContent='Đã thêm sản phẩm vào giỏ hàng.'; }
-      else {
-        const response = await fetch('/api/me', {credentials:'same-origin'});
-        const result = response.ok ? await response.json() : {};
-        if (!result.account || result.account.vaiTro !== 'CUSTOMER') { window.openModal('login'); throw Error('Vui lòng đăng nhập tài khoản khách hàng trước khi mua.'); }
-        // Chưa có module giỏ của TV4: phát sự kiện có dữ liệu để tích hợp, không báo thêm thành công giả.
-        window.dispatchEvent(new CustomEvent('techstore:cart-request',{detail:{productId:p.masp,quantity:1,account:result.account}}));
-        throw Error('Chức năng giỏ hàng của TV4 chưa được kết nối. Sản phẩm đã sẵn sàng để tích hợp.');
+      if (!window.TechStoreDemo?.getAccount?.()) {
+        window.openModal('login');
+        throw Error('Vui lòng đăng nhập tài khoản khách hàng trước khi mua hàng.');
       }
+      if (!window.TechStoreCart?.add) throw Error('Chức năng giỏ hàng chưa được tải. Hãy tải lại trang.');
+      await window.TechStoreCart.add({productId:p.masp,quantity:1});
+      if (buyNow) { window.location.href = 'don-hang.html?checkout=1'; return; }
+      feedback.textContent='Đã thêm sản phẩm vào giỏ hàng.';
     } catch(error) { feedback.textContent=location.protocol==='file:' && !window.TechStoreCart ? 'Cần đăng nhập để mua hàng. Mở bản chạy Node.js để dùng tài khoản, hoặc kết nối module giỏ hàng TV4.' : error.message; }
     finally { buy.disabled=false; }
   });
   window.addEventListener('popstate',()=>location.reload());
   window.addEventListener('storage', e=>{if(e.key===S.KEY) render();});
-  async function loadProducts(){
+  function loadProducts(){
     try {
       reload();
-      if (window.TechStoreDemo?.localMode) {
-        sqlLoaded = false;
-        window.__customerProducts = db.products;
-        dataError = '';
-        render();
-        return;
-      }
-      const response=await fetch('/api/products',{credentials:'same-origin'});
-      if(!response.ok) throw Error('API không tải được sản phẩm từ database ('+response.status+').');
-      const result=await response.json();
-      if(!Array.isArray(result.products)) throw Error('API sản phẩm trả dữ liệu không đúng định dạng.');
-      const localByCode=new Map(db.products.map(p=>[p.masp,p]));
-      window.__customerProducts=result.products.map(row=>{
-        const old=localByCode.get(row.maSP)||{};
-        const apiImage=String(row.hinhAnh||'');
-        return {...old,masp:row.maSP,name:row.tenSanPham,company:row.hang,img:apiImage?(apiImage.startsWith('../')?apiImage:'../'+apiImage):(old.img||''),sqlPrice:Number(row.gia),sqlStock:Number(row.soLuongTon),price:Number(row.gia),hidden:row.trangThai!=='ACTIVE',detail:{...old.detail,screen:row.manHinh,os:row.heDieuHanh,camara:row.cameraSau,camaraFront:row.cameraTruoc,cpu:row.cpu,ram:row.ram,rom:row.rom,microUSB:row.theNho,battery:row.pin}};
-      });
-      sqlLoaded=true;
-      dataError=''; render();
-    } catch(e) {dataError=e.message;window.__customerProducts=[];render();}
+      window.__customerProducts = db.products;
+      dataError = '';
+      render();
+    } catch (e) {
+      dataError = 'Không thể đọc dữ liệu sản phẩm trong Local Storage: ' + e.message;
+      window.__customerProducts = [];
+      render();
+    }
   }
   window.addEventListener('pageshow',loadProducts);
 })();

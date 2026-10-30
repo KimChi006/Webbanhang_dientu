@@ -2,13 +2,13 @@
 
 ## Chạy giao diện
 
-1. Mở **`admin/index.html`** bằng Chrome. Đây là file ở bên trong thư mục `admin`, không phải `index.html` ngoài thư mục gốc.
+1. Chạy website bằng VS Code Live Server từ `index.html`, rồi mở `admin/index.html` trên cùng origin. Cách này giúp các trang chia sẻ cùng Local Storage.
 2. Đăng nhập:
    - Email: **admin@techstore.vn**
    - Mật khẩu: **Admin123!**
 3. Chọn một trong bảy mục quản lý ở menu. Bảy mục nghiệp vụ và màn hình đăng nhập riêng bao phủ các nhóm **I.1–I.8 của phần admin**.
 
-Không cần cài thư viện, chạy Node.js, SQL Server, Live Server hoặc có Internet. Các tệp CSS, JavaScript và ảnh đều lấy từ dự án. Tìm kiếm/lọc được thực hiện khi bấm **Áp dụng** hoặc Enter trong ô tìm kiếm.
+Không cần cài thư viện, Node.js hoặc SQL Server. Khi tích hợp cả bốn trang, nên dùng Live Server để Local Storage được chia sẻ cùng origin. Các tệp CSS, JavaScript và ảnh đều lấy từ dự án. Tìm kiếm/lọc được thực hiện khi bấm **Áp dụng** hoặc Enter trong ô tìm kiếm.
 
 Phiên bản này lấy bố cục TechStore trong ZIP làm cơ sở: menu xanh đậm, nút xanh dương, thanh quản trị viên, ba thẻ thống kê và bảng dữ liệu. Phần quản trị được viết lại, thay màn hình đang xây dựng bằng các chức năng hoàn chỉnh trong phạm vi prototype.
 
@@ -104,12 +104,10 @@ Học theo trình tự: xem HTML → xem các nhóm CSS có chú thích → đ�
 ## Lưu trữ và phạm vi
 
 - Dữ liệu mẫu: 20 sản phẩm có ảnh thật trong dự án, 3 loại, 6 khách hàng, 8 đơn với 4 tình trạng, phiếu nhập nháp/hoàn thành và lịch sử kho. Ngày mẫu được tính theo ngày khởi tạo.
-- Dữ liệu lưu ở localStorage `techstore_admin_v2`, phiên đăng nhập ở sessionStorage `techstore_admin_session_v2`. Mỗi trình duyệt/đường dẫn có thể có bộ dữ liệu riêng.
-- Mở bài bằng cùng trình duyệt, cùng đường dẫn để giữ dữ liệu. Cách xử lý localStorage dưới `file://` phụ thuộc trình duyệt; các luồng đã được thử trên Chrome.
-- Bản mới dùng khóa dữ liệu riêng nên không tự sửa hay xóa dữ liệu Electro cũ.
-- Đây là **clickable prototype cho phần admin**, phù hợp yêu cầu mở HTML local. Đăng nhập và mật khẩu khách hàng là mô phỏng, chỉ sử dụng thông tin thử nghiệm.
-- Giao diện không sử dụng Node.js/SQL Server của ZIP. Chưa kết nối trang mua hàng, giỏ hàng hoặc đăng nhập khách hàng; khóa/reset chỉ cập nhật tài khoản mẫu của admin. Muốn dùng backend thật cần nối thêm API và kiểm thử tích hợp.
-- Mục II của phiếu chấm (website khách hàng) và hai mục điểm cộng không thuộc lần làm lại admin này. Không coi việc hoàn thành admin là hoàn thành cả đồ án 10 điểm.
+- Dữ liệu lưu ở Local Storage `techstore_admin_v2`, phiên admin ở sessionStorage `techstore_admin_session_v2`. Mọi trang phải chạy trên cùng origin để dùng chung dữ liệu.
+- Đăng ký khách hàng từ trang chủ sẽ đưa tài khoản vào tab Khách hàng. Khóa/mở khóa và reset mật khẩu được đồng bộ với tài khoản demo đăng ký cục bộ.
+- Đây là ứng dụng frontend demo. Không có backend và không lưu dữ liệu lên máy chủ; Local Storage không phù hợp cho mật khẩu thật hoặc môi trường production.
+- Admin đã được nối với danh mục, giỏ hàng và đơn hàng qua mô hình dữ liệu Local Storage chung. Chuyển khoản/trực tuyến chỉ mô phỏng.
 
 ## Bản code cũ
 

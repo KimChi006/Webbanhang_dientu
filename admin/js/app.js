@@ -72,7 +72,7 @@ let db, dbProducts = [], dbProductsLoaded = false,
   toastTimer,
   returnFocus;
 const PAGE_SIZE = 8;
-const TV4_LOCAL_MODE = window.location.protocol === "file:";
+const TV4_LOCAL_MODE = true; // Admin lưu dữ liệu bằng Local Storage.
 let TV4_INCOMING_DB = null;
 try {
   if (TV4_LOCAL_MODE && window.location.hash.startsWith("#tv4db=")) {
@@ -92,16 +92,8 @@ customerSiteLink.href = "../index.html";
 customerSiteLink.textContent = "Trang khách hàng";
 customerSiteLink.title = "Quay về trang khách và giữ dữ liệu đơn hàng hiện tại";
 $("#logoutButton").before(customerSiteLink);
-customerSiteLink.addEventListener("click", (event) => {
-  if (!TV4_LOCAL_MODE || !db) return;
-  event.preventDefault();
-  const account = db.demoCurrentAccount || null;
-  const profile = db.demoCurrentProfile || (account ? {
-    hoTen: account.hoTen || "", email: account.email || "",
-    soDienThoai: account.soDienThoai || "", ngaySinh: account.ngaySinh || "", diaChi: account.diaChi || ""
-  } : {});
-  const payload = { v: 1, account, profile, cart: [], db };
-  window.location.href = "../index.html#tv4=" + encodeURIComponent(JSON.stringify(payload));
+customerSiteLink.addEventListener("click", () => {
+  // Cùng origin nên tài khoản, giỏ hàng và dữ liệu quản trị đã nằm trong Local Storage.
 });
 
 const category = (id) => db.categories.find((c) => c.id === id);
@@ -253,6 +245,7 @@ function render() {
   });
   const actions = {
     categories: action("+ Thêm loại sản phẩm", "edit-category", "", "primary"),
+    products: action("+ Thêm sản phẩm", "add-product", "", "primary"),
     imports: action("+ Tạo phiếu nhập", "edit-receipt", "", "primary"),
   };
   $("#pageActions").innerHTML = actions[currentPage] || "";
@@ -364,7 +357,7 @@ function renderProducts() {
       "🛒",
       "Tổng số lượng tồn kho",
       dbProducts.reduce((n, p) => n + p.sqlStock, 0),
-      "Theo API SQL · gồm cả sản phẩm ẩn",
+      "Gồm cả sản phẩm ẩn",
     )}${stat("🙈", "Sản phẩm không hiển thị", dbProducts.filter(effectiveHidden).length)}</div>` +
     panel(
       "Danh sách sản phẩm",
@@ -528,9 +521,7 @@ function renderOrders() {
 }
 function renderInventory() {
   const current = dbProducts.filter(matchesProduct);
-  if (dbProductsLoaded) {
-    return `<div class="stats">${stat("📦", "Sản phẩm trong database", dbProducts.length)}${stat("🛒", "Tổng tồn kho hiện tại", dbProducts.reduce((n,p)=>n+p.sqlStock,0), "Đọc từ dbo.SanPham.SoLuongTon")}</div><p class="notice">Database hiện chỉ lưu tồn kho hiện tại; không có bảng lịch sử nhập–xuất hoặc ngưỡng cảnh báo trong schema đang dùng. Màn hình này không ước tính các số liệu đó.</p>` + panel("Tồn kho hiện tại từ SQL", filterForm(queryFilter()+categoryFilter()), table(["Sản phẩm","Loại","Tồn kho","Trạng thái"], current.filter(p=>matchesProduct(p)).map(p=>`<tr><td>${productCell(p)}</td><td>${escapeHTML(category(p.categoryId)?.name||"Chưa phân loại")}</td><td><strong>${p.sqlStock}</strong></td><td>${badge(p.hidden?"Đã ẩn":"Đang hiển thị",p.hidden?"neutral":"active")}</td></tr>`)));
-  }
+
   const selected = db.products.filter(matchesProduct),
     at = filters.at || S.now();
   const rows = selected.filter(
@@ -758,7 +749,7 @@ function editProduct(id) {
     name: "",
     company: "",
     categoryId: db.categories.find((c) => !c.hidden)?.id || "",
-    img: "",
+    img: "../images/" + S.assets[0],
     description: "",
     threshold: 5,
     detail: {},
@@ -1058,7 +1049,12 @@ document.addEventListener("click", (event) => {
         c.locked ? "Mở khóa tài khoản" : "Khóa tài khoản",
         `Bạn xác nhận ${c.locked ? "mở khóa" : "khóa"} tài khoản <strong>${escapeHTML(c.email)}</strong>?`,
         (next) => {
-          next.customers.find((x) => x.id === id).locked = !c.locked;
+          const target = next.customers.find((x) => x.id === id);
+          if (!target) throw new Error("Không tìm thấy khách hàng.");
+          target.locked = !c.locked;
+          const users = JSON.parse(localStorage.getItem("techstore_demo_users_v1") || "[]");
+          const user = users.find((x) => String(x.email).toLowerCase() === String(c.email).toLowerCase());
+          if (user) { user.locked = target.locked; localStorage.setItem("techstore_demo_users_v1", JSON.stringify(users)); }
         },
         "Đã cập nhật trạng thái tài khoản.",
       );
@@ -1125,6 +1121,7 @@ document.addEventListener("click", (event) => {
     },
     "edit-product-margin": () => editMargin(id, false),
     "edit-category-margin": () => editMargin(id, true),
+    "add-product": () => editProduct(""),
     "view-order": () => viewOrder(id),
     "stock-history": () => stockHistory(id),
   };
@@ -1153,29 +1150,16 @@ $("#menu").innerHTML = Object.entries(pageInfo)
 async function showAdmin() {
   try {
     db = S.load(typeof list_products === "undefined" ? [] : list_products);
-    if (TV4_LOCAL_MODE) {
-      dbProductsLoaded = false;
-      dbProducts = db.products.map((p) => ({
-        ...p,
-        sqlPrice: S.sellingPrice(db, p),
-        sqlStock: S.stock(db, p.masp),
-      }));
-    } else {
-      const response = await fetch("/api/admin/products", { credentials: "same-origin" });
-      const result = await response.json();
-      if (!response.ok || !Array.isArray(result.products)) throw new Error(result.message || "Không tải được sản phẩm từ database.");
-      const localByCode = new Map(db.products.map((p) => [p.masp, p]));
-      dbProducts = result.products.map((row) => {
-        const local = localByCode.get(row.maSP) || {};
-        const image = String(row.hinhAnh || local.img || "");
-        return { ...local, masp: row.maSP, name: row.tenSanPham, company: row.hang, img: image.startsWith("../") ? image : image ? "../" + image : "", sqlPrice: Number(row.gia), sqlStock: Number(row.soLuongTon), hidden: row.trangThai !== "ACTIVE" };
-      });
-      dbProductsLoaded = true;
-    }
+    dbProductsLoaded = false;
+    dbProducts = db.products.map((p) => ({
+      ...p,
+      sqlPrice: S.sellingPrice(db, p),
+      sqlStock: S.stock(db, p.masp),
+    }));
     sessionStorage.setItem(S.SESSION_KEY, "admin");
     $("#loginScreen").classList.add("hidden");
     $("#adminApp").classList.remove("hidden");
-    go(TV4_LOCAL_MODE && TV4_INCOMING_DB ? "orders" : "customers");
+    go("customers");
   } catch (error) {
     $("#loginMessage").textContent = error.message;
   }
@@ -1183,32 +1167,16 @@ async function showAdmin() {
 
 $("#adminLoginForm").addEventListener("submit", async (event) => {
   event.preventDefault();
-  if (TV4_LOCAL_MODE) {
-    if (
-      $("#adminEmail").value.trim().toLowerCase() === S.ADMIN.email &&
-      $("#adminPassword").value === S.ADMIN.password
-    ) {
-      $("#loginMessage").textContent = "";
-      await showAdmin();
-    } else {
-      $("#loginMessage").textContent = "Email hoặc mật khẩu quản trị không đúng.";
-    }
-    return;
-  }
-  const button = $("#adminLoginForm button[type=submit]"); button.disabled = true;
-  try {
-    const response = await fetch("/api/admin/login", { method: "POST", credentials: "same-origin", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email: $("#adminEmail").value.trim(), matKhau: $("#adminPassword").value }) });
-    const result = await response.json();
-    if (!response.ok) throw new Error(result.message || "Đăng nhập quản trị thất bại.");
+  const email = $("#adminEmail").value.trim().toLowerCase();
+  const password = $("#adminPassword").value;
+  if (email === S.ADMIN.email && password === S.ADMIN.password) {
     $("#loginMessage").textContent = "";
     await showAdmin();
-  } catch (error) { $("#loginMessage").textContent = error.message; }
-  finally { button.disabled = false; }
+  } else {
+    $("#loginMessage").textContent = "Email hoặc mật khẩu quản trị không đúng.";
+  }
 });
 $("#logoutButton").addEventListener("click", async () => {
-  if (!TV4_LOCAL_MODE) {
-    try { await fetch("/api/logout", { method: "POST", credentials: "same-origin" }); } catch {}
-  }
   try {
     sessionStorage.removeItem(S.SESSION_KEY);
   } catch {}
@@ -1238,10 +1206,7 @@ window.addEventListener("storage", (event) => {
     );
 });
 try {
-  if (sessionStorage.getItem(S.SESSION_KEY) === "admin") {
-    if (TV4_LOCAL_MODE) showAdmin();
-    else fetch("/api/admin/me", { credentials: "same-origin" }).then(r => { if (r.ok) showAdmin(); else sessionStorage.removeItem(S.SESSION_KEY); }).catch(() => sessionStorage.removeItem(S.SESSION_KEY));
-  }
+  if (sessionStorage.getItem(S.SESSION_KEY) === "admin") showAdmin();
 } catch {
   $("#loginMessage").textContent =
     "Trình duyệt đang chặn bộ nhớ phiên. Hãy cho phép lưu dữ liệu để sử dụng bản thực hành.";

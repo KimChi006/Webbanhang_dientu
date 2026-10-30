@@ -292,14 +292,14 @@
   }
   function stock(db, id, at = "9999-12-31T23:59") {
     return db.ledger
-      .filter((e) => e.productId === id && e.at <= at)
+      .filter((e) => String(e.productId) === String(id) && e.at <= at)
       .reduce((n, e) => n + e.quantity, 0);
   }
   function cost(db, id) {
     let quantity = 0,
       average = 0;
     db.ledger
-      .filter((e) => e.productId === id)
+      .filter((e) => String(e.productId) === String(id))
       .slice()
       .sort((a, b) => a.at.localeCompare(b.at))
       .forEach((e) => {
@@ -332,7 +332,7 @@
       from <= to,
       "Thời điểm bắt đầu phải trước hoặc bằng thời điểm kết thúc.",
     );
-    const events = db.ledger.filter((e) => e.productId === id);
+    const events = db.ledger.filter((e) => String(e.productId) === String(id));
     const inside = events.filter((e) => e.at >= from && e.at <= to);
     return {
       opening: events
@@ -578,6 +578,12 @@
     requireValue(c, "Không tìm thấy khách hàng.");
     c.password = password;
     c.passwordUpdatedAt = now();
+    // Đồng bộ mật khẩu với tài khoản đăng ký trên website (bản Local Storage).
+    try {
+      const users = JSON.parse(localStorage.getItem("techstore_demo_users_v1") || "[]");
+      const user = users.find((item) => String(item.email).toLowerCase() === String(c.email).toLowerCase());
+      if (user) { user.password = password; localStorage.setItem("techstore_demo_users_v1", JSON.stringify(users)); }
+    } catch (_) {}
   }
   window.TechStore = {
     KEY,

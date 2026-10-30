@@ -2,7 +2,7 @@ var list_products = [{
     "name": "SamSung Galaxy J4+",
     "company": "Samsung",
     "img": "images/samsung-galaxy-j4-plus-pink-400x400.jpg",
-    "price": "3.490.000",
+    "price": 3490000,
     "star": 3,
     "rateCount": 26,
     "promo": {
@@ -25,7 +25,7 @@ var list_products = [{
     "name": "Xiaomi Mi 8 Lite",
     "company": "Xiaomi",
     "img": "images/xiaomi-mi-8-lite-black-1-600x600.jpg",
-    "price": "6.690.000",
+    "price": 6690000,
     "star": 0,
     "rateCount": 0,
     "promo": {
@@ -48,7 +48,7 @@ var list_products = [{
     "name": "Oppo F9",
     "company": "Oppo",
     "img": "images/oppo-f9-red-600x600.jpg",
-    "price": "7.690.000",
+    "price": 7690000,
     "star": 5,
     "rateCount": 188,
     "promo": {
@@ -71,7 +71,7 @@ var list_products = [{
     "name": "Nokia 5.1 Plus",
     "company": "Nokia",
     "img": "images/nokia-51-plus-black-18thangbh-400x400.jpg",
-    "price": "4.790.000",
+    "price": 4790000,
     "star": 5,
     "rateCount": 7,
     "promo": {
@@ -94,7 +94,7 @@ var list_products = [{
     "name": "Samsung Galaxy A8+ (2018)",
     "company": "Samsung",
     "img": "images/samsung-galaxy-a8-plus-2018-gold-600x600.jpg",
-    "price": "11.990.000",
+    "price": 11990000,
     "star": 0,
     "rateCount": 0,
     "promo": {
@@ -117,7 +117,7 @@ var list_products = [{
     "name": "iPhone X 256GB Silver",
     "company": "Apple",
     "img": "images/iphone-x-256gb-silver-400x400.jpg",
-    "price": "31.990.000",
+    "price": 31990000,
     "star": 4,
     "rateCount": 10,
     "promo": {
@@ -140,7 +140,7 @@ var list_products = [{
     "name": "Oppo A3s 32GB",
     "company": "Oppo",
     "img": "images/oppo-a3s-32gb-600x600.jpg",
-    "price": "4.690.000",
+    "price": 4690000,
     "star": 0,
     "rateCount": 0,
     "promo": {
@@ -163,7 +163,7 @@ var list_products = [{
     "name": "Samsung Galaxy J8",
     "company": "Samsung",
     "img": "images/samsung-galaxy-j8-600x600-600x600.jpg",
-    "price": "6.290.000",
+    "price": 6290000,
     "star": 0,
     "rateCount": 0,
     "promo": {
@@ -186,7 +186,7 @@ var list_products = [{
     "name": "iPad 2018 Wifi 32GB",
     "company": "Apple",
     "img": "images/ipad-wifi-32gb-2018-thumb-600x600.jpg",
-    "price": "8.990.000",
+    "price": 8990000,
     "star": 0,
     "rateCount": 0,
     "promo": {
@@ -209,7 +209,7 @@ var list_products = [{
     "name": "iPhone 7 Plus 32GB",
     "company": "Apple",
     "img": "images/iphone-7-plus-32gb-hh-600x600.jpg",
-    "price": "17.000.000",
+    "price": 17000000,
     "star": 0,
     "rateCount": 0,
     "promo": {
@@ -232,7 +232,7 @@ var list_products = [{
     "name": "Xiaomi Mi 8",
     "company": "Xiaomi",
     "img": "images/xiaomi-mi-8-1-600x600.jpg",
-    "price": "12.990.000",
+    "price": 12990000,
     "star": 0,
     "rateCount": 0,
     "promo": {
@@ -255,7 +255,7 @@ var list_products = [{
     "name": "Mobiistar X",
     "company": "Mobiistar",
     "img": "images/mobiistar-x-3-600x600.jpg",
-    "price": "3.490.000",
+    "price": 3490000,
     "star": 4,
     "rateCount": 16,
     "promo": {
@@ -278,7 +278,7 @@ var list_products = [{
     "name": "Mobiistar Zumbo S2 Dual",
     "company": "Mobiistar",
     "img": "images/mobiistar-zumbo-s2-dual-300x300.jpg",
-    "price": "2.850.000",
+    "price": 2850000,
     "star": 4,
     "rateCount": 104,
     "promo": {
@@ -301,7 +301,7 @@ var list_products = [{
     "name": "Mobiistar E Selfie",
     "company": "Mobiistar",
     "img": "images/mobiistar-e-selfie-300-1copy-600x600.jpg",
-    "price": "2.490.000",
+    "price": 2490000,
     "star": 4,
     "rateCount": 80,
     "promo": {
@@ -324,7 +324,7 @@ var list_products = [{
     "name": "Mobiistar B310",
     "company": "Mobiistar",
     "img": "images/mobiistar-b310-orange-600x600.jpg",
-    "price": "260.000",
+    "price": 260000,
     "star": 5,
     "rateCount": 87,
     "promo": {
@@ -347,7 +347,7 @@ var list_products = [{
     "name": "Xiaomi Redmi Note 5",
     "company": "Xiaomi",
     "img": "images/xiaomi-redmi-note-5-pro-600x600.jpg",
-    "price": "5.690.000",
+    "price": 5690000,
     "star": 4,
     "rateCount": 372,
     "promo": {
@@ -370,7 +370,7 @@ var list_products = [{
     "name": "Xiaomi Redmi 5 Plus 4GB",
     "company": "Xiaomi",
     "img": "images/xiaomi-redmi-5-plus-600x600.jpg",
-    "price": "4.790.000",
+    "price": 4790000,
     "star": 4,
     "rateCount": 347,
     "promo": {
@@ -393,7 +393,7 @@ var list_products = [{
     "name": "Huawei Mate 20 Pro",
     "company": "Huawei",
     "img": "images/huawei-mate-20-pro-green-600x600.jpg",
-    "price": "21.990.000",
+    "price": 21990000,
     "star": 5,
     "rateCount": 4,
     "promo": {
@@ -416,7 +416,7 @@ var list_products = [{
     "name": "Huawei Nova 3",
     "company": "Huawei",
     "img": "images/huawei-nova-3-2-600x600.jpg",
-    "price": "9.990.000",
+    "price": 9990000,
     "star": 4,
     "rateCount": 22,
     "promo": {
@@ -439,7 +439,7 @@ var list_products = [{
     "name": "Huawei Y5 2017",
     "company": "Huawei",
     "img": "images/huawei-y5-2017-300x300.jpg",
-    "price": "1.990.000",
+    "price": 1990000,
     "star": 5,
     "rateCount": 54,
     "promo": {
@@ -462,7 +462,7 @@ var list_products = [{
     "name": "Nokia black future",
     "company": "Nokia",
     "img": "https://cdn.tgdd.vn/Products/Images/42/22701/dien-thoai-di-dong-Nokia-1280-dienmay.com-l.jpg",
-    "price": "999.999.000",
+    "price": 999999000,
     "star": 5,
     "rateCount": 9999,
     "promo": {
@@ -485,7 +485,7 @@ var list_products = [{
     "name": "Samsung Galaxy A7 (2018)",
     "company": "Samsung",
     "img": "https://cdn.tgdd.vn/Products/Images/42/194327/samsung-galaxy-a7-2018-128gb-black-400x400.jpg",
-    "price": "8.990.000",
+    "price": 8990000,
     "star": 4,
     "rateCount": 22,
     "promo": {
@@ -508,7 +508,7 @@ var list_products = [{
     "name": "Realme 2 Pro 8GB/128GB",
     "company": "Realme",
     "img": "https://cdn.tgdd.vn/Products/Images/42/192002/oppo-realme-2-pro-black-600x600.jpg",
-    "price": "6.990.000",
+    "price": 6990000,
     "star": 5,
     "rateCount": 16,
     "promo": {
@@ -531,7 +531,7 @@ var list_products = [{
     "name": "Realme 2 4GB/64GB",
     "company": "Realme",
     "img": "https://cdn.tgdd.vn/Products/Images/42/193462/realme-2-4gb-64gb-docquyen-600x600.jpg",
-    "price": "4.490.000",
+    "price": 4490000,
     "star": 5,
     "rateCount": 7,
     "promo": {
@@ -554,7 +554,7 @@ var list_products = [{
     "name": "Realme C1",
     "company": "Realme",
     "img": "https://cdn.tgdd.vn/Products/Images/42/193286/realme-c1-black-600x600.jpg",
-    "price": "2.490.000",
+    "price": 2490000,
     "star": 4,
     "rateCount": 4,
     "promo": {
@@ -577,7 +577,7 @@ var list_products = [{
     "name": "Realme 2 Pro 4GB/64GB",
     "company": "Realme",
     "img": "https://cdn.tgdd.vn/Products/Images/42/193464/realme-2-pro-4gb-64gb-blue-600x600.jpg",
-    "price": "5.590.000",
+    "price": 5590000,
     "star": 4,
     "rateCount": 11,
     "promo": {
@@ -600,7 +600,7 @@ var list_products = [{
     "name": "Philips E331",
     "company": "Philips",
     "img": "https://cdn.tgdd.vn/Products/Images/42/139742/philips-e331-xenium-300-300x300.jpg",
-    "price": "890.000",
+    "price": 890000,
     "star": 5,
     "rateCount": 6,
     "promo": {
@@ -623,7 +623,7 @@ var list_products = [{
     "name": "Philips S329",
     "company": "Philips",
     "img": "https://cdn.tgdd.vn/Products/Images/42/143146/philips-s329-2-300x300.jpg",
-    "price": "2.390.000",
+    "price": 2390000,
     "star": 3,
     "rateCount": 30,
     "promo": {
@@ -646,7 +646,7 @@ var list_products = [{
     "name": "Philips E103",
     "company": "Philips",
     "img": "https://cdn.tgdd.vn/Products/Images/42/73727/philips-e103-9-300x300.jpg",
-    "price": "260.000",
+    "price": 260000,
     "star": 5,
     "rateCount": 126,
     "promo": {
@@ -669,7 +669,7 @@ var list_products = [{
     "name": "Vivo V11",
     "company": "Vivo",
     "img": "https://cdn.tgdd.vn/Products/Images/42/188828/vivo-v11-600x600.jpg",
-    "price": "10.990.000",
+    "price": 10990000,
     "star": 0,
     "rateCount": 0,
     "promo": {
@@ -692,7 +692,7 @@ var list_products = [{
     "name": "Vivo V9",
     "company": "Vivo",
     "img": "https://cdn.tgdd.vn/Products/Images/42/155047/vivo-v9-2-1-600x600-600x600.jpg",
-    "price": "7.490.000",
+    "price": 7490000,
     "star": 5,
     "rateCount": 168,
     "promo": {
@@ -715,7 +715,7 @@ var list_products = [{
     "name": "Vivo Y85",
     "company": "Vivo",
     "img": "https://cdn.tgdd.vn/Products/Images/42/156205/vivo-y85-red-docquyen-600x600.jpg",
-    "price": "4.990.000",
+    "price": 4990000,
     "star": 4,
     "rateCount": 60,
     "promo": {
@@ -738,7 +738,7 @@ var list_products = [{
     "name": "Vivo Y71",
     "company": "Vivo",
     "img": "https://cdn.tgdd.vn/Products/Images/42/158585/vivo-y71-docquyen-600x600.jpg",
-    "price": "3.290.000",
+    "price": 3290000,
     "star": 4,
     "rateCount": 60,
     "promo": {
@@ -761,7 +761,7 @@ var list_products = [{
     "name": "Mobell M789",
     "company": "Mobell",
     "img": "https://cdn.tgdd.vn/Products/Images/42/92016/mobell-m789-8-300x300.jpg",
-    "price": "550.000",
+    "price": 550000,
     "star": 4,
     "rateCount": 37,
     "promo": {
@@ -784,7 +784,7 @@ var list_products = [{
     "name": "Mobell Rock 3",
     "company": "Mobell",
     "img": "https://cdn.tgdd.vn/Products/Images/42/112837/mobell-rock-3-2-300x300.jpg",
-    "price": "590.000",
+    "price": 590000,
     "star": 4,
     "rateCount": 58,
     "promo": {
@@ -807,7 +807,7 @@ var list_products = [{
     "name": "Mobell S60",
     "company": "Mobell",
     "img": "https://cdn.tgdd.vn/Products/Images/42/193271/mobell-s60-red-1-600x600.jpg",
-    "price": "1.790.000",
+    "price": 1790000,
     "star": 0,
     "rateCount": 0,
     "promo": {
@@ -830,7 +830,7 @@ var list_products = [{
     "name": "Itel P32",
     "company": "Itel",
     "img": "https://cdn.tgdd.vn/Products/Images/42/186851/itel-p32-gold-600x600.jpg",
-    "price": "1.890.000",
+    "price": 1890000,
     "star": 4,
     "rateCount": 12,
     "promo": {
@@ -853,7 +853,7 @@ var list_products = [{
     "name": "Itel A32F",
     "company": "Itel",
     "img": "https://cdn.tgdd.vn/Products/Images/42/193990/itel-a32f-pink-gold-600x600.jpg",
-    "price": "1.350.000",
+    "price": 1350000,
     "star": 5,
     "rateCount": 3,
     "promo": {
@@ -876,7 +876,7 @@ var list_products = [{
     "name": "Itel it2123",
     "company": "Itel",
     "img": "https://cdn.tgdd.vn/Products/Images/42/146651/itel-it2123-d-300-300x300.jpg",
-    "price": "160.000",
+    "price": 160000,
     "star": 5,
     "rateCount": 302,
     "promo": {
@@ -899,7 +899,7 @@ var list_products = [{
     "name": "Itel it2161",
     "company": "Itel",
     "img": "https://cdn.tgdd.vn/Products/Images/42/193989/itel-it2161-600x600.jpg",
-    "price": "170.000",
+    "price": 170000,
     "star": 5,
     "rateCount": 33,
     "promo": {
@@ -922,7 +922,7 @@ var list_products = [{
     "name": "Coolpad N3D",
     "company": "Coolpad",
     "img": "https://cdn.tgdd.vn/Products/Images/42/193504/coolpad-n3d-blue-600x600.jpg",
-    "price": "2.390.000",
+    "price": 2390000,
     "star": 0,
     "rateCount": 0,
     "promo": {
@@ -945,7 +945,7 @@ var list_products = [{
     "name": "Coolpad N3",
     "company": "Coolpad",
     "img": "https://cdn.tgdd.vn/Products/Images/42/193502/coolpad-n3-gray-1-600x600.jpg",
-    "price": "1.890.000",
+    "price": 1890000,
     "star": 3,
     "rateCount": 3,
     "promo": {
@@ -968,7 +968,7 @@ var list_products = [{
     "name": "Coolpad N3 mini",
     "company": "Coolpad",
     "img": "https://cdn.tgdd.vn/Products/Images/42/193503/coolpad-n3-mini-600x600.jpg",
-    "price": "1.390.000",
+    "price": 1390000,
     "star": 4,
     "rateCount": 2,
     "promo": {
@@ -991,7 +991,7 @@ var list_products = [{
     "name": "HTC U12 life",
     "company": "HTC",
     "img": "https://cdn.tgdd.vn/Products/Images/42/186397/htc-u12-life-1-600x600.jpg",
-    "price": "7.690.000",
+    "price": 7690000,
     "star": 4,
     "rateCount": 12,
     "promo": {
@@ -1014,7 +1014,7 @@ var list_products = [{
     "name": "Motorola Moto C 4G",
     "company": "Motorola",
     "img": "https://cdn.tgdd.vn/Products/Images/42/109099/motorola-moto-c-4g-300-300x300.jpg",
-    "price": "1.290.000",
+    "price": 1290000,
     "star": 4,
     "rateCount": 14,
     "promo": {
@@ -1037,7 +1037,7 @@ var list_products = [{
     "name": "iPhone Xr 128GB",
     "company": "Apple",
     "img": "https://cdn.tgdd.vn/Products/Images/42/191483/iphone-xr-128gb-red-600x600.jpg",
-    "price": "24.990.000",
+    "price": 24990000,
     "star": 0,
     "rateCount": 0,
     "promo": {
@@ -1060,7 +1060,7 @@ var list_products = [{
     "name": "iPhone 8 Plus 64GB",
     "company": "Apple",
     "img": "https://cdn.tgdd.vn/Products/Images/42/114110/iphone-8-plus-hh-600x600.jpg",
-    "price": "20.990.000",
+    "price": 20990000,
     "star": 5,
     "rateCount": 230,
     "promo": {
@@ -1083,7 +1083,7 @@ var list_products = [{
     "name": "iPhone 8 Plus 256GB",
     "company": "Apple",
     "img": "https://cdn.tgdd.vn/Products/Images/42/114114/iphone-8-plus-256gb-red-600x600.jpg",
-    "price": "25.790.000",
+    "price": 25790000,
     "star": 5,
     "rateCount": 16,
     "promo": {
@@ -1106,7 +1106,7 @@ var list_products = [{
     "name": "iPhone Xr 64GB",
     "company": "Apple",
     "img": "https://cdn.tgdd.vn/Products/Images/42/190325/iphone-xr-black-400x460.png",
-    "price": "22.990.000",
+    "price": 22990000,
     "star": 4,
     "rateCount": 5,
     "promo": {
@@ -1128,7 +1128,7 @@ var list_products = [{
     "name": "Huawei Nova 2i",
     "company": "Huawei",
     "img": "https://cdn.tgdd.vn/Products/Images/42/157031/huawei-nova-2i-600x600.jpg",
-    "price": "4.490.000",
+    "price": 4490000,
     "star": 4,
     "rateCount": 804,
     "promo": {
