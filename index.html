@@ -1248,10 +1248,31 @@
             document.getElementById("authModal").classList.remove("show");
         }
 
+        // Đóng các hộp thoại thông tin cá nhân/thông báo dùng chung.
+        // Hàm này được gọi bởi nút X và thao tác bấm vào vùng nền bên ngoài.
+        function closeOverlay(id) {
+            const overlay = document.getElementById(id);
+            if (overlay) overlay.classList.remove("show");
+        }
+
+        function closeOverlayOutside(event) {
+            const overlay = event.currentTarget;
+            if (event.target === overlay) {
+                overlay.classList.remove("show");
+            }
+        }
+
         function closeModalOutside(event) {
             // Chỉ đóng khi bấm đúng vùng nền bên ngoài hộp thoại, không đóng khi thao tác trong form.
             if (event.target === document.getElementById("authModal")) closeModal();
         }
+
+        document.addEventListener("keydown", event => {
+            if (event.key !== "Escape") return;
+            closeModal();
+            closeOverlay("profileModal");
+            closeOverlay("notificationModal");
+        });
 
         function switchAuthMode() {
             authMode = authMode === "login" ? "register" : "login";

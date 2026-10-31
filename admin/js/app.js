@@ -1137,7 +1137,20 @@ $("#pageContent").addEventListener("submit", (event) => {
   pageNumber = 1;
   render();
 });
-$("#closeModal").addEventListener("click", closeModal);
+$("#closeModal").addEventListener("click", (event) => {
+  event.preventDefault();
+  event.stopPropagation();
+  closeModal();
+});
+$("#modal").addEventListener("click", (event) => {
+  // Với dialog, chỉ click đúng phần nền (không phải nội dung) mới đóng.
+  if (event.target === $("#modal")) closeModal();
+});
+$("#modal").addEventListener("cancel", (event) => {
+  // Giữ một luồng đóng thống nhất khi nhấn Escape.
+  event.preventDefault();
+  closeModal();
+});
 $("#modal").addEventListener("close", () => {
   if (returnFocus?.isConnected) returnFocus.focus({ preventScroll: true });
 });
