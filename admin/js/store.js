@@ -396,6 +396,14 @@
         ].every((k) => Array.isArray(db[k])),
       "Dữ liệu lưu không tương thích với phiên bản TechStore này.",
     );
+    const cleanRes = cleanProductDescriptions(db);
+    if (cleanRes.updated > 0) {
+      try {
+        save(db);
+      } catch (err) {
+        console.warn("Không thể lưu tự động khi làm sạch mô tả sản phẩm:", err);
+      }
+    }
     return db;
   }
   function transact(db, operation) {
@@ -1541,7 +1549,7 @@ const BATCH_04 = {
     price,
     stock,
     threshold: Math.max(2, Math.min(5, Math.floor(stock / 4))),
-    description: `${name}. Thông số được đối chiếu theo tài liệu của hãng; giá bán và tồn kho là dữ liệu demo của TechStore.`,
+    description: `${name} chính hãng, thiết kế hiện đại, chất lượng vượt trội cùng chế độ bảo hành chính hãng tại TechStore.`,
     promo: { name: "", value: "" },
     star: 0,
     rateCount: 0,
@@ -1940,6 +1948,22 @@ const BATCH_04 = {
     return { updated, skipped: false };
   }
 
+  function cleanProductDescriptions(db) {
+    if (!db || !Array.isArray(db.products)) return { updated: 0 };
+    let updated = 0;
+    for (const p of db.products) {
+      if (
+        typeof p.description === "string" &&
+        (/dữ liệu demo của TechStore/i.test(p.description) ||
+          /Thông số được đối chiếu/i.test(p.description))
+      ) {
+        p.description = `${p.name} chính hãng, thiết kế hiện đại, chất lượng vượt trội cùng chế độ bảo hành chính hãng tại TechStore.`;
+        updated++;
+      }
+    }
+    return { updated };
+  }
+
   function importStandardBatches(db) {
     if (!db || !Array.isArray(db.products)) return db;
     let modified = false;
@@ -1954,6 +1978,8 @@ const BATCH_04 = {
     if (!correctionRes.skipped || correctionRes.updated > 0) modified = true;
     const patchRes = patchProductImagePaths(db);
     if (patchRes.updated > 0) modified = true;
+    const cleanRes = cleanProductDescriptions(db);
+    if (cleanRes.updated > 0) modified = true;
     if (modified) {
       try {
         save(db);
@@ -2003,5 +2029,6 @@ const BATCH_04 = {
     CANONICAL_PRODUCT_IMAGES,
     patchProductImagePaths,
     patchBatch2Corrections,
+    cleanProductDescriptions,
   };
 })();

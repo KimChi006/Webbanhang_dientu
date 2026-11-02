@@ -557,7 +557,7 @@ test("Đợt 3 có đúng 55 sản phẩm, cân bằng phụ kiện, ảnh hợp
   for (const product of batch3.flatMap((batch) => batch.products)) {
     assert.equal(product.star, 0, `${product.masp} không được có đánh giá giả`);
     assert.equal(product.rateCount, 0, `${product.masp} không được có lượt đánh giá giả`);
-    assert.match(product.description, /dữ liệu demo/i);
+    assert.match(product.description, /chính hãng/i);
     assert.ok(Object.values(product.detail || {}).filter(Boolean).length >= 3);
 
     const fullPath = path.join(root, "images", path.basename(product.img));
@@ -642,6 +642,24 @@ test("migration kiểm tra chéo đợt 2 vá dữ liệu cũ đúng một lần
   const second = S.patchBatch2Corrections(oldDb);
   assert.equal(second.skipped, true);
   assert.equal(JSON.stringify(oldDb), snapshot, "Chạy lại không thay đổi dữ liệu");
+});
+
+test("cleanProductDescriptions làm sạch toàn bộ mô tả demo cũ trong Local Storage", () => {
+  const db = {
+    products: [
+      { masp: "SP1", name: "Apple AirPods 3", description: "Apple AirPods 3. Thông số được đối chiếu theo tài liệu của hãng; giá bán và tồn kho là dữ liệu demo của TechStore." },
+      { masp: "SP2", name: "Cáp sạc Baseus", description: "Cáp sạc Baseus chính hãng chất lượng cao." },
+      { masp: "SP3", name: "Chuột Logitech", description: "Chuột Logitech. Dữ liệu demo của TechStore cho học phần." },
+    ],
+  };
+  const res = S.cleanProductDescriptions(db);
+  assert.equal(res.updated, 2);
+  assert.equal(db.products[0].description, "Apple AirPods 3 chính hãng, thiết kế hiện đại, chất lượng vượt trội cùng chế độ bảo hành chính hãng tại TechStore.");
+  assert.equal(db.products[1].description, "Cáp sạc Baseus chính hãng chất lượng cao.");
+  assert.equal(db.products[2].description, "Chuột Logitech chính hãng, thiết kế hiện đại, chất lượng vượt trội cùng chế độ bảo hành chính hãng tại TechStore.");
+
+  const res2 = S.cleanProductDescriptions(db);
+  assert.equal(res2.updated, 0);
 });
 
 console.log(`Hoàn tất ${passed} nhóm kiểm tra nghiệp vụ.`);
