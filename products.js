@@ -1,5 +1,5 @@
 var list_products = [{
-    "name": "SamSung Galaxy J4+",
+    "name": "Samsung Galaxy J4+",
     "company": "Samsung",
     "img": "images/samsung-galaxy-j4-plus-pink-400x400.jpg",
     "price": 3490000,
@@ -45,8 +45,8 @@ var list_products = [{
     },
     "masp": "Xia0"
 }, {
-    "name": "Oppo F9",
-    "company": "Oppo",
+    "name": "OPPO F9",
+    "company": "OPPO",
     "img": "images/oppo-f9-red-600x600.jpg",
     "price": 7690000,
     "star": 5,
@@ -137,8 +137,8 @@ var list_products = [{
     },
     "masp": "App0"
 }, {
-    "name": "Oppo A3s 32GB",
-    "company": "Oppo",
+    "name": "OPPO A3s 32GB",
+    "company": "OPPO",
     "img": "images/oppo-a3s-32gb-600x600.jpg",
     "price": 4690000,
     "star": 0,
@@ -194,15 +194,15 @@ var list_products = [{
         "value": "0"
     },
     "detail": {
-        "screen": "LED-backlit LCD, 9.7p''",
-        "os": "\tiOS 11.3",
+        "screen": "9.7 inch, Retina IPS",
+        "os": "iOS 11.3",
         "camara": "8 MP",
         "camaraFront": "1.2 MP",
         "cpu": "Apple A10 Fusion, 2.34 GHz",
         "ram": "2 GB",
         "rom": "32 GB",
         "microUSB": "Không",
-        "battery": "Chưa có thông số cụ thể"
+        "battery": "Tối đa 10 giờ duyệt web Wi-Fi hoặc xem video"
     },
     "masp": "App1"
 }, {
@@ -240,15 +240,15 @@ var list_products = [{
         "value": "0"
     },
     "detail": {
-        "screen": "IPS LCD, 6.26', Full HD+",
+        "screen": "AMOLED, 6.21 inch, Full HD+",
         "os": "Android 8.1 (Oreo)",
-        "camara": "12 MP và 5 MP (2 camera)",
-        "camaraFront": "24 MP",
-        "cpu": "Qualcomm Snapdragon 660 8 nhân",
-        "ram": "4 GB",
+        "camara": "2 camera 12 MP",
+        "camaraFront": "20 MP",
+        "cpu": "Qualcomm Snapdragon 845 8 nhân",
+        "ram": "6 GB",
         "rom": "64 GB",
-        "microUSB": "MicroSD, hỗ trợ tối đa 512 GB",
-        "battery": "3300 mAh, có sạc nhanh"
+        "microUSB": "Không hỗ trợ thẻ nhớ; USB-C",
+        "battery": "3400 mAh, có sạc nhanh"
     },
     "masp": "Xia1"
 }, {
@@ -1121,6 +1121,7 @@ var list_products = [{
         "cpu": "Apple A12 Bionic 6 nhân",
         "ram": "3 GB",
         "rom": "64 GB",
+        "microUSB": "Không",
         "battery": "2942 mAh, có sạc nhanh"
     },
     "masp": "App6"

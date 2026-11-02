@@ -22,7 +22,7 @@ try {
     const page = await context.newPage();
     const errors = [];
     page.on("pageerror", (error) => errors.push(error.message));
-    const artifacts = path.join(os.tmpdir(), "techstore-admin-review-20261019");
+    const artifacts = path.join(os.tmpdir(), "techstore-admin-review-20261101");
     fs.mkdirSync(artifacts, { recursive: true });
     const screenshot = async (name) =>
       page.screenshot({
@@ -82,6 +82,7 @@ try {
     // Loại: CRUD, ẩn/hiện và chặn xóa loại có sản phẩm.
     await nav("categories");
     await action("edit-category", "").click();
+    await page.locator("#f-id").fill("L99");
     await page.locator("#f-name").fill("Thiết bị thử nghiệm");
     await page.locator("#f-profitRate").fill("20");
     await submit();
@@ -106,8 +107,8 @@ try {
     await nav("products");
     await screenshot("03-products");
     await action("next").click();
-    assert.match(await page.locator(".pagination").innerText(), /2 \/ 3/);
-    await action("edit-product", "").click();
+    assert.match(await page.locator(".pagination").innerText(), /2 \/ 15/);
+    await action("add-product", "").click();
     await page.locator("#f-masp").fill("QA-UI");
     await page.locator("#f-categoryId").selectOption(categoryId);
     await page.locator("#f-name").fill("Điện thoại kiểm thử");
@@ -326,6 +327,56 @@ try {
     await page.locator("#logoutButton").click();
     await page.reload();
     assert.equal(await page.locator("#loginScreen").isVisible(), true);
+
+    // Storefront Đợt 4: popup đa lựa chọn, URL, đổi danh mục và mobile.
+    await page.setViewportSize({ width: 1366, height: 900 });
+    await page.goto(pathToFileURL(path.resolve(__dirname, "../../index.html")).href + "?category=L04");
+    assert.equal(await page.locator(".storefront-header .logo-mark").getAttribute("src"), "images/techstore-mark.svg");
+    assert.equal(await page.locator(".storefront-header .cart-count").innerText(), "0");
+    assert.equal(await page.locator(".hero-showcase, .hero-device").count(), 0);
+    assert.equal(await page.locator(".hero-content h1").innerText(), "Thi\u1ebft b\u1ecb ph\u00f9 h\u1ee3p v\u1edbi m\u1ecdi nhu c\u1ea7u");
+    assert.equal(await page.locator(".hero-cta").getAttribute("href"), "#san-pham");
+    await screenshot("09-storefront-desktop");
+    await page.locator("#headerSearchInput").fill("Lenovo");
+    await page.locator("#headerSearchInput").press("Enter");
+    await page.waitForFunction(() => new URLSearchParams(location.search).get("q") === "Lenovo");
+    assert.match(page.url(), /q=Lenovo/);
+    await page.goto(pathToFileURL(path.resolve(__dirname, "../../index.html")).href + "?category=L04");
+    assert.match(await page.locator("#productCount").innerText(), /25 sản phẩm/);
+    assert.match(await page.locator(".filter-group-spec1 .pill-label").innerText(), /ĐỒ HỌA \(GPU\)/i);
+    await page.locator(".filter-group-brand .filter-popover-trigger").click();
+    assert.equal(await page.locator(".filter-group-brand .filter-popover-panel").isVisible(), true);
+    await page.keyboard.press("Escape");
+    assert.equal(await page.locator(".filter-group-brand .filter-popover-panel").isVisible(), false);
+    await page.locator(".filter-group-brand .filter-popover-trigger").click();
+    await page.locator(".filters-heading").click();
+    assert.equal(await page.locator(".filter-group-brand .filter-popover-panel").isVisible(), false);
+    await page.locator(".filter-group-brand .filter-popover-trigger").focus();
+    await page.keyboard.press("Enter");
+    assert.equal(await page.locator(".filter-group-brand .filter-popover-panel").isVisible(), true);
+    await page.keyboard.press("Escape");
+    await page.locator('[data-action="toggle-advanced"]').click();
+    await page.locator(".filter-group-brand .filter-popover-trigger").click();
+    await page.locator('.filter-group-brand input[value="Apple"]').check();
+    await page.locator('.filter-group-brand input[value="Asus"]').check();
+    assert.match(await page.locator("#productCount").innerText(), /9 sản phẩm/);
+    assert.match(page.url(), /brand=Apple/);
+    assert.match(page.url(), /brand=Asus/);
+    assert.equal(await page.locator(".filter-chip").filter({ hasText: "Hãng:" }).count(), 2);
+    await page.locator(".filter-group-spec1 .filter-popover-trigger").click();
+    await page.locator('.filter-group-spec1 input[value="NVIDIA RTX 4050"]').check();
+    assert.match(await page.locator("#productCount").innerText(), /1 sản phẩm/);
+    await page.locator('select[name="category"]').selectOption("L05");
+    assert.doesNotMatch(page.url(), /spec1=|ram=|rom=|cpu=/);
+    assert.match(await page.locator("#productCount").innerText(), /3 sản phẩm/);
+    assert.match(page.url(), /brand=Apple/);
+    assert.doesNotMatch(page.url(), /brand=Asus/);
+    await page.goBack();
+    await page.waitForFunction(() => document.querySelector("#productCount")?.textContent.includes("1 sản phẩm"));
+    assert.match(await page.locator("#productCount").innerText(), /1 sản phẩm/);
+    await page.setViewportSize({ width: 390, height: 844 });
+    assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth), false);
+    await screenshot("09-storefront-filters-mobile");
     assert.deepEqual(errors, []);
     console.log(
       "PASS: đăng nhập riêng, khách hàng, loại, sản phẩm, phiếu nhập, giá bán, đơn hàng, kho theo thời điểm, báo cáo theo loại, lưu dữ liệu, desktop/mobile, chạy file:// offline.",

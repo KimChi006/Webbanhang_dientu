@@ -52,7 +52,7 @@
         .logo {
             font-size: 25px;
             font-weight: 800;
-            color: #1769d2;
+            color: #0066ff;
             white-space: nowrap;
         }
 
@@ -74,8 +74,15 @@
         }
 
         .nav-menu a:hover {
-            color: #1769d2;
+            color: #0066ff;
         }
+
+        .nav-product-menu { position: relative; display: flex; align-items: center; height: 100%; }
+        .nav-product-trigger { display: inline-flex; align-items: center; gap: 6px; padding: 18px 0; }
+        .nav-category-dropdown { display: none; position: absolute; top: calc(100% - 2px); left: -14px; min-width: 220px; max-width: 300px; max-height: 65vh; overflow-y: auto; padding: 8px; background: #fff; border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 14px 35px rgba(15,23,42,.16); z-index: 1000; }
+        .nav-product-menu:hover .nav-category-dropdown, .nav-product-menu:focus-within .nav-category-dropdown { display: block; }
+        .nav-category-dropdown a { display: block; padding: 10px 12px; border-radius: 7px; color: #334155; white-space: normal; }
+        .nav-category-dropdown a:hover, .nav-category-dropdown a:focus-visible { color: #0066ff; background: #eff6ff; }
 
         .nav-actions {
             display: flex;
@@ -95,8 +102,8 @@
 
         .btn-outline {
             background: white;
-            color: #1769d2;
-            border: 1px solid #1769d2;
+            color: #0066ff;
+            border: 1px solid #0066ff;
         }
 
         .btn-outline:hover {
@@ -104,17 +111,17 @@
         }
 
         .btn-primary {
-            background: #1769d2;
+            background: #0066ff;
             color: white;
         }
 
         .btn-primary:hover {
-            background: #1055b0;
+            background: #0052cc;
         }
 
         .btn-cart {
             background: #edf4ff;
-            color: #1769d2;
+            color: #0066ff;
         }
 
         .btn-cart:hover {
@@ -129,7 +136,7 @@
         }
 
         .hero-content {
-            background: linear-gradient(120deg, #1769d2, #3989f5);
+            background: #0066ff;
             color: white;
             padding: 38px 42px;
             border-radius: 16px;
@@ -216,7 +223,7 @@
 
         .product-company {
             font-size: 12px;
-            color: #1769d2;
+            color: #0066ff;
             font-weight: 700;
             margin-bottom: 8px;
             text-transform: uppercase;
@@ -257,46 +264,204 @@
             border-radius: 12px;
         }
 
-        /* ===== CHÂN TRANG ===== */
+        /* ===== CHÂN TRANG (FOOTER) ===== */
         .footer {
-            background: #17263c;
-            color: #dbe4f0;
-            padding: 40px 24px 20px;
+            background-color: #131e2e;
+            color: #cbd5e1;
+            padding: 48px 20px 24px;
+            border-top: 1px solid #1e293b;
         }
 
         .footer-container {
             max-width: 1200px;
-            margin: auto;
+            margin: 0 auto;
             display: grid;
-            grid-template-columns: 1.4fr 1fr 1fr;
+            grid-template-columns: 1.3fr 1fr 1fr;
             gap: 40px;
         }
 
+        .footer-col {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .footer-brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .footer-logo-mark {
+            width: 32px;
+            height: 32px;
+            flex-shrink: 0;
+        }
+
+        .footer-brand-name {
+            font-size: 22px;
+            font-weight: 800;
+            color: #ffffff;
+            letter-spacing: -0.5px;
+        }
+
+        .footer-slogan {
+            font-size: 13.5px;
+            line-height: 1.6;
+            color: #94a3b8;
+            margin: 0 0 16px 0;
+        }
+
         .footer h3 {
-            color: white;
-            font-size: 17px;
-            margin-bottom: 16px;
+            color: #ffffff;
+            font-size: 16px;
+            font-weight: 700;
+            margin: 0 0 16px 0;
+            padding-left: 10px;
+            border-left: 3px solid #0066ff;
+            line-height: 1.3;
         }
 
-        .footer p,
-        .footer a {
+        .footer-contact-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 11px;
+        }
+
+        .footer-contact-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 13.5px;
+            line-height: 1.5;
+            color: #cbd5e1;
+        }
+
+        .footer-contact-list li i {
+            color: #38bdf8;
             font-size: 14px;
-            line-height: 1.9;
-            color: #c4d0df;
+            width: 16px;
+            margin-top: 3px;
+            flex-shrink: 0;
+            text-align: center;
         }
 
-        .footer a:hover {
-            color: white;
+        .footer-contact-list a {
+            color: #e2e8f0;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.18s ease;
+        }
+
+        .footer-contact-list a:hover {
+            color: #38bdf8;
+            text-decoration: underline;
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .footer-links a {
+            display: inline-flex;
+            align-items: center;
+            gap: 9px;
+            color: #cbd5e1;
+            text-decoration: none;
+            font-size: 13.5px;
+            line-height: 1.45;
+            transition: color 0.18s ease, transform 0.18s ease;
+        }
+
+        .footer-links a i {
+            color: #64748b;
+            font-size: 13px;
+            width: 16px;
+            text-align: center;
+            flex-shrink: 0;
+            transition: color 0.18s ease;
+        }
+
+        .footer-links a:hover {
+            color: #38bdf8;
+            transform: translateX(3px);
+        }
+
+        .footer-links a:hover i {
+            color: #38bdf8;
+        }
+
+        .footer-notes {
+            margin-top: 16px;
+            padding: 12px 14px;
+            background: #17263c;
+            border: 1px solid #23354d;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .footer-note-item {
+            margin: 0;
+            font-size: 12.5px;
+            line-height: 1.5;
+            color: #94a3b8;
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .footer-note-item i {
+            color: #38bdf8;
+            font-size: 13px;
+            margin-top: 2px;
+            width: 14px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .footer-note-item strong {
+            color: #e2e8f0;
         }
 
         .footer-bottom {
             max-width: 1200px;
-            margin: 28px auto 0;
-            padding-top: 18px;
-            border-top: 1px solid #34445a;
+            margin: 36px auto 0;
+            padding-top: 20px;
+            border-top: 1px solid #1e293b;
             text-align: center;
+        }
+
+        .copyright-text {
             font-size: 13px;
-            color: #9fb0c5;
+            color: #94a3b8;
+            margin: 0;
+        }
+
+        @media (max-width: 860px) {
+            .footer {
+                padding: 36px 16px 20px;
+            }
+            .footer-container {
+                grid-template-columns: 1fr;
+                gap: 28px;
+            }
+            .footer-bottom {
+                margin-top: 28px;
+                padding-top: 16px;
+            }
+            .copyright-text {
+                font-size: 12px;
+            }
         }
 
         /* ===== FORM ĐĂNG NHẬP / ĐĂNG KÝ ===== */
@@ -331,7 +496,7 @@
         }
 
         .modal-header h2 {
-            color: #1769d2;
+            color: #0066ff;
             font-size: 26px;
             margin-bottom: 10px;
         }
@@ -372,8 +537,8 @@
         }
 
         .form-group input:focus {
-            border-color: #1769d2;
-            box-shadow: 0 0 0 3px #1769d21a;
+            border-color: #0066ff;
+            box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.15);
         }
 
         .form-submit {
@@ -392,7 +557,7 @@
         .form-switch button {
             border: none;
             background: none;
-            color: #1769d2;
+            color: #0066ff;
             font-weight: 700;
         }
 
@@ -404,7 +569,7 @@
         }
 
         .account-name {
-            color: #1769d2;
+            color: #0066ff;
             font-size: 14px;
             font-weight: 700;
         }
@@ -417,7 +582,7 @@
         .account-trigger {
             border: 1px solid #d6deea;
             background: #fff;
-            color: #1769d2;
+            color: #0066ff;
             border-radius: 8px;
             padding: 10px 14px;
             font-size: 14px;
@@ -470,7 +635,7 @@
 
         .account-dropdown button:hover {
             background: #eef5ff;
-            color: #1769d2;
+            color: #0066ff;
         }
 
         .account-dropdown button.logout-option {
@@ -478,7 +643,6 @@
             border-top: 1px solid #e8edf5;
             margin-top: 4px;
         }
-        
         /* ===== FORM ĐĂNG NHẬP ===== */
         #authForm:not(.register-layout) {
             display: flex;
@@ -532,73 +696,12 @@
 
         /* ===== RESPONSIVE ===== */
         @media (max-width: 1000px) {
-            .nav-container {
-                flex-wrap: wrap;
-            }
-
-            .nav-menu {
-                order: 3;
-                width: 100%;
-                justify-content: center;
-                padding-top: 8px;
-            }
-
             .product-grid {
                 grid-template-columns: repeat(3, minmax(0, 1fr));
             }
         }
 
-        .mobile-menu-toggle { display: none; border: 1px solid #d8e2f0; border-radius: 9px; background: #fff; color: #1769d2; font-size: 24px; line-height: 1; padding: 8px 11px; }
-        @media (max-width: 700px) {
-            .nav-container { position: relative; flex-wrap: nowrap; gap: 8px; }
-            .logo { order: 1; flex-shrink: 0; }
-            /* Chỉ ẩn lời chào; vẫn giữ Tài khoản, Đăng xuất, Giỏ hàng và nút menu */
-            .nav-actions { order: 2; margin-left: auto; flex-shrink: 1; display: flex; align-items: center; gap: 6px; min-width: 0; }
-            .nav-actions .account-greeting { display: none !important; }
-            .nav-actions > .btn { white-space: nowrap; padding: 8px 9px; font-size: 13px; }
-            .nav-actions .btn-cart { white-space: nowrap; padding: 8px 9px; }
-            .mobile-menu-toggle { display: inline-flex; align-items: center; justify-content: center; order: 3; flex-shrink: 0; padding: 7px 9px; }
-            .nav-menu { display: none; position: absolute; top: calc(100% + 1px); left: 0; right: 0; width: auto; padding: 10px 16px 14px; background: #fff; border-bottom: 1px solid #e2e8f0; box-shadow: 0 12px 20px rgba(15,23,42,.12); flex-direction: column; align-items: stretch; gap: 0; overflow: visible; z-index: 1001; }
-            .nav-menu.mobile-open { display: flex; }
-            .nav-menu > a, .nav-product-trigger { display: flex; width: 100%; padding: 13px 10px; white-space: normal; font-size: 15px; }
-            .nav-product-menu { display: block; height: auto; }
-            .nav-category-dropdown { position: static; min-width: 0; max-width: none; max-height: 40vh; margin: 0 0 6px 10px; box-shadow: none; border-radius: 8px; background: #f8fafc; }
-            .nav-product-menu.mobile-expanded .nav-category-dropdown { display: block; }
-            .nav-product-menu:hover .nav-category-dropdown { display: none; }
-            .nav-product-menu.mobile-expanded:hover .nav-category-dropdown { display: block; }
-        }
-
-        @media (max-width: 700px) {
-            .nav-container {
-                padding: 14px 16px;
-                gap: 14px;
-            }
-
-            .logo {
-                font-size: 21px;
-            }
-
-            .nav-actions {
-                gap: 6px;
-            }
-
-            .nav-actions .btn {
-                padding: 9px;
-                font-size: 12px;
-            }
-
-            .nav-menu {
-                gap: 17px;
-                overflow-x: auto;
-                justify-content: flex-start;
-            }
-
-            .nav-menu a {
-                white-space: nowrap;
-                font-size: 13px;
-            }
-
-            .hero,
+        .hero,
             .products-section {
                 padding: 0 16px;
             }
@@ -632,10 +735,6 @@
                 font-size: 16px;
             }
 
-            .footer-container {
-                grid-template-columns: 1fr;
-                gap: 25px;
-            }
         }
 
         #profileModal .modal-content,
@@ -689,7 +788,7 @@
         .detail-back {
             display: inline-block;
             margin-bottom: 22px;
-            color: #1769d2;
+            color: #0066ff;
             font-weight: 600;
             font-size: 14px;
             cursor: pointer;
@@ -735,7 +834,7 @@
         }
 
         .detail-company {
-            color: #1769d2;
+            color: #0066ff;
             font-size: 14px;
             font-weight: 700;
         }
@@ -820,25 +919,36 @@
         }
 
     </style>
-    <link rel="stylesheet" href="css/catalog.css"></head>
+    <link rel="stylesheet" href="css/catalog.css">
+    <link rel="stylesheet" href="css/storefront-header.css">
+    <link rel="stylesheet" href="assets/fontawesome/css/all.min.css"></head>
 
 <body>
 
     <!-- THANH ĐIỀU HƯỚNG -->
-    <header class="navbar">
+    <header class="storefront-header">
+        <div class="storefront-utility"><div class="storefront-utility-inner"><span>TechStore · Cửa hàng điện tử</span><a href="#lien-he">Hỗ trợ khách hàng</a></div></div>
+        <div class="navbar">
         <div class="nav-container">
 
-            <a href="index.html" class="logo">
-                Tech<span>Store.</span>
+            <a href="index.html" class="logo" aria-label="TechStore - Trang chủ">
+                <img class="logo-mark" src="images/techstore-mark.svg" alt="">
+                <span class="logo-wordmark">TechStore</span>
             </a>
+
+            <form class="header-search" id="headerSearch" role="search">
+                <label class="sr-only" for="headerSearchInput">Tìm kiếm sản phẩm</label>
+                <input id="headerSearchInput" name="q" type="search" maxlength="200" autocomplete="off" placeholder="Tìm sản phẩm, thương hiệu...">
+                <button type="submit" aria-label="Tìm kiếm"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i></button>
+            </form>
 
             <nav class="nav-menu" id="primaryNav">
                 <a href="index.html">Trang chủ</a>
-                <a href="#san-pham">Sản phẩm</a>
+                <div class="nav-product-menu"><a href="index.html#san-pham" class="nav-product-trigger" aria-haspopup="true" aria-expanded="false"><i class="fa-solid fa-table-cells-large" aria-hidden="true"></i> Sản phẩm <i class="fa-solid fa-chevron-down" aria-hidden="true"></i></a><div class="nav-category-dropdown" id="navCategoryDropdown" role="menu" aria-label="Loại sản phẩm"><a href="index.html#san-pham" data-nav-category="" role="menuitem">Tất cả sản phẩm</a></div></div>
                 <a href="#lien-he">Liên hệ</a>
             </nav>
 
-            <button class="mobile-menu-toggle" id="mobileMenuToggle" type="button" aria-label="Mở menu điều hướng" aria-expanded="false" aria-controls="primaryNav">☰</button>
+            <button class="mobile-menu-toggle" id="mobileMenuToggle" type="button" aria-label="Mở menu điều hướng" aria-expanded="false" aria-controls="primaryNav"><i class="fa-solid fa-bars" aria-hidden="true"></i></button>
             <div class="nav-actions" id="accountActions">
                 <button class="btn btn-outline" onclick="openModal('register')">
                     Đăng ký
@@ -849,21 +959,18 @@
                 </button>
 
                 <a href="don-hang.html" class="btn btn-cart">
-                    🛒 Giỏ hàng
+                    <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i> <span class="btn-cart-label">Giỏ hàng</span>
                 </a>
             </div>
 
+        </div>
         </div>
     </header>
 
     <!-- GIỚI THIỆU -->
     <section class="hero">
         <div class="hero-content">
-            <h1>Chào mừng đến với TechStore</h1>
-            <p>
-                Khám phá các sản phẩm điện tử nổi bật với thông tin rõ ràng,
-                giá cả minh bạch và trải nghiệm mua sắm thuận tiện.
-            </p>
+            <div class="hero-copy"><span class="hero-eyebrow">Thiết bị công nghệ · Thông tin minh bạch</span><h1>Thiết bị phù hợp với mọi nhu cầu</h1><p>Khám phá sản phẩm điện tử với giá và thông tin rõ ràng trong một trải nghiệm mua sắm gọn gàng.</p><a class="hero-cta" href="index.html#san-pham">Khám phá sản phẩm <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></a></div>
         </div>
     </section>
 
@@ -885,40 +992,65 @@
 
     </main>
 
-    <!-- THÔNG TIN LIÊN HỆ -->
+    <!-- THÔNG TIN LIÊN HỆ & CHÂN TRANG -->
     <footer class="footer" id="lien-he">
         <div class="footer-container">
 
-            <div>
-                <h3>TechStore</h3>
-                <p>
-                    Cửa hàng kinh doanh thiết bị điện tử.
-                    Mang đến trải nghiệm mua sắm tiện lợi
-                    và thông tin sản phẩm minh bạch.
-                </p>
+            <!-- CỘT 1: VỀ CỬA HÀNG TECHSTORE -->
+            <div class="footer-col footer-col-about">
+                <div class="footer-brand">
+                    <img class="footer-logo-mark" src="images/techstore-mark.svg" alt="" aria-hidden="true">
+                    <span class="footer-brand-name">TechStore</span>
+                </div>
+                <p class="footer-slogan">Cửa hàng bán lẻ thiết bị công nghệ và phụ kiện điện tử chính hãng.</p>
+                <ul class="footer-contact-list">
+                    <li>
+                        <i class="fa-solid fa-location-dot" aria-hidden="true"></i>
+                        <span>273 An Dương Vương, Phường Chợ Quán, TP. Hồ Chí Minh</span>
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-envelope" aria-hidden="true"></i>
+                        <span>Email: <a href="mailto:support@techstore.vn">support@techstore.vn</a></span>
+                    </li>
+                    <li>
+                        <i class="fa-solid fa-clock" aria-hidden="true"></i>
+                        <span>Thứ 2 - Chủ Nhật (08:00 - 21:30)</span>
+                    </li>
+                </ul>
             </div>
 
-            <div>
-                <h3>Thông tin liên hệ</h3>
-                <p>Địa chỉ: Cập nhật địa chỉ cửa hàng</p>
-                <p>Email: support@techstore.vn</p>
-                <p>Điện thoại: 0123 456 789</p>
+            <!-- CỘT 2: DANH MỤC SẢN PHẨM (TẤT CẢ LINK HOẠT ĐỘNG THẬT) -->
+            <div class="footer-col">
+                <h3>Danh mục thiết bị</h3>
+                <ul class="footer-links">
+                    <li><a href="index.html?category=L01#san-pham" data-nav-category="L01"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> Điện thoại di động</a></li>
+                    <li><a href="index.html?category=L04#san-pham" data-nav-category="L04"><i class="fa-solid fa-laptop" aria-hidden="true"></i> Máy tính xách tay</a></li>
+                    <li><a href="index.html?category=L02#san-pham" data-nav-category="L02"><i class="fa-solid fa-tablet-screen-button" aria-hidden="true"></i> Máy tính bảng (Tablet)</a></li>
+                    <li><a href="index.html?category=L05#san-pham" data-nav-category="L05"><i class="fa-solid fa-headphones" aria-hidden="true"></i> Tai nghe &amp; Thiết bị âm thanh</a></li>
+                    <li><a href="index.html?category=L03#san-pham" data-nav-category="L03"><i class="fa-solid fa-charging-station" aria-hidden="true"></i> Cáp sạc &amp; Phụ kiện</a></li>
+                    <li><a href="index.html#san-pham" data-nav-category=""><i class="fa-solid fa-layer-group" aria-hidden="true"></i> Tất cả sản phẩm</a></li>
+                </ul>
             </div>
 
-            <div>
-                <h3>Hỗ trợ khách hàng</h3>
-                <p><a href="#san-pham">Danh sách sản phẩm</a></p>
-                <p><a id="footerCartLink" href="don-hang.html">Giỏ hàng và đơn hàng</a></p>
-                <p><a href="don-hang.html">Giỏ hàng và đơn hàng</a></p>
-                <p><a href="#" onclick="openModal('login'); return false;">
-                    Tài khoản khách hàng
-                </a></p>
+            <!-- CỘT 3: DỊCH VỤ & TIỆN ÍCH HỆ THỐNG -->
+            <div class="footer-col">
+                <h3>Tiện ích khách hàng</h3>
+                <ul class="footer-links">
+                    <li><a id="footerCartLink" href="don-hang.html"><i class="fa-solid fa-receipt" aria-hidden="true"></i> Quản lý đơn hàng &amp; Giỏ hàng</a></li>
+                    <li><a href="#" onclick="openModal('login'); return false;"><i class="fa-solid fa-user-circle" aria-hidden="true"></i> Đăng nhập / Đăng ký</a></li>
+                    <li><a href="index.html#san-pham"><i class="fa-solid fa-filter" aria-hidden="true"></i> Bộ lọc &amp; Tìm kiếm nhanh</a></li>
+                </ul>
+                <div class="footer-notes">
+                    <p class="footer-note-item"><i class="fa-solid fa-truck-fast" aria-hidden="true"></i> <span><strong>Phương thức:</strong> Hỗ trợ đặt hàng trực tuyến, thanh toán khi nhận hàng (COD).</span></p>
+                    <p class="footer-note-item"><i class="fa-solid fa-database" aria-hidden="true"></i> <span><strong>Lưu trữ:</strong> Dữ liệu đơn hàng và tài khoản đồng bộ trên hệ thống trình duyệt.</span></p>
+                </div>
             </div>
 
         </div>
 
+        <!-- DÒNG BẢN QUYỀN DƯỚI CÙNG -->
         <div class="footer-bottom">
-            © 2026 TechStore. Website bán hàng điện tử.
+            <p class="copyright-text">© 2026 TechStore · Cửa hàng thiết bị điện tử trực tuyến. Mọi quyền được bảo lưu.</p>
         </div>
     </footer>
 
@@ -927,7 +1059,7 @@
         <div class="modal-content">
 
             <button class="close-modal" onclick="closeModal()" aria-label="Đóng">
-                &times;
+                <i class="fa-solid fa-xmark" aria-hidden="true"></i>
             </button>
 
             <div class="modal-header">
@@ -1034,8 +1166,8 @@
         <div class="modal-content">
             <button class="close-modal"
                     type="button"
-                    onclick="closeOverlay('profileModal')"
-                    aria-label="Đóng">&times;</button>
+                    onclick="requestCloseProfile()"
+                    aria-label="Đóng thông tin cá nhân"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
 
             <div class="modal-header">
                 <h2>Thông tin cá nhân</h2>
@@ -1079,6 +1211,7 @@
                         id="profileSubmit" type="submit">
                     Lưu thay đổi
                 </button>
+                <div class="profile-form-actions"><button class="btn btn-outline" id="profileCancel" type="button" onclick="requestCloseProfile()">Hủy</button></div>
             </form>
         </div>
     </div>
@@ -1090,7 +1223,7 @@
             <button class="close-modal"
                     type="button"
                     onclick="closeOverlay('notificationModal')"
-                    aria-label="Đóng">&times;</button>
+                    aria-label="Đóng"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
 
             <div class="modal-header">
                 <h2>Thông báo</h2>
@@ -1297,8 +1430,16 @@
                     : "Nhập mật khẩu";
         }
 
-                const authForm = document.getElementById("authForm");
+        const authForm = document.getElementById("authForm");
         const formMessage = document.getElementById("formMessage");
+        let profileSnapshot = null;
+        let profileOpener = null;
+        function profileFormValues() { return ["profileName", "profileEmail", "profilePhone", "profileBirth", "profileAddress"].map(id => document.getElementById(id)?.value || ""); }
+        function profileIsDirty() { return profileSnapshot && JSON.stringify(profileFormValues()) !== JSON.stringify(profileSnapshot); }
+        function closeOverlay(id) { const modal = document.getElementById(id); if (!modal) return; modal.classList.remove("show"); if (!document.querySelector(".modal.show")) document.body.classList.remove("modal-open"); if (id === "profileModal" && profileOpener && document.contains(profileOpener)) profileOpener.focus(); if (id === "profileModal") { profileSnapshot = null; profileOpener = null; } }
+        function requestCloseProfile() { if (profileIsDirty() && !window.confirm("Bạn có muốn bỏ các thay đổi chưa lưu không?")) return; closeOverlay("profileModal"); }
+        function closeOverlayOutside(event) { if (event.target !== event.currentTarget) return; if (event.currentTarget.id === "profileModal") requestCloseProfile(); else closeOverlay(event.currentTarget.id); }
+        document.addEventListener("keydown", event => { if (event.key !== "Escape") return; const visible = document.querySelector(".modal.show"); if (!visible) return; if (visible.id === "profileModal") requestCloseProfile(); else closeOverlay(visible.id); });
 
         // Đọc thông tin cá nhân từ tài khoản đang đăng nhập trong Local Storage.
         function openProfileModal() {
@@ -1306,7 +1447,9 @@
             const message = document.getElementById("profileMessage");
             const submit = document.getElementById("profileSubmit");
             const p = tv4CurrentAccount();
+            profileOpener = document.activeElement;
             modal.classList.add("show");
+            document.body.classList.add("modal-open");
             if (!p) {
                 message.textContent = "Vui lòng đăng nhập trước khi xem hồ sơ.";
                 message.style.color = "#d14343";
@@ -1318,9 +1461,11 @@
             document.getElementById("profilePhone").value = p.soDienThoai || "";
             document.getElementById("profileBirth").value = String(p.ngaySinh || "").slice(0, 10);
             document.getElementById("profileAddress").value = p.diaChi || "";
+            profileSnapshot = profileFormValues();
             message.textContent = "Thông tin được lưu trên trình duyệt này.";
             message.style.color = "#64748b";
             submit.disabled = false;
+            requestAnimationFrame(() => document.getElementById("profileName")?.focus());
         }
 
         document.getElementById("profileForm").addEventListener("submit", event => {
@@ -1351,6 +1496,7 @@
             tv4SaveCurrentAccount(updated);
             tv4SyncCustomer(updated);
             updateAccountActions(updated);
+            profileSnapshot = profileFormValues();
             message.style.color = "#16803d"; message.textContent = "Đã lưu thông tin cá nhân vào Local Storage.";
             submit.disabled = false;
         });
@@ -1422,36 +1568,35 @@
         function updateAccountActions(account) {
             const host = document.getElementById("accountActions");
             if (!host) return;
-            const cart = '<a href="don-hang.html" class="btn btn-cart">🛒 Giỏ hàng</a>';
+            let cartQuantity = 0;
+            if (account) {
+                const carts = tv4ReadJSON(TV4_CART_KEY, {});
+                const items = Array.isArray(carts[tv4AccountId(account)]) ? carts[tv4AccountId(account)] : [];
+                cartQuantity = items.reduce((sum, item) => sum + Math.max(0, Number(item.quantity) || 0), 0);
+            }
+            const cart = '<a href="don-hang.html" class="btn btn-cart" aria-label="Giỏ hàng, ' + cartQuantity + ' sản phẩm"><i class="fa-solid fa-cart-shopping" aria-hidden="true"></i> <span class="btn-cart-label">Giỏ hàng</span><span class="cart-count" aria-hidden="true">' + cartQuantity + '</span></a>';
             if (!account) {
-                host.innerHTML = '<button class="btn btn-outline" type="button" onclick="openModal(\'register\')">Đăng ký</button><button class="btn btn-primary" type="button" onclick="openModal(\'login\')">Đăng nhập</button>' + cart;
+                host.innerHTML = '<button class="btn btn-outline" type="button" onclick="openModal(\'register\')"><i class="fa-solid fa-user-plus" aria-hidden="true"></i> Đăng ký</button><button class="btn btn-primary" type="button" onclick="openModal(\'login\')"><i class="fa-solid fa-right-to-bracket" aria-hidden="true"></i> Đăng nhập</button>' + cart;
                 return;
             }
             const name = String(account.hoTen || account.name || account.email || "Khách hàng").replace(/[&<>"']/g, ch => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch]));
-            host.innerHTML = '<span class="account-greeting" title="' + name + '">Xin chào, ' + name + '</span><button class="btn btn-outline" type="button" onclick="openProfileModal()">Tài khoản</button><button class="btn btn-primary" type="button" onclick="logoutAccount()">Đăng xuất</button>' + cart;
+            host.innerHTML = '<span class="account-greeting" title="' + name + '"><i class="fa-solid fa-user" aria-hidden="true"></i> Xin chào, ' + name + '</span><button class="btn btn-outline" type="button" onclick="openProfileModal()"><i class="fa-solid fa-id-card" aria-hidden="true"></i> Tài khoản</button><button class="btn btn-primary" type="button" onclick="logoutAccount()"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Đăng xuất</button>' + cart;
         }
 
         (function setupMobileMenu() {
-            const toggle = document.getElementById("mobileMenuToggle");
             const nav = document.getElementById("primaryNav");
             const productMenu = document.querySelector(".nav-product-menu");
             const productTrigger = document.querySelector(".nav-product-trigger");
-            if (!toggle || !nav) return;
-            toggle.addEventListener("click", () => { const open = !nav.classList.contains("mobile-open"); nav.classList.toggle("mobile-open", open); toggle.setAttribute("aria-expanded", String(open)); toggle.textContent = open ? "×" : "☰"; });
-            if (productTrigger && productMenu) productTrigger.addEventListener("click", event => { if (window.matchMedia("(max-width: 700px)").matches) { event.preventDefault(); productMenu.classList.toggle("mobile-expanded"); } });
-            const closeMobileNav = () => {
-                if (!window.matchMedia("(max-width: 700px)").matches) return;
-                nav.classList.remove("mobile-open");
-                if (productMenu) productMenu.classList.remove("mobile-expanded");
-                toggle.setAttribute("aria-expanded", "false");
-                toggle.textContent = "☰";
-            };
-            nav.addEventListener("click", event => { if (event.target.closest("a") && !event.target.closest(".nav-product-trigger")) closeMobileNav(); });
-            // Đóng menu khi rê chuột ra khỏi toàn bộ menu, không để nó che khu vực sản phẩm.
-            nav.addEventListener("pointerleave", closeMobileNav);
-            // Chỉ đóng danh sách loại khi rời mục Sản phẩm; vẫn có thể rê vào các loại bên trong.
-            if (productMenu) productMenu.addEventListener("pointerleave", () => {
-                if (window.matchMedia("(max-width: 700px)").matches) productMenu.classList.remove("mobile-expanded");
+            if (productTrigger && productMenu) {
+                productTrigger.addEventListener("click", event => {
+                    event.preventDefault();
+                    productMenu.classList.toggle("mobile-expanded");
+                });
+            }
+            document.addEventListener("click", event => {
+                if (productMenu && !event.target.closest(".nav-product-menu")) {
+                    productMenu.classList.remove("mobile-expanded");
+                }
             });
         })();
 

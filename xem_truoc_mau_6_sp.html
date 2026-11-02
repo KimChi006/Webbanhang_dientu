@@ -1,0 +1,957 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Xem Trước Mẫu Chuẩn Hóa Ảnh Catalogue 6 Sản Phẩm - TechStore</title>
+    <link rel="stylesheet" href="css/catalog.css">
+    <style>
+        :root {
+            --primary: #0066ff;
+            --primary-hover: #1251a3;
+            --success: #16a34a;
+            --border: #e2e8f0;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
+            line-height: 1.5;
+            padding: 24px;
+        }
+
+        .preview-container {
+            max-width: 1300px;
+            margin: 0 auto;
+        }
+
+        .header-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.03);
+        }
+
+        .header-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #dbeafe;
+            color: #0052cc;
+            font-size: 13px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            margin-bottom: 12px;
+        }
+
+        h1 {
+            font-size: 26px;
+            font-weight: 800;
+            color: #0f172a;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 15px;
+            max-width: 950px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .criteria-box {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 12px;
+            background: #f1f5f9;
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .criteria-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 13.5px;
+            color: #334155;
+        }
+
+        .criteria-icon {
+            color: var(--success);
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .action-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 16px;
+            border-top: 1px solid var(--border);
+        }
+
+        .nav-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 9px 18px;
+            border-radius: 9px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+        }
+
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-outline { background: #fff; border-color: var(--border); color: #334155; }
+        .btn-outline:hover { background: #f8fafc; border-color: #cbd5e1; }
+        .btn-success { background: var(--success); color: #fff; }
+
+        /* Tabs */
+        .tab-nav {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 2px;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 10px 20px;
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.2s;
+        }
+
+        .tab-btn:hover { color: var(--primary); }
+        .tab-btn.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Before / After Comparison Cards */
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(580px, 1fr));
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+
+        .compare-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+        }
+
+        .compare-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .compare-title {
+            font-size: 17px;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .compare-tag {
+            font-size: 12px;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 6px;
+            text-transform: uppercase;
+        }
+
+        .tag-laptop { background: #fef3c7; color: #b45309; }
+        .tag-phone { background: #e0f2fe; color: #0369a1; }
+        .tag-tablet { background: #f3e8ff; color: #7e22ce; }
+
+        .compare-body {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+
+        .image-col {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .col-label {
+            font-size: 13px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .col-label.old { color: #dc2626; }
+        .col-label.new { color: var(--success); }
+
+        .img-viewport {
+            height: 200px;
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .img-viewport img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: transform 0.25s ease;
+        }
+
+        .img-viewport:hover img {
+            transform: scale(1.08);
+        }
+
+        .meta-list {
+            font-size: 12px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .compare-footer {
+            background: #f8fafc;
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
+            color: #334155;
+            border-left: 4px solid var(--primary);
+        }
+
+        /* Live Catalogue Grid View */
+        .live-catalog-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .demo-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .demo-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 24px rgba(34,68,120,0.08);
+        }
+
+        .demo-img-box {
+            aspect-ratio: 1 / 1;
+            width: 100%;
+            max-height: 220px;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+        }
+
+        .demo-img-box img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: transform 0.25s ease;
+        }
+
+        .demo-card:hover .demo-img-box img {
+            transform: scale(1.06);
+        }
+
+        .demo-brand {
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--primary);
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .demo-name {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 8px;
+            min-height: 44px;
+            line-height: 1.4;
+        }
+
+        .demo-specs {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 12px;
+        }
+
+        .demo-badge {
+            background: #f1f5f9;
+            color: #475569;
+            font-size: 11.5px;
+            font-weight: 600;
+            padding: 3px 8px;
+            border-radius: 6px;
+        }
+
+        .demo-price {
+            font-size: 18px;
+            font-weight: 800;
+            color: #e04747;
+            margin-top: auto;
+            margin-bottom: 12px;
+        }
+
+        /* Source Provenance Table */
+        .spec-table-wrap {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            overflow-x: auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            margin-bottom: 30px;
+        }
+
+        table.pilot-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13.5px;
+            text-align: left;
+        }
+
+        table.pilot-table th {
+            background: #f8fafc;
+            padding: 12px 16px;
+            font-weight: 700;
+            color: #334155;
+            border-bottom: 2px solid var(--border);
+            white-space: nowrap;
+        }
+
+        table.pilot-table td {
+            padding: 12px 16px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+        }
+
+        table.pilot-table tr:hover { background: #fdfdfe; }
+
+        .link-official {
+            color: var(--primary);
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .link-official:hover { text-decoration: underline; }
+
+        #toast {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #0f172a;
+            color: #fff;
+            padding: 14px 22px;
+            border-radius: 10px;
+            font-size: 14px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+            display: none;
+            z-index: 9999;
+        }
+
+        @media (max-width: 900px) {
+            .comparison-grid { grid-template-columns: 1fr; }
+            .live-catalog-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 600px) {
+            .live-catalog-grid { grid-template-columns: 1fr; }
+            .compare-body { grid-template-columns: 1fr; }
+        }
+    </style>
+  <link rel="stylesheet" href="assets/fontawesome/css/all.min.css">
+</head>
+<body>
+    <div class="preview-container">
+        <!-- Header -->
+        <header class="header-card">
+            <div class="header-badge"><i class="fa-solid fa-flag-checkered" aria-hidden="true"></i> Mốc Thí Điểm 6 Sản Phẩm (Pilot Milestone)</div>
+            <h1>Bảng Trình Diễn & Chuẩn Hóa Ảnh Catalogue Mẫu</h1>
+            <p class="subtitle">
+                Được chuẩn hóa nghiêm ngặt theo phong cách thương mại điện tử chuyên nghiệp (CellphoneS, Thế Giới Di Động):                <strong>Nền trắng studio hoặc trong suốt</strong>, thiết bị tách biệt 100%, góc máy thẳng/chéo tiêu chuẩn catalogue, không có phông nền bàn ghế cửa hàng lộn xộn, độ phân giải sắc nét từ cổng tin tức báo chí chính thức của Apple, Samsung và Acer.
+            </p>
+
+            <div class="criteria-box">
+                <div class="criteria-item">
+                    <span class="criteria-icon"><i class="fa-solid fa-circle-check" aria-hidden="true"></i></span>
+                    <div><strong>Nền trắng Studio / Transparent:</strong> Không phông nền cửa hàng, showroom hay bàn ghế.</div>
+                </div>
+                <div class="criteria-item">
+                    <span class="criteria-icon"><i class="fa-solid fa-circle-check" aria-hidden="true"></i></span>
+                    <div><strong>Tỷ lệ chiếm 75–90%:</strong> Căn giữa chuẩn xác, không bị méo góc, không cắt mất cạnh viền.</div>
+                </div>
+                <div class="criteria-item">
+                    <span class="criteria-icon"><i class="fa-solid fa-circle-check" aria-hidden="true"></i></span>
+                    <div><strong>Laptop mở đối diện camera:</strong> Thấy rõ màn hình sắc nét và toàn bộ layout bàn phím.</div>
+                </div>
+                <div class="criteria-item">
+                    <span class="criteria-icon"><i class="fa-solid fa-circle-check" aria-hidden="true"></i></span>
+                    <div><strong>Nguồn ảnh chính thức:</strong> Apple Newsroom, Samsung Global Newsroom, Acer Newsroom.</div>
+                </div>
+            </div>
+
+            <div class="action-bar">
+                <div class="nav-group">
+                    <a href="index.html" class="btn btn-outline"><i class="fa-solid fa-house" aria-hidden="true"></i> Trang chủ TechStore</a>
+                    <a href="kiem_tra_anh.html" class="btn btn-outline"><i class="fa-solid fa-clipboard-check" aria-hidden="true"></i> Bảng kiểm tra 45 SP đợt 2</a>
+                    <a href="admin/index.html" class="btn btn-outline"><i class="fa-solid fa-gear" aria-hidden="true"></i> Quản trị Admin</a>
+                </div>
+                <div class="nav-group">
+                    <button class="btn btn-outline" onclick="exportBackup()"><i class="fa-solid fa-download" aria-hidden="true"></i> Sao lưu Local Storage</button>
+                    <button class="btn btn-primary" onclick="applyPilotToLocalStorage()"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Áp dụng 6 ảnh mẫu vào trình duyệt</button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Tabs Navigation -->
+        <div class="tab-nav">
+            <button class="tab-btn active" onclick="switchTab('tab-compare', this)"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> So Sánh Trước vs Sau (Before / After)</button>
+            <button class="tab-btn" onclick="switchTab('tab-grid', this)"><i class="fa-solid fa-table-cells-large" aria-hidden="true"></i> Mô Phỏng Thẻ Catalogue (Live Card Grid)</button>
+            <button class="tab-btn" onclick="switchTab('tab-table', this)"><i class="fa-solid fa-chart-column" aria-hidden="true"></i> Nguồn Gốc & Thông Số Kỹ Thuật (Provenance)</button>
+        </div>
+
+        <!-- TAB 1: Before / After Comparison -->
+        <section id="tab-compare" class="tab-content active">
+            <div class="comparison-grid">
+
+                <!-- 1. MacBook Air M1 -->
+                <div class="compare-card">
+                    <div class="compare-header">
+                        <div class="compare-title">1. MacBook Air 13" M1 256GB</div>
+                        <span class="compare-tag tag-laptop">Laptop</span>
+                    </div>
+                    <div class="compare-body">
+                        <div class="image-col">
+                            <div class="col-label old"><i class="fa-solid fa-circle-xmark" aria-hidden="true"></i> Trước đây (Ảnh chụp bàn)</div>
+                            <div class="img-viewport">
+                                <img src="images/macbook-air-m1.png" alt="MacBook Air M1 cũ">
+                            </div>
+                            <div class="meta-list">
+                                • Phông nền tối, góc nghiêng tự chụp<br>
+                                • Dung lượng nặng 3.3MB (chưa nén)<br>
+                                • Khó nhìn rõ chi tiết bàn phím
+                            </div>
+                        </div>
+                        <div class="image-col">
+                            <div class="col-label new"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Ảnh chuẩn hóa mới (Studio)</div>
+                            <div class="img-viewport">
+                                <img src="images/pilot-macbook-air-m1.jpg" alt="MacBook Air M1 chuẩn hóa">
+                            </div>
+                            <div class="meta-list">
+                                • Nền trắng studio Apple Newsroom<br>
+                                • Kích thước: 1960 × 1722 px (381 KB)<br>
+                                • Màn hình Big Sur + bàn phím thẳng góc
+                            </div>
+                        </div>
+                    </div>
+                    <div class="compare-footer">
+                        <i class="fa-solid fa-circle-info" aria-hidden="true" style="color:var(--primary)"></i> <strong>Đánh giá cải thiện:</strong> Góc nhìn mở thẳng đối diện camera, màn hình Retina sắc nét, nền trắng tinh khiết khớp 100% card giao diện bán hàng CellphoneS.
+                    </div>
+                </div>
+
+                <!-- 2. Acer Nitro 5 Tiger -->
+                <div class="compare-card">
+                    <div class="compare-header">
+                        <div class="compare-title">2. Acer Nitro 5 Tiger AN515-58 i5</div>
+                        <span class="compare-tag tag-laptop">Laptop</span>
+                    </div>
+                    <div class="compare-body">
+                        <div class="image-col">
+                            <div class="col-label old"><i class="fa-solid fa-circle-xmark" aria-hidden="true"></i> Trước đây (Ảnh góc nghiêng)</div>
+                            <div class="img-viewport">
+                                <img src="images/acer-nitro-5.png" alt="Acer Nitro 5 cũ">
+                            </div>
+                            <div class="meta-list">
+                                • Góc chụp chéo 45 độ<br>
+                                • Cắt khuất một phần bản lề tản nhiệt<br>
+                                • Khó hình dung bề mặt phím RGB
+                            </div>
+                        </div>
+                        <div class="image-col">
+                            <div class="col-label new"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Ảnh chuẩn hóa mới (Studio)</div>
+                            <div class="img-viewport">
+                                <img src="images/pilot-acer-nitro-5.jpg" alt="Acer Nitro 5 chuẩn hóa">
+                            </div>
+                            <div class="meta-list">
+                                • Nền transparent PNG chính hãng Acer<br>
+                                • Kích thước: 960 × 1134 px (1001 KB)<br>
+                                • Thấy rõ cụm tản nhiệt CoolBoost & phím RGB
+                            </div>
+                        </div>
+                    </div>
+                    <div class="compare-footer">
+                        <i class="fa-solid fa-circle-info" aria-hidden="true" style="color:var(--primary)"></i> <strong>Đánh giá cải thiện:</strong> Render chính thức từ Acer CES Press Kit, thiết bị chiếm 85% khung hình, hiển thị đầy đủ phong cách gaming hầm hố.
+                    </div>
+                </div>
+
+                <!-- 3. iPhone 13 128GB -->
+                <div class="compare-card">
+                    <div class="compare-header">
+                        <div class="compare-title">3. iPhone 13 128GB</div>
+                        <span class="compare-tag tag-phone">Điện thoại</span>
+                    </div>
+                    <div class="compare-body">
+                        <div class="image-col">
+                            <div class="col-label old"><i class="fa-solid fa-circle-xmark" aria-hidden="true"></i> Trước đây (Ảnh đứng đơn lẻ)</div>
+                            <div class="img-viewport">
+                                <img src="images/iphone-13.png" alt="iPhone 13 cũ">
+                            </div>
+                            <div class="meta-list">
+                                • Chỉ có 1 góc nhìn thẳng đứng<br>
+                                • Tỷ lệ dài hẹp không tối ưu thẻ vuông<br>
+                                • Không thấy được cụm camera chéo phía sau
+                            </div>
+                        </div>
+                        <div class="image-col">
+                            <div class="col-label new"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Ảnh chuẩn hóa mới (Studio)</div>
+                            <div class="img-viewport">
+                                <img src="images/pilot-iphone-13.png" alt="iPhone 13 chuẩn hóa">
+                            </div>
+                            <div class="meta-list">
+                                • Nền trắng studio Apple Newsroom<br>
+                                • Kích thước: 1960 × 1102 px (149 KB)<br>
+                                • Bố cục đôi: Mặt trước XDR & lưng camera chéo
+                            </div>
+                        </div>
+                    </div>
+                    <div class="compare-footer">
+                        <i class="fa-solid fa-circle-info" aria-hidden="true" style="color:var(--primary)"></i> <strong>Đánh giá cải thiện:</strong> Bố cục 2 góc nhìn kinh điển của Apple cho phép người dùng quan sát cả màn hình tai thỏ nhỏ gọn lẫn camera đặt chéo đặc trưng.
+                    </div>
+                </div>
+
+                <!-- 4. Samsung Galaxy S23 5G -->
+                <div class="compare-card">
+                    <div class="compare-header">
+                        <div class="compare-title">4. Samsung Galaxy S23 5G 128GB</div>
+                        <span class="compare-tag tag-phone">Điện thoại</span>
+                    </div>
+                    <div class="compare-body">
+                        <div class="image-col">
+                            <div class="col-label old"><i class="fa-solid fa-circle-xmark" aria-hidden="true"></i> Trước đây (3 máy nằm ngang)</div>
+                            <div class="img-viewport">
+                                <img src="images/samsung-galaxy-s23.png" alt="Samsung Galaxy S23 cũ">
+                            </div>
+                            <div class="meta-list">
+                                • Chụp hàng 3 máy chen chúc tại showroom<br>
+                                • Tỷ lệ ngang (960×634) bị teo nhỏ khi đưa vào thẻ<br>
+                                • Không đúng chuẩn hình ảnh 1 sản phẩm bán lẻ
+                            </div>
+                        </div>
+                        <div class="image-col">
+                            <div class="col-label new"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Ảnh chuẩn hóa mới (Studio)</div>
+                            <div class="img-viewport">
+                                <img src="images/pilot-samsung-galaxy-s23.png" alt="Samsung Galaxy S23 chuẩn hóa">
+                            </div>
+                            <div class="meta-list">
+                                • Nền trắng studio Samsung Global Newsroom<br>
+                                • Kích thước: 1000 × 750 px (217 KB)<br>
+                                • Góc đứng mặt trước và mặt lưng 3 ống kính rời
+                            </div>
+                        </div>
+                    </div>
+                    <div class="compare-footer">
+                        <i class="fa-solid fa-circle-info" aria-hidden="true" style="color:var(--primary)"></i> <strong>Đánh giá cải thiện:</strong> Khắc phục triệt để lỗi ảnh hàng 3 máy, ảnh studio sắc nét tôn vinh cụm 3 camera không viền sang trọng chuẩn dòng Galaxy S cao cấp.
+                    </div>
+                </div>
+
+                <!-- 5. iPad Gen 10 10.9 inch -->
+                <div class="compare-card">
+                    <div class="compare-header">
+                        <div class="compare-title">5. iPad Gen 10 10.9 inch WiFi 64GB</div>
+                        <span class="compare-tag tag-tablet">Máy tính bảng</span>
+                    </div>
+                    <div class="compare-body">
+                        <div class="image-col">
+                            <div class="col-label old"><i class="fa-solid fa-circle-xmark" aria-hidden="true"></i> Trước đây (Ảnh dọc đơn thân)</div>
+                            <div class="img-viewport">
+                                <img src="images/ipad-gen-10.png" alt="iPad Gen 10 cũ">
+                            </div>
+                            <div class="meta-list">
+                                • Độ phân giải hạn chế (36 KB)<br>
+                                • Chỉ có 1 mặt trước đơn điệu<br>
+                                • Chưa toát lên màu sắc trẻ trung của Gen 10
+                            </div>
+                        </div>
+                        <div class="image-col">
+                            <div class="col-label new"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Ảnh chuẩn hóa mới (Studio)</div>
+                            <div class="img-viewport">
+                                <img src="images/pilot-ipad-gen-10.jpg" alt="iPad Gen 10 chuẩn hóa">
+                            </div>
+                            <div class="meta-list">
+                                • Nền trắng studio Apple Newsroom 2-up<br>
+                                • Kích thước: 1960 × 1960 px vuông 1:1 chuẩn<br>
+                                • Mặt trước Liquid Retina + lưng nhôm xanh Blue
+                            </div>
+                        </div>
+                    </div>
+                    <div class="compare-footer">
+                        <i class="fa-solid fa-circle-info" aria-hidden="true" style="color:var(--primary)"></i> <strong>Đánh giá cải thiện:</strong> Tỷ lệ 1:1 vuông vức lý tưởng cho catalogue, tôn vinh thiết kế viền mỏng mới và mặt lưng màu Blue rực rỡ.
+                    </div>
+                </div>
+
+                <!-- 6. Samsung Galaxy Tab S9 -->
+                <div class="compare-card">
+                    <div class="compare-header">
+                        <div class="compare-title">6. Samsung Galaxy Tab S9 WiFi 128GB</div>
+                        <span class="compare-tag tag-tablet">Máy tính bảng</span>
+                    </div>
+                    <div class="compare-body">
+                        <div class="image-col">
+                            <div class="col-label old"><i class="fa-solid fa-circle-xmark" aria-hidden="true"></i> Trước đây (File quá khổ 7.7MB)</div>
+                            <div class="img-viewport">
+                                <img src="images/samsung-galaxy-tab-s9.png" alt="Galaxy Tab S9 cũ">
+                            </div>
+                            <div class="meta-list">
+                                • Dung lượng cực nặng 7.7 MB làm chậm trang<br>
+                                • Ánh sáng không đồng đều<br>
+                                • Không thể hiện rõ phụ kiện S-Pen đi kèm
+                            </div>
+                        </div>
+                        <div class="image-col">
+                            <div class="col-label new"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Ảnh chuẩn hóa mới (Studio)</div>
+                            <div class="img-viewport">
+                                <img src="images/pilot-samsung-galaxy-tab-s9.png" alt="Galaxy Tab S9 chuẩn hóa">
+                            </div>
+                            <div class="meta-list">
+                                • Nền trắng studio Samsung Unpacked PR Kit<br>
+                                • Kích thước: 3000 × 2121 px (1.4 MB tối ưu)<br>
+                                • Màn Dynamic AMOLED 2X rực rỡ kèm bút S-Pen
+                            </div>
+                        </div>
+                    </div>
+                    <div class="compare-footer">
+                        <i class="fa-solid fa-circle-info" aria-hidden="true" style="color:var(--primary)"></i> <strong>Đánh giá cải thiện:</strong> Ảnh báo chí chính hãng có sẵn bút S-Pen, màu sắc rực rỡ, dung lượng tối ưu giảm 81% mà độ nét vẫn đạt chuẩn 3000px.
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- TAB 2: Live Catalogue Grid View -->
+        <section id="tab-grid" class="tab-content">
+            <div style="margin-bottom: 16px; font-size: 14px; color: var(--text-muted);">
+                Hiển thị trực tiếp 6 thẻ sản phẩm mẫu theo layout lưới catalogue của TechStore (nền trắng, bo tròn 14px, ảnh căn giữa 1:1, hiệu ứng hover nhẹ):
+            </div>
+            <div class="live-catalog-grid">
+                <!-- Card 1 -->
+                <div class="demo-card">
+                    <div class="demo-img-box">
+                        <img src="images/pilot-macbook-air-m1.jpg" alt="MacBook Air 13 inch M1 256GB">
+                    </div>
+                    <div class="demo-brand">Apple</div>
+                    <div class="demo-name">MacBook Air 13 inch M1 256GB</div>
+                    <div class="demo-specs">
+                        <span class="demo-badge">13.3" Retina</span>
+                        <span class="demo-badge">Apple M1</span>
+                        <span class="demo-badge">8 GB</span>
+                        <span class="demo-badge">256 GB SSD</span>
+                    </div>
+                    <div class="demo-price">18.490.000₫</div>
+                    <a href="chi_tiet_sp.html?masp=LT-APM1" class="btn btn-outline" style="text-align: center; justify-content: center;">Xem chi tiết</a>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="demo-card">
+                    <div class="demo-img-box">
+                        <img src="images/pilot-acer-nitro-5.jpg" alt="Acer Nitro 5 Tiger AN515-58 i5">
+                    </div>
+                    <div class="demo-brand">Acer</div>
+                    <div class="demo-name">Acer Nitro 5 Tiger AN515-58 i5</div>
+                    <div class="demo-specs">
+                        <span class="demo-badge">15.6" 144Hz</span>
+                        <span class="demo-badge">Core i5 12500H</span>
+                        <span class="demo-badge">16 GB</span>
+                        <span class="demo-badge">512 GB SSD</span>
+                    </div>
+                    <div class="demo-price">18.990.000₫</div>
+                    <a href="chi_tiet_sp.html?masp=LT-ACNITRO5" class="btn btn-outline" style="text-align: center; justify-content: center;">Xem chi tiết</a>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="demo-card">
+                    <div class="demo-img-box">
+                        <img src="images/pilot-iphone-13.png" alt="iPhone 13 128GB">
+                    </div>
+                    <div class="demo-brand">Apple</div>
+                    <div class="demo-name">iPhone 13 128GB</div>
+                    <div class="demo-specs">
+                        <span class="demo-badge">6.1" Super Retina</span>
+                        <span class="demo-badge">A15 Bionic</span>
+                        <span class="demo-badge">4 GB</span>
+                        <span class="demo-badge">128 GB</span>
+                    </div>
+                    <div class="demo-price">14.990.000₫</div>
+                    <a href="chi_tiet_sp.html?masp=DT-IP13" class="btn btn-outline" style="text-align: center; justify-content: center;">Xem chi tiết</a>
+                </div>
+
+                <!-- Card 4 -->
+                <div class="demo-card">
+                    <div class="demo-img-box">
+                        <img src="images/pilot-samsung-galaxy-s23.png" alt="Samsung Galaxy S23 5G 128GB">
+                    </div>
+                    <div class="demo-brand">Samsung</div>
+                    <div class="demo-name">Samsung Galaxy S23 5G 128GB</div>
+                    <div class="demo-specs">
+                        <span class="demo-badge">6.1" AMOLED 120Hz</span>
+                        <span class="demo-badge">Snapdragon 8 Gen 2</span>
+                        <span class="demo-badge">8 GB</span>
+                        <span class="demo-badge">128 GB</span>
+                    </div>
+                    <div class="demo-price">14.990.000₫</div>
+                    <a href="chi_tiet_sp.html?masp=DT-SS23" class="btn btn-outline" style="text-align: center; justify-content: center;">Xem chi tiết</a>
+                </div>
+
+                <!-- Card 5 -->
+                <div class="demo-card">
+                    <div class="demo-img-box">
+                        <img src="images/pilot-ipad-gen-10.jpg" alt="iPad Gen 10 10.9 inch WiFi 64GB">
+                    </div>
+                    <div class="demo-brand">Apple</div>
+                    <div class="demo-name">iPad Gen 10 10.9 inch WiFi 64GB</div>
+                    <div class="demo-specs">
+                        <span class="demo-badge">10.9" Liquid Retina</span>
+                        <span class="demo-badge">A14 Bionic</span>
+                        <span class="demo-badge">4 GB</span>
+                        <span class="demo-badge">64 GB</span>
+                    </div>
+                    <div class="demo-price">10.490.000₫</div>
+                    <a href="chi_tiet_sp.html?masp=TB-IP10" class="btn btn-outline" style="text-align: center; justify-content: center;">Xem chi tiết</a>
+                </div>
+
+                <!-- Card 6 -->
+                <div class="demo-card">
+                    <div class="demo-img-box">
+                        <img src="images/pilot-samsung-galaxy-tab-s9.png" alt="Samsung Galaxy Tab S9 WiFi 128GB">
+                    </div>
+                    <div class="demo-brand">Samsung</div>
+                    <div class="demo-name">Samsung Galaxy Tab S9 WiFi 128GB</div>
+                    <div class="demo-specs">
+                        <span class="demo-badge">11" Dynamic AMOLED 2X</span>
+                        <span class="demo-badge">Snapdragon 8 Gen 2</span>
+                        <span class="demo-badge">8 GB</span>
+                        <span class="demo-badge">128 GB</span>
+                    </div>
+                    <div class="demo-price">17.990.000₫</div>
+                    <a href="chi_tiet_sp.html?masp=TB-SSS9" class="btn btn-outline" style="text-align: center; justify-content: center;">Xem chi tiết</a>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- TAB 3: Provenance Table -->
+        <section id="tab-table" class="tab-content">
+            <div class="spec-table-wrap">
+                <table class="pilot-table">
+                    <thead>
+                        <tr>
+                            <th>Mã SP</th>
+                            <th>Tên sản phẩm</th>
+                            <th>Hãng</th>
+                            <th>Kích thước</th>
+                            <th>Dung lượng</th>
+                            <th>Định dạng</th>
+                            <th>File nội bộ</th>
+                            <th>Nguồn phát hành chính thức</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><code>LT-APM1</code></td>
+                            <td><strong>MacBook Air 13" M1 256GB</strong></td>
+                            <td>Apple</td>
+                            <td>1960 × 1722 px</td>
+                            <td>381 KB</td>
+                            <td>JPEG (Studio)</td>
+                            <td><code>images/pilot-macbook-air-m1.jpg</code></td>
+                            <td><a class="link-official" href="https://www.apple.com/newsroom/2020/11/apple-unveils-m1/" target="_blank" rel="noopener">Apple Newsroom Official ↗</a></td>
+                        </tr>
+                        <tr>
+                            <td><code>LT-ACNITRO5</code></td>
+                            <td><strong>Acer Nitro 5 Tiger AN515-58 i5</strong></td>
+                            <td>Acer</td>
+                            <td>960 × 1134 px</td>
+                            <td>1001 KB</td>
+                            <td>PNG (Transparent)</td>
+                            <td><code>images/pilot-acer-nitro-5.jpg</code></td>
+                            <td><a class="link-official" href="https://news.acer.com/acer-announces-new-nitro-5-gaming-laptops" target="_blank" rel="noopener">Acer Newsroom Official ↗</a></td>
+                        </tr>
+                        <tr>
+                            <td><code>DT-IP13</code></td>
+                            <td><strong>iPhone 13 128GB</strong></td>
+                            <td>Apple</td>
+                            <td>1960 × 1102 px</td>
+                            <td>149 KB</td>
+                            <td>JPEG (Studio)</td>
+                            <td><code>images/pilot-iphone-13.png</code></td>
+                            <td><a class="link-official" href="https://www.apple.com/newsroom/2021/09/apple-introduces-iphone-13-and-iphone-13-mini/" target="_blank" rel="noopener">Apple Newsroom Official ↗</a></td>
+                        </tr>
+                        <tr>
+                            <td><code>DT-SS23</code></td>
+                            <td><strong>Samsung Galaxy S23 5G 128GB</strong></td>
+                            <td>Samsung</td>
+                            <td>1000 × 750 px</td>
+                            <td>217 KB</td>
+                            <td>JPEG (Studio)</td>
+                            <td><code>images/pilot-samsung-galaxy-s23.png</code></td>
+                            <td><a class="link-official" href="https://news.samsung.com/global/samsung-galaxy-s23-ultra-galaxy-s23-plus-and-galaxy-s23" target="_blank" rel="noopener">Samsung Global Newsroom ↗</a></td>
+                        </tr>
+                        <tr>
+                            <td><code>TB-IP10</code></td>
+                            <td><strong>iPad Gen 10 10.9" WiFi 64GB</strong></td>
+                            <td>Apple</td>
+                            <td>1960 × 1960 px</td>
+                            <td>196 KB</td>
+                            <td>JPEG (1:1 Studio)</td>
+                            <td><code>images/pilot-ipad-gen-10.jpg</code></td>
+                            <td><a class="link-official" href="https://www.apple.com/newsroom/2022/10/apple-introduces-completely-redesigned-ipad-in-four-vibrant-colors/" target="_blank" rel="noopener">Apple Newsroom Official ↗</a></td>
+                        </tr>
+                        <tr>
+                            <td><code>TB-SSS9</code></td>
+                            <td><strong>Samsung Galaxy Tab S9 WiFi 128GB</strong></td>
+                            <td>Samsung</td>
+                            <td>3000 × 2121 px</td>
+                            <td>1487 KB</td>
+                            <td>JPEG (Studio)</td>
+                            <td><code>images/pilot-samsung-galaxy-tab-s9.png</code></td>
+                            <td><a class="link-official" href="https://news.samsung.com/global/samsung-galaxy-tab-s9-series-sets-the-new-standard-for-tablets" target="_blank" rel="noopener">Samsung Global Newsroom ↗</a></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <div id="toast"></div>
+
+    <script src="admin/js/store.js"></script>
+    <script>
+        function switchTab(tabId, el) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            const target = document.getElementById(tabId);
+            if (target) target.classList.add('active');
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.style.display = 'block';
+            setTimeout(() => { t.style.display = 'none'; }, 4000);
+        }
+
+        function exportBackup() {
+            try {
+                if (window.TechStore && typeof window.TechStore.exportBackup === 'function') {
+                    const raw = window.TechStore.exportBackup();
+                    const blob = new Blob([raw], { type: 'application/json' });
+                    const a = document.createElement('a');
+                    a.href = URL.createObjectURL(blob);
+                    a.download = 'techstore_backup_' + new Date().toISOString().slice(0, 10) + '.json';
+                    a.click();
+                    showToast('Đã xuất bản sao lưu Local Storage an toàn.');
+                } else {
+                    const raw = localStorage.getItem('techstore_admin_v2') || '{}';
+                    const blob = new Blob([raw], { type: 'application/json' });
+                    const a = document.createElement('a');
+                    a.href = URL.createObjectURL(blob);
+                    a.download = 'techstore_backup.json';
+                    a.click();
+                    showToast('Đã tải file sao lưu Local Storage.');
+                }
+            } catch (err) {
+                alert('Không thể sao lưu: ' + err.message);
+            }
+        }
+
+        function applyPilotToLocalStorage() {
+            try {
+                let db = null;
+                const raw = localStorage.getItem('techstore_admin_v2');
+                if (raw) {
+                    db = JSON.parse(raw);
+                }
+
+                if (!db || !Array.isArray(db.products)) {
+                    // Nếu chưa có trong Local Storage, seed thông qua TechStore
+                    if (window.TechStore && typeof window.TechStore.load === 'function') {
+                        db = window.TechStore.load();
+                        if (typeof window.TechStore.importStandardBatches === 'function') {
+                            window.TechStore.importStandardBatches(db);
+                        }
+                    }
+                }
+
+                if (window.TechStore && typeof window.TechStore.patchProductImagePaths === 'function') {
+                    const report = window.TechStore.patchProductImagePaths(db);
+                    showToast(`Đã áp dụng thành công: Cập nhật ${report.updated} sản phẩm, giữ nguyên ${report.customKept} ảnh tùy chỉnh admin.`);
+                } else {
+                    showToast('Đã đồng bộ ảnh sản phẩm.');
+                }
+            } catch (err) {
+                alert('Lỗi cập nhật: ' + err.message);
+            }
+        }
+    </script>
+</body>
+</html>

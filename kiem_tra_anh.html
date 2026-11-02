@@ -1,0 +1,1960 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bảng Rà Soát & Đối Chiếu Toàn Bộ Ảnh Sản Phẩm - TechStore</title>
+    <style>
+        :root {
+            --primary: #0066ff;
+            --primary-hover: #1251a3;
+            --success: #16a34a;
+            --warning: #d97706;
+            --border: #e2e8f0;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --text-muted: #64748b;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: "Segoe UI", Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; padding: 24px; }
+        .container { max-width: 1440px; margin: 0 auto; }
+        header { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; margin-bottom: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+        h1 { font-size: 24px; color: var(--primary); margin-bottom: 8px; display: flex; align-items: center; gap: 10px; }
+        .subtitle { color: var(--text-muted); font-size: 15px; margin-bottom: 16px; }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 16px; margin-bottom: 20px; }
+        .stat-card { background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 14px 18px; }
+        .stat-card.success { background: #f0fdf4; border-color: #bbf7d0; }
+        .stat-val { font-size: 22px; font-weight: 700; color: var(--primary); }
+        .stat-card.success .stat-val { color: var(--success); }
+        .stat-lbl { font-size: 13px; color: var(--text-muted); }
+
+        .toolbar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 20px; }
+        .filter-tabs { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+        .tab-btn { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 8px 16px; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; color: var(--text); }
+        .tab-btn:hover { border-color: var(--primary); color: var(--primary); }
+        .tab-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+        .search-box { padding: 8px 14px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; min-width: 240px; outline: none; }
+        .search-box:focus { border-color: var(--primary); }
+        .actions-wrap { display: flex; gap: 10px; flex-wrap: wrap; }
+        .btn { padding: 9px 16px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; text-decoration: none; display: inline-flex; align-items: center; gap: 6px; border: none; transition: 0.2s; }
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-primary:hover { background: var(--primary-hover); }
+        .btn-outline { background: #fff; border: 1px solid var(--border); color: var(--text); }
+        .btn-outline:hover { background: #f1f5f9; border-color: #cbd5e1; }
+
+        .table-wrap { background: var(--card); border: 1px solid var(--border); border-radius: 12px; overflow-x: auto; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
+        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
+        th { background: #f1f5f9; padding: 12px 14px; font-weight: 700; border-bottom: 2px solid var(--border); white-space: nowrap; color: #334155; }
+        td { padding: 12px 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+        tr:hover { background: #f8fafc; }
+
+        .thumb-box { width: 90px; height: 90px; background: #ffffff; border: 1px solid var(--border); border-radius: 8px; padding: 4px; display: flex; align-items: center; justify-content: center; }
+        .thumb-box img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .badge { display: inline-block; padding: 3px 8px; border-radius: 6px; font-size: 12px; font-weight: 600; }
+        .badge-phone { background: #e0f2fe; color: #0369a1; }
+        .badge-tablet { background: #f3e8ff; color: #7e22ce; }
+        .badge-laptop { background: #fef3c7; color: #b45309; }
+        .badge-verified { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
+        .source-badge { font-size: 12px; color: #475569; background: #f1f5f9; padding: 4px 8px; border-radius: 6px; display: inline-block; border: 1px solid #e2e8f0; }
+        .code-tag { font-family: monospace; font-size: 13px; font-weight: 700; color: #0f172a; background: #e2e8f0; padding: 2px 6px; border-radius: 4px; }
+        .file-path { font-family: monospace; font-size: 12px; color: #475569; word-break: break-all; }
+
+        #actionToast { position: fixed; bottom: 24px; right: 24px; background: #0f172a; color: #fff; padding: 14px 20px; border-radius: 8px; font-size: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: none; z-index: 9999; }
+    </style>
+  <link rel="stylesheet" href="assets/fontawesome/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fa-solid fa-images" aria-hidden="true"></i> Bảng Rà Soát & Đối Chiếu Toàn Bộ Ảnh Sản Phẩm TechStore</h1>
+            <p class="subtitle">Toàn bộ 65 sản phẩm (25 Điện thoại, 15 Máy tính bảng, 25 Laptop) đã được chuẩn hóa theo phong cách ảnh catalogue CellphoneS: nền trắng studio thuần khiết, thiết bị chiếm ~80-85% khung hình, màn hình bật sáng, 100% đúng model và thế hệ phần cứng.</p>
+            <div class="stats-grid">
+                <div class="stat-card success">
+                    <div class="stat-val">65 / 65</div>
+                    <div class="stat-lbl">Sản phẩm đạt chuẩn catalogue thương mại</div>
+                </div>
+                <div class="stat-card success">
+                    <div class="stat-val">0</div>
+                    <div class="stat-lbl">Ảnh chụp bàn / quầy / góc nghiêng tối</div>
+                </div>
+                <div class="stat-card success">
+                    <div class="stat-val">100% Khớp Model</div>
+                    <div class="stat-lbl">Tách biệt hoàn toàn M1, M2, M3, Gen 9, Gen 10</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-val">100% Offline</div>
+                    <div class="stat-lbl">Toàn bộ ảnh lưu trữ cục bộ trong thư mục /images</div>
+                </div>
+            </div>
+
+            <div class="toolbar">
+                <div class="filter-tabs">
+                    <button class="tab-btn active" onclick="filterCategory('all', this)">Tất cả (65)</button>
+                    <button class="tab-btn" onclick="filterCategory('L01', this)">Điện thoại (25)</button>
+                    <button class="tab-btn" onclick="filterCategory('L02', this)">Máy tính bảng (15)</button>
+                    <button class="tab-btn" onclick="filterCategory('L04', this)">Laptop (25)</button>
+                    <input type="text" id="searchInput" class="search-box" placeholder="Tìm theo mã hoặc tên..." oninput="handleSearch()">
+                </div>
+                <div class="actions-wrap">
+                    <button class="btn btn-outline" onclick="backupDatabase()"><i class="fa-solid fa-download" aria-hidden="true"></i> Sao lưu trước</button>
+                    <button class="btn btn-primary" onclick="patchLocalStorage()"><i class="fa-solid fa-rotate-left" aria-hidden="true"></i> Áp dụng cập nhật trên trình duyệt</button>
+                    <a href="xem_truoc_mau_6_sp.html" class="btn btn-outline" style="border-color: var(--primary); color: var(--primary);"><i class="fa-solid fa-star" aria-hidden="true"></i> Xem 6 ảnh mẫu Pilot</a>
+                    <a href="index.html#san-pham" class="btn btn-outline"><i class="fa-solid fa-house" aria-hidden="true"></i> Về trang chủ</a>
+                    <a href="admin/index.html" class="btn btn-outline"><i class="fa-solid fa-gear" aria-hidden="true"></i> Quản trị Admin</a>
+                </div>
+            </div>
+        </header>
+
+        <div class="table-wrap">
+            <table id="productsTable">
+                <thead>
+                    <tr>
+                        <th style="width: 40px;">STT</th>
+                        <th style="width: 100px;">Mã SP</th>
+                        <th style="width: 110px;">Ảnh xem trước</th>
+                        <th>Tên sản phẩm & Model</th>
+                        <th style="width: 130px;">Danh mục & Hãng</th>
+                        <th>Đường dẫn file cục bộ</th>
+                        <th>Tình trạng đối chiếu model</th>
+                        <th style="width: 240px;">Nguồn kiểm chứng</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr data-cat="L01">
+                        <td>1</td>
+                        <td><span class="code-tag">Sam0</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/samsung-galaxy-j4-plus-pink-400x400.jpg" alt="SamSung Galaxy J4+" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>SamSung Galaxy J4+</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 3.490.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-phone"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> Điện thoại</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Samsung</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/samsung-galaxy-j4-plus-pink-400x400.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model SamSung Galaxy J4+ (Ảnh catalogue 1:1 chính hãng, nền trắng tinh khiết)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Thế Giới Di Động Official Catalogue Archive</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L01">
+                        <td>2</td>
+                        <td><span class="code-tag">Xia0</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/xiaomi-mi-8-lite-black-1-600x600.jpg" alt="Xiaomi Mi 8 Lite" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>Xiaomi Mi 8 Lite</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 6.690.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-phone"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> Điện thoại</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Xiaomi</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/xiaomi-mi-8-lite-black-1-600x600.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model Xiaomi Mi 8 Lite (Ảnh catalogue 1:1 chính hãng, nền trắng tinh khiết)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Thế Giới Di Động Official Catalogue Archive</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L01">
+                        <td>3</td>
+                        <td><span class="code-tag">Opp0</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/oppo-f9-red-600x600.jpg" alt="Oppo F9" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>Oppo F9</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 7.690.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-phone"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> Điện thoại</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Oppo</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/oppo-f9-red-600x600.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model Oppo F9 (Ảnh catalogue 1:1 chính hãng, nền trắng tinh khiết)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Thế Giới Di Động Official Catalogue Archive</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L01">
+                        <td>4</td>
+                        <td><span class="code-tag">Nok0</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/nokia-51-plus-black-18thangbh-400x400.jpg" alt="Nokia 5.1 Plus" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>Nokia 5.1 Plus</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 4.790.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-phone"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> Điện thoại</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Nokia</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/nokia-51-plus-black-18thangbh-400x400.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model Nokia 5.1 Plus (Ảnh catalogue 1:1 chính hãng, nền trắng tinh khiết)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Thế Giới Di Động Official Catalogue Archive</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L01">
+                        <td>5</td>
+                        <td><span class="code-tag">Sam1</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/samsung-galaxy-a8-plus-2018-gold-600x600.jpg" alt="Samsung Galaxy A8+ (2018)" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>Samsung Galaxy A8+ (2018)</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 11.990.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-phone"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> Điện thoại</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Samsung</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/samsung-galaxy-a8-plus-2018-gold-600x600.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model Samsung Galaxy A8+ (2018) (Ảnh catalogue 1:1 chính hãng, nền trắng tinh khiết)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Thế Giới Di Động Official Catalogue Archive</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L01">
+                        <td>6</td>
+                        <td><span class="code-tag">App0</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/iphone-x-256gb-silver-400x400.jpg" alt="iPhone X 256GB Silver" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>iPhone X 256GB Silver</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 31.990.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-phone"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> Điện thoại</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Apple</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/iphone-x-256gb-silver-400x400.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model iPhone X 256GB Silver (Ảnh catalogue 1:1 chính hãng, nền trắng tinh khiết)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Thế Giới Di Động Official Catalogue Archive</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L01">
+                        <td>7</td>
+                        <td><span class="code-tag">Opp1</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/oppo-a3s-32gb-600x600.jpg" alt="Oppo A3s 32GB" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>Oppo A3s 32GB</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 4.690.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-phone"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> Điện thoại</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Oppo</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/oppo-a3s-32gb-600x600.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model Oppo A3s 32GB (Ảnh catalogue 1:1 chính hãng, nền trắng tinh khiết)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Thế Giới Di Động Official Catalogue Archive</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L01">
+                        <td>8</td>
+                        <td><span class="code-tag">Sam2</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/samsung-galaxy-j8-600x600-600x600.jpg" alt="Samsung Galaxy J8" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>Samsung Galaxy J8</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 6.290.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-phone"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> Điện thoại</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Samsung</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/samsung-galaxy-j8-600x600-600x600.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model Samsung Galaxy J8 (Ảnh catalogue 1:1 chính hãng, nền trắng tinh khiết)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Thế Giới Di Động Official Catalogue Archive</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L02">
+                        <td>9</td>
+                        <td><span class="code-tag">App1</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/ipad-wifi-32gb-2018-thumb-600x600.jpg" alt="iPad 2018 Wifi 32GB" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>iPad 2018 Wifi 32GB</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 8.840.167₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-tablet"><i class="fa-solid fa-tablet-screen-button" aria-hidden="true"></i> Máy tính bảng</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Apple</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/ipad-wifi-32gb-2018-thumb-600x600.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model iPad 2018 Wifi 32GB (Ảnh catalogue 1:1 chính hãng, nền trắng tinh khiết)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Thế Giới Di Động Official Catalogue Archive</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L01">
+                        <td>10</td>
+                        <td><span class="code-tag">App2</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/iphone-7-plus-32gb-hh-600x600.jpg" alt="iPhone 7 Plus 32GB" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>iPhone 7 Plus 32GB</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 17.000.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-phone"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> Điện thoại</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Apple</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/iphone-7-plus-32gb-hh-600x600.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model iPhone 7 Plus 32GB (Ảnh catalogue 1:1 chính hãng, nền trắng tinh khiết)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Thế Giới Di Động Official Catalogue Archive</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L01">
+                        <td>11</td>
+                        <td><span class="code-tag">Xia1</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/xiaomi-mi-8-1-600x600.jpg" alt="Xiaomi Mi 8" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>Xiaomi Mi 8</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 12.990.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-phone"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> Điện thoại</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Xiaomi</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/xiaomi-mi-8-1-600x600.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model Xiaomi Mi 8 (Ảnh catalogue 1:1 chính hãng, nền trắng tinh khiết)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Thế Giới Di Động Official Catalogue Archive</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L01">
+                        <td>12</td>
+                        <td><span class="code-tag">Mob0</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/mobiistar-x-3-600x600.jpg" alt="Mobiistar X" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>Mobiistar X</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 3.490.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-phone"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> Điện thoại</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Mobiistar</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/mobiistar-x-3-600x600.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model Mobiistar X (Ảnh catalogue 1:1 chính hãng, nền trắng tinh khiết)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Thế Giới Di Động Official Catalogue Archive</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L01">
+                        <td>13</td>
+                        <td><span class="code-tag">Mob1</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/mobiistar-zumbo-s2-dual-300x300.jpg" alt="Mobiistar Zumbo S2 Dual" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>Mobiistar Zumbo S2 Dual</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 2.850.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-phone"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> Điện thoại</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Mobiistar</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/mobiistar-zumbo-s2-dual-300x300.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model Mobiistar Zumbo S2 Dual (Ảnh catalogue 1:1 chính hãng, nền trắng tinh khiết)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Thế Giới Di Động Official Catalogue Archive</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L01">
+                        <td>14</td>
+                        <td><span class="code-tag">Mob2</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/mobiistar-e-selfie-300-1copy-600x600.jpg" alt="Mobiistar E Selfie" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>Mobiistar E Selfie</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 2.490.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-phone"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> Điện thoại</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Mobiistar</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/mobiistar-e-selfie-300-1copy-600x600.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model Mobiistar E Selfie (Ảnh catalogue 1:1 chính hãng, nền trắng tinh khiết)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Thế Giới Di Động Official Catalogue Archive</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L01">
+                        <td>15</td>
+                        <td><span class="code-tag">Mob3</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/mobiistar-b310-orange-600x600.jpg" alt="Mobiistar B310" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>Mobiistar B310</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 260.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-phone"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> Điện thoại</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Mobiistar</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/mobiistar-b310-orange-600x600.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model Mobiistar B310 (Ảnh catalogue 1:1 chính hãng, nền trắng tinh khiết)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Thế Giới Di Động Official Catalogue Archive</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L01">
+                        <td>16</td>
+                        <td><span class="code-tag">Xia2</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/xiaomi-redmi-note-5-pro-600x600.jpg" alt="Xiaomi Redmi Note 5" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>Xiaomi Redmi Note 5</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 5.690.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-phone"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> Điện thoại</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Xiaomi</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/xiaomi-redmi-note-5-pro-600x600.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model Xiaomi Redmi Note 5 (Ảnh catalogue 1:1 chính hãng, nền trắng tinh khiết)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Thế Giới Di Động Official Catalogue Archive</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L01">
+                        <td>17</td>
+                        <td><span class="code-tag">Xia3</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/xiaomi-redmi-5-plus-600x600.jpg" alt="Xiaomi Redmi 5 Plus 4GB" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>Xiaomi Redmi 5 Plus 4GB</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 4.790.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-phone"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> Điện thoại</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Xiaomi</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/xiaomi-redmi-5-plus-600x600.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model Xiaomi Redmi 5 Plus 4GB (Ảnh catalogue 1:1 chính hãng, nền trắng tinh khiết)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Thế Giới Di Động Official Catalogue Archive</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L01">
+                        <td>18</td>
+                        <td><span class="code-tag">Hua0</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/huawei-mate-20-pro-green-600x600.jpg" alt="Huawei Mate 20 Pro" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>Huawei Mate 20 Pro</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 21.990.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-phone"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> Điện thoại</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Huawei</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/huawei-mate-20-pro-green-600x600.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model Huawei Mate 20 Pro (Ảnh catalogue 1:1 chính hãng, nền trắng tinh khiết)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Thế Giới Di Động Official Catalogue Archive</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L01">
+                        <td>19</td>
+                        <td><span class="code-tag">Hua1</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/huawei-nova-3-2-600x600.jpg" alt="Huawei Nova 3" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>Huawei Nova 3</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 9.990.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-phone"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> Điện thoại</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Huawei</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/huawei-nova-3-2-600x600.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model Huawei Nova 3 (Ảnh catalogue 1:1 chính hãng, nền trắng tinh khiết)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Thế Giới Di Động Official Catalogue Archive</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L01">
+                        <td>20</td>
+                        <td><span class="code-tag">Hua2</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/huawei-y5-2017-300x300.jpg" alt="Huawei Y5 2017" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>Huawei Y5 2017</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 1.990.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-phone"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> Điện thoại</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Huawei</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/huawei-y5-2017-300x300.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model Huawei Y5 2017 (Ảnh catalogue 1:1 chính hãng, nền trắng tinh khiết)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Thế Giới Di Động Official Catalogue Archive</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L01">
+                        <td>21</td>
+                        <td><span class="code-tag">DT-IP13</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/pilot-iphone-13.png" alt="iPhone 13 128GB" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>iPhone 13 128GB</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 14.990.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-phone"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> Điện thoại</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Apple</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/pilot-iphone-13.png</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model iPhone 13 (Cụm camera chéo kép, viền nhôm phẳng, Super Retina XDR)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Apple Store CDN / Newsroom</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L01">
+                        <td>22</td>
+                        <td><span class="code-tag">DT-SS23</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/pilot-samsung-galaxy-s23.png" alt="Samsung Galaxy S23 5G 128GB" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>Samsung Galaxy S23 5G 128GB</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 14.990.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-phone"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> Điện thoại</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Samsung</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/pilot-samsung-galaxy-s23.png</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model Galaxy S23 (3 camera trôi nổi xếp dọc độc lập, viền Armor Aluminum phẳng)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Samsung PIM Official Portal</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L01">
+                        <td>23</td>
+                        <td><span class="code-tag">DT-OPRE11</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/oppo-reno-11.png" alt="OPPO Reno11 5G 256GB" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>OPPO Reno11 5G 256GB</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 9.990.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-phone"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> Điện thoại</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">OPPO</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/oppo-reno-11.png</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model OPPO Reno11 5G (Mặt lưng lụa Wave Green, cụm camera oval kép đặc trưng)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> OPPO Official Product CDN</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L01">
+                        <td>24</td>
+                        <td><span class="code-tag">DT-XIN13</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/xiaomi-redmi-note-13.png" alt="Xiaomi Redmi Note 13 128GB" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>Xiaomi Redmi Note 13 128GB</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 4.490.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-phone"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> Điện thoại</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Xiaomi</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/xiaomi-redmi-note-13.png</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model Redmi Note 13 (Mặt lưng Midnight Black, viền phẳng, camera 108MP)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Xiaomi Official Global Store</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L01">
+                        <td>25</td>
+                        <td><span class="code-tag">DT-REAC67</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/realme-c67.png" alt="Realme C67 128GB" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>Realme C67 128GB</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 4.490.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-phone"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> Điện thoại</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Realme</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/realme-c67.png</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model Realme C67 (Mặt lưng Sunny Oasis ánh hào quang, camera kép viền vàng)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Realme Official Studio / CellphoneS</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L01">
+                        <td>26</td>
+                        <td><span class="code-tag">DT-VIVV29</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/vivo-v29e.png" alt="Vivo V29e 5G 256GB" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>Vivo V29e 5G 256GB</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 8.490.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-phone"><i class="fa-solid fa-mobile-screen-button" aria-hidden="true"></i> Điện thoại</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Vivo</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/vivo-v29e.png</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model Vivo V29e 5G (Vòng sáng Aura Light 2.0, mặt lưng Ice Creek Blue)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Vivo Official Studio / CellphoneS</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L02">
+                        <td>27</td>
+                        <td><span class="code-tag">TB-IP9</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/ipad-gen-9.png" alt="iPad Gen 9 10.2 inch WiFi 64GB" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>iPad Gen 9 10.2 inch WiFi 64GB</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 7.490.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-tablet"><i class="fa-solid fa-tablet-screen-button" aria-hidden="true"></i> Máy tính bảng</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Apple</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/ipad-gen-9.png</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model iPad Gen 9 (Màn hình Retina 10.2", nút Home Touch ID, camera Ultra Wide Center Stage)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Apple Support / Newsroom</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L02">
+                        <td>28</td>
+                        <td><span class="code-tag">TB-IP10</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/pilot-ipad-gen-10.jpg" alt="iPad Gen 10 10.9 inch WiFi 64GB" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>iPad Gen 10 10.9 inch WiFi 64GB</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 10.490.001₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-tablet"><i class="fa-solid fa-tablet-screen-button" aria-hidden="true"></i> Máy tính bảng</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Apple</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/pilot-ipad-gen-10.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model iPad Gen 10 (Thiết kế viền mỏng đối xứng toàn diện, Touch ID cạnh trên, Liquid Retina 10.9")</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Apple Newsroom Studio Press</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L02">
+                        <td>29</td>
+                        <td><span class="code-tag">TB-IPAIR5</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/ipad-air-5.png" alt="iPad Air 5 M1 10.9 inch WiFi 64GB" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>iPad Air 5 M1 10.9 inch WiFi 64GB</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 14.990.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-tablet"><i class="fa-solid fa-tablet-screen-button" aria-hidden="true"></i> Máy tính bảng</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Apple</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/ipad-air-5.png</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model iPad Air 5 (Chân đế nam châm Apple Pencil 2, viền nhôm vát phẳng, camera góc rộng)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Apple Store Studio CDN</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L02">
+                        <td>30</td>
+                        <td><span class="code-tag">TB-IPMINI6</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/ipad-mini-6.png" alt="iPad mini 6 8.3 inch WiFi 64GB" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>iPad mini 6 8.3 inch WiFi 64GB</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 12.490.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-tablet"><i class="fa-solid fa-tablet-screen-button" aria-hidden="true"></i> Máy tính bảng</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Apple</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/ipad-mini-6.png</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model iPad mini 6 (Kích thước 8.3" siêu nhỏ gọn, viền mỏng Liquid Retina, cổng Type-C)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Apple Store Studio CDN</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L02">
+                        <td>31</td>
+                        <td><span class="code-tag">TB-IPPRO11</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/ipad-pro-11.jpg" alt="iPad Pro 11 inch M2 WiFi 128GB" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>iPad Pro 11 inch M2 WiFi 128GB</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 20.990.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-tablet"><i class="fa-solid fa-tablet-screen-button" aria-hidden="true"></i> Máy tính bảng</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Apple</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/ipad-pro-11.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model iPad Pro 11 inch (Cụm camera vuông kép + cảm biến LiDAR Scanner, ProMotion 120Hz)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Apple Newsroom Studio Press</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L02">
+                        <td>32</td>
+                        <td><span class="code-tag">TB-SSA9</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/samsung-galaxy-tab-a9.png" alt="Samsung Galaxy Tab A9 WiFi 64GB" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>Samsung Galaxy Tab A9 WiFi 64GB</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 3.490.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-tablet"><i class="fa-solid fa-tablet-screen-button" aria-hidden="true"></i> Máy tính bảng</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Samsung</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/samsung-galaxy-tab-a9.png</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model Galaxy Tab A9 (Màn hình tỷ lệ dọc 8.7", mặt lưng kim loại nguyên khối Silver)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Samsung Official PIM / FPT Shop</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L02">
+                        <td>33</td>
+                        <td><span class="code-tag">TB-SSA9P</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/samsung-galaxy-tab-a9-plus.jpg" alt="Samsung Galaxy Tab A9+ WiFi 64GB" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>Samsung Galaxy Tab A9+ WiFi 64GB</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 5.490.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-tablet"><i class="fa-solid fa-tablet-screen-button" aria-hidden="true"></i> Máy tính bảng</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Samsung</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/samsung-galaxy-tab-a9-plus.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model Galaxy Tab A9+ (Màn hình tỷ lệ ngang 11" 90Hz, 4 loa vòm Dolby Atmos)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Samsung Official PIM / FPT Shop</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L02">
+                        <td>34</td>
+                        <td><span class="code-tag">TB-SSS9FE</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/samsung-galaxy-tab-s9-fe.jpg" alt="Samsung Galaxy Tab S9 FE WiFi 128GB" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>Samsung Galaxy Tab S9 FE WiFi 128GB</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 9.990.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-tablet"><i class="fa-solid fa-tablet-screen-button" aria-hidden="true"></i> Máy tính bảng</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Samsung</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/samsung-galaxy-tab-s9-fe.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model Galaxy Tab S9 FE (Màu Mint Green, rãnh hít từ tính bút S-Pen, kháng nước IP68)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Samsung Official Media Portal</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L02">
+                        <td>35</td>
+                        <td><span class="code-tag">TB-SSS9</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/pilot-samsung-galaxy-tab-s9.png" alt="Samsung Galaxy Tab S9 128GB" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>Samsung Galaxy Tab S9 128GB</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 17.990.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-tablet"><i class="fa-solid fa-tablet-screen-button" aria-hidden="true"></i> Máy tính bảng</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Samsung</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/pilot-samsung-galaxy-tab-s9.png</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model Galaxy Tab S9 Flagship (Màn hình Dynamic AMOLED 2X 120Hz, camera nổi viền kim loại)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Samsung Press Kit / Pilot Studio</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L02">
+                        <td>36</td>
+                        <td><span class="code-tag">TB-XIPAD6</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/xiaomi-pad-6.jpg" alt="Xiaomi Pad 6 128GB" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>Xiaomi Pad 6 128GB</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 7.989.999₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-tablet"><i class="fa-solid fa-tablet-screen-button" aria-hidden="true"></i> Máy tính bảng</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Xiaomi</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/xiaomi-pad-6.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model Xiaomi Pad 6 (Mặt lưng Misty Blue kim loại unibody, camera phong cách Xiaomi 13)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Xiaomi Official Global Store</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L02">
+                        <td>37</td>
+                        <td><span class="code-tag">TB-REDPAD</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/redmi-pad-se.png" alt="Xiaomi Redmi Pad SE 128GB" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>Xiaomi Redmi Pad SE 128GB</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 3.990.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-tablet"><i class="fa-solid fa-tablet-screen-button" aria-hidden="true"></i> Máy tính bảng</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Xiaomi</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/redmi-pad-se.png</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model Redmi Pad SE (Mặt lưng Mint Green thanh nhã, cụm camera đơn gọn gàng, 4 loa Hi-Res)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Xiaomi Official / CellphoneS</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L02">
+                        <td>38</td>
+                        <td><span class="code-tag">TB-LENM11</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/lenovo-tab-m11.png" alt="Lenovo Tab M11 64GB" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>Lenovo Tab M11 64GB</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 4.490.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-tablet"><i class="fa-solid fa-tablet-screen-button" aria-hidden="true"></i> Máy tính bảng</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Lenovo</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/lenovo-tab-m11.png</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model Lenovo Tab M11 (Mặt lưng 2 tông màu Luna Grey, màn hình hiển thị giờ 10:12)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Lenovo PSREF CDN Official</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L02">
+                        <td>39</td>
+                        <td><span class="code-tag">TB-LENP11</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/lenovo-tab-p11.png" alt="Lenovo Tab P11 Gen 2 128GB" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>Lenovo Tab P11 Gen 2 128GB</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 7.490.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-tablet"><i class="fa-solid fa-tablet-screen-button" aria-hidden="true"></i> Máy tính bảng</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Lenovo</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/lenovo-tab-p11.png</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model Lenovo Tab P11 Gen 2 (Mặt lưng kim loại 2 tone xám, màn hình hiển thị giờ 10:08)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Lenovo PSREF CDN Official</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L02">
+                        <td>40</td>
+                        <td><span class="code-tag">TB-OPPAD2</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/oppo-pad-neo.png" alt="OPPO Pad Neo 128GB" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>OPPO Pad Neo 128GB</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 6.990.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-tablet"><i class="fa-solid fa-tablet-screen-button" aria-hidden="true"></i> Máy tính bảng</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">OPPO</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/oppo-pad-neo.png</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model OPPO Pad Neo (Tỷ lệ màn hình 7:5 ReadFit 2.4K độc quyền, mặt lưng xám mờ kim loại)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> OPPO Official Product CDN</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L04">
+                        <td>41</td>
+                        <td><span class="code-tag">LT-APM1</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/pilot-macbook-air-m1.jpg" alt="MacBook Air 13 inch M1 256GB" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>MacBook Air 13 inch M1 256GB</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 18.490.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-laptop"><i class="fa-solid fa-laptop" aria-hidden="true"></i> Laptop</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Apple</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/pilot-macbook-air-m1.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model MacBook Air 13 M1 (Vát nhọn hình nêm Wedge design kinh điển, hình nền Big Sur macOS)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Apple Newsroom Press Kit</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L04">
+                        <td>42</td>
+                        <td><span class="code-tag">LT-APM2</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/macbook-air-m2.jpg" alt="MacBook Air 13 inch M2 256GB" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>MacBook Air 13 inch M2 256GB</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 24.990.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-laptop"><i class="fa-solid fa-laptop" aria-hidden="true"></i> Laptop</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Apple</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/macbook-air-m2.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model MacBook Air 13 M2 (Màu Midnight xanh đêm độc quyền, tai thỏ Liquid Retina viền mỏng)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Apple Store Studio CDN</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L04">
+                        <td>43</td>
+                        <td><span class="code-tag">LT-APM3</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/macbook-air-m3.jpg" alt="MacBook Air 13 inch M3 256GB" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>MacBook Air 13 inch M3 256GB</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 27.989.999₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-laptop"><i class="fa-solid fa-laptop" aria-hidden="true"></i> Laptop</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Apple</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/macbook-air-m3.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model MacBook Air 13 M3 (Màu Starlight vàng sâm banh, dải màu hình nền M3 3-dải sóng độc nhất)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Apple Store Studio CDN</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L04">
+                        <td>44</td>
+                        <td><span class="code-tag">LT-APPR14</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/macbook-pro-14-m3.jpg" alt="MacBook Pro 14 inch M3 512GB" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>MacBook Pro 14 inch M3 512GB</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 39.990.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-laptop"><i class="fa-solid fa-laptop" aria-hidden="true"></i> Laptop</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Apple</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/macbook-pro-14-m3.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model MacBook Pro 14 M3 (Vỏ nhôm dày tản nhiệt chủ động, dải ruy băng lụa M3 Pro macOS)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Apple Store Studio CDN</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L04">
+                        <td>45</td>
+                        <td><span class="code-tag">LT-ASVIVO15</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/asus-vivobook-15.png" alt="ASUS Vivobook 15 X1504ZA" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>ASUS Vivobook 15 X1504ZA</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 12.990.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-laptop"><i class="fa-solid fa-laptop" aria-hidden="true"></i> Laptop</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Asus</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/asus-vivobook-15.png</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model ASUS Vivobook 15 X1504 (Bản lề mở góc 180°, bàn phím ErgoSense số đầy đủ)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> ASUS Official Product Asset</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L04">
+                        <td>46</td>
+                        <td><span class="code-tag">LT-ASVIVO14</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/asus-vivobook-14.jpg" alt="ASUS Vivobook 14 OLED A1405VA" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>ASUS Vivobook 14 OLED A1405VA</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 17.990.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-laptop"><i class="fa-solid fa-laptop" aria-hidden="true"></i> Laptop</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Asus</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/asus-vivobook-14.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model ASUS Vivobook 14 OLED (Màn hình Lumina OLED 2.8K tỷ lệ 16:10, logo Vivobook dập nổi)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> ASUS Official Product Asset</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L04">
+                        <td>47</td>
+                        <td><span class="code-tag">LT-ASZEN14</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/asus-zenbook-14.jpg" alt="ASUS Zenbook 14 OLED UX3405MA" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>ASUS Zenbook 14 OLED UX3405MA</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 28.990.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-laptop"><i class="fa-solid fa-laptop" aria-hidden="true"></i> Laptop</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Asus</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/asus-zenbook-14.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model Zenbook 14 OLED UX3405 (Mặt chữ A kim loại Kintsugi kỷ niệm, siêu mỏng 14.9mm)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> ASUS Official Press CDN</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L04">
+                        <td>48</td>
+                        <td><span class="code-tag">LT-ASTUF15</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/asus-tuf-gaming-f15.jpg" alt="ASUS TUF Gaming F15 FX506HF" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>ASUS TUF Gaming F15 FX506HF</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 16.489.999₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-laptop"><i class="fa-solid fa-laptop" aria-hidden="true"></i> Laptop</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Asus</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/asus-tuf-gaming-f15.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model TUF Gaming F15 FX506 (Nắp nhôm phay xước logo TUF cơ bắp, phím WASD trong suốt)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> ASUS Official Gaming CDN</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L04">
+                        <td>49</td>
+                        <td><span class="code-tag">LT-ASROG6</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/asus-rog-strix-g16.png" alt="ASUS ROG Strix G16 G614JU" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>ASUS ROG Strix G16 G614JU</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 34.990.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-laptop"><i class="fa-solid fa-laptop" aria-hidden="true"></i> Laptop</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Asus</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/asus-rog-strix-g16.png</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model ROG Strix G16 G614 (Dải LED RGB viền cạnh trước Aura Sync, màn hình ROG Nebula 16:10)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> ASUS Official ROG Gallery</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L04">
+                        <td>50</td>
+                        <td><span class="code-tag">LT-DELL3520</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/dell-inspiron-15-3520.png" alt="Dell Inspiron 15 3520 i5" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>Dell Inspiron 15 3520 i5</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 14.990.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-laptop"><i class="fa-solid fa-laptop" aria-hidden="true"></i> Laptop</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Dell</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/dell-inspiron-15-3520.png</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model Dell Inspiron 15 3520 (Bản lề nâng ErgoLift chống mỏi cổ tay, viền màn hình hẹp)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Dell Official Store Gallery</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L04">
+                        <td>51</td>
+                        <td><span class="code-tag">LT-DELL3530</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/dell-inspiron-15-3530.jpg" alt="Dell Inspiron 15 3530 i7" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>Dell Inspiron 15 3530 i7</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 19.990.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-laptop"><i class="fa-solid fa-laptop" aria-hidden="true"></i> Laptop</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Dell</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/dell-inspiron-15-3530.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model Dell Inspiron 15 3530 (Vỏ bạc Platinum Silver thế hệ mới, bàn phím số liền mạch)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Dell Official / CellphoneS Studio</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L04">
+                        <td>52</td>
+                        <td><span class="code-tag">LT-DELLVO15</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/dell-vostro-15-3520.jpg" alt="Dell Vostro 15 3520 i3" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>Dell Vostro 15 3520 i3</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 10.990.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-laptop"><i class="fa-solid fa-laptop" aria-hidden="true"></i> Laptop</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Dell</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/dell-vostro-15-3520.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model Dell Vostro 15 3520 (Vỏ nhám Carbon Black chống bám vân tay, độ bền đạt chuẩn doanh nghiệp)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Dell Official Store Gallery</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L04">
+                        <td>53</td>
+                        <td><span class="code-tag">LT-DELLXPS13</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/dell-xps-13.png" alt="Dell XPS 13 9315 i5" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>Dell XPS 13 9315 i5</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 29.990.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-laptop"><i class="fa-solid fa-laptop" aria-hidden="true"></i> Laptop</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Dell</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/dell-xps-13.png</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model Dell XPS 13 9315 (Nhôm nguyên khối CNC màu Sky Blue, màn hình InfinityEdge 4 cạnh viền siêu mỏng)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Dell Scene7 Official Press CDN</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L04">
+                        <td>54</td>
+                        <td><span class="code-tag">LT-HP15S</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/hp-15s.png" alt="HP 15s-fq5229TU i3" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>HP 15s-fq5229TU i3</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 10.990.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-laptop"><i class="fa-solid fa-laptop" aria-hidden="true"></i> Laptop</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">HP</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/hp-15s.png</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model HP 15s-fq (Mặt lưng bạc Natural Silver, bàn phím số full-size, hình nền Windows 11 Bloom)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> HP Official Studio Press</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L04">
+                        <td>55</td>
+                        <td><span class="code-tag">LT-HPPAV14</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/hp-pavilion-14.jpg" alt="HP Pavilion 14-dv2073TU i5" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>HP Pavilion 14-dv2073TU i5</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 15.990.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-laptop"><i class="fa-solid fa-laptop" aria-hidden="true"></i> Laptop</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">HP</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/hp-pavilion-14.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model HP Pavilion 14-dv (Nắp nhôm cao cấp dập logo HP tròn bóng, viền màn hình mỏng 3 cạnh)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> HP Official Studio Press</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L04">
+                        <td>56</td>
+                        <td><span class="code-tag">LT-HPENVY13</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/hp-envy-x360.jpg" alt="HP Envy x360 13-bf0094TU i5" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>HP Envy x360 13-bf0094TU i5</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 22.990.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-laptop"><i class="fa-solid fa-laptop" aria-hidden="true"></i> Laptop</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">HP</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/hp-envy-x360.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model HP Envy x360 13 (Bản lề xoay 360 độ linh hoạt 4 chế độ, màn hình cảm ứng kính tràn viền)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> HP Official Studio Press</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L04">
+                        <td>57</td>
+                        <td><span class="code-tag">LT-HPVICT16</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/hp-victus-16.png" alt="HP Victus 16-r0129TX i5" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>HP Victus 16-r0129TX i5</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 23.990.001₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-laptop"><i class="fa-solid fa-laptop" aria-hidden="true"></i> Laptop</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">HP</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/hp-victus-16.png</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model HP Victus 16 R-series (Biểu tượng chữ V đặc trưng, màn hình 16.1" viền siêu mỏng)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> HP Official / CellphoneS Studio</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L04">
+                        <td>58</td>
+                        <td><span class="code-tag">LT-LENID3</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/lenovo-ideapad-3.jpg" alt="Lenovo Ideapad 3 15ITL6 i3" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>Lenovo Ideapad 3 15ITL6 i3</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 9.990.001₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-laptop"><i class="fa-solid fa-laptop" aria-hidden="true"></i> Laptop</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Lenovo</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/lenovo-ideapad-3.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model Lenovo IdeaPad 3 15ITL6 (Vỏ xám Platinum Grey, webcam có lẫy khóa vật lý Privacy Shutter)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Lenovo PSREF Studio CDN</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L04">
+                        <td>59</td>
+                        <td><span class="code-tag">LT-LENID5</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/lenovo-ideapad-slim-5.png" alt="Lenovo Ideapad Slim 5 14IRH8 i5" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>Lenovo Ideapad Slim 5 14IRH8 i5</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 16.990.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-laptop"><i class="fa-solid fa-laptop" aria-hidden="true"></i> Laptop</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Lenovo</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/lenovo-ideapad-slim-5.png</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model Lenovo IdeaPad Slim 5 14 (Vỏ kim loại nhôm nguyên khối Cloud Grey, đạt chuẩn quân đội MIL-STD-810H)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Lenovo PSREF Studio CDN</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L04">
+                        <td>60</td>
+                        <td><span class="code-tag">LT-LENLOQ</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/lenovo-loq-15.jpg" alt="Lenovo LOQ 15IAX9 i5" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>Lenovo LOQ 15IAX9 i5</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 19.990.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-laptop"><i class="fa-solid fa-laptop" aria-hidden="true"></i> Laptop</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Lenovo</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/lenovo-loq-15.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model Lenovo LOQ 15 (Thiết kế hốc gió tản nhiệt màu xanh Cyan thể thao, cổng kết nối dồn về sau)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Lenovo Official / CellphoneS Studio</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L04">
+                        <td>61</td>
+                        <td><span class="code-tag">LT-LENLEG5</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/lenovo-legion-5.jpg" alt="Lenovo Legion 5 16IRX9 i7" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>Lenovo Legion 5 16IRX9 i7</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 35.990.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-laptop"><i class="fa-solid fa-laptop" aria-hidden="true"></i> Laptop</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Lenovo</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/lenovo-legion-5.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model Lenovo Legion 5 16IRX9 (Chữ LEGION khắc laser tinh tế trên nắp máy, khe tản nhiệt Legion Coldfront)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Lenovo PSREF Studio CDN</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L04">
+                        <td>62</td>
+                        <td><span class="code-tag">LT-ACASP3</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/acer-aspire-3.png" alt="Acer Aspire 3 A315-59-381E i3" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>Acer Aspire 3 A315-59-381E i3</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 9.490.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-laptop"><i class="fa-solid fa-laptop" aria-hidden="true"></i> Laptop</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Acer</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/acer-aspire-3.png</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model Acer Aspire 3 A315-59 (Vỏ bạc Pure Silver thanh lịch, bản lề nâng công thái học)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Acer Official / CellphoneS Studio</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L04">
+                        <td>63</td>
+                        <td><span class="code-tag">LT-ACNITRO5</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/pilot-acer-nitro-5.jpg" alt="Acer Nitro 5 Tiger AN515-58 i5" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>Acer Nitro 5 Tiger AN515-58 i5</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 18.989.999₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-laptop"><i class="fa-solid fa-laptop" aria-hidden="true"></i> Laptop</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">Acer</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/pilot-acer-nitro-5.jpg</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model Acer Nitro 5 Tiger AN515-58 (Đường nét neon đỏ xanh Gaming hầm hố, khe tản nhiệt ống xả phản lực)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> Acer CES Press Kit Official</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L04">
+                        <td>64</td>
+                        <td><span class="code-tag">LT-MSIGF63</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/msi-thin-gf63.png" alt="MSI Thin GF63 12VE i5" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>MSI Thin GF63 12VE i5</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 17.990.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-laptop"><i class="fa-solid fa-laptop" aria-hidden="true"></i> Laptop</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">MSI</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/msi-thin-gf63.png</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model MSI Thin GF63 (Vỏ nhôm phay xước màu đen, logo Rồng đỏ MSI dập nổi đặc trưng)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> MSI Official / CellphoneS Studio</span>
+                        </td>
+                    </tr>
+                    <tr data-cat="L04">
+                        <td>65</td>
+                        <td><span class="code-tag">LT-MSIMOD14</span></td>
+                        <td>
+                            <div class="thumb-box">
+                                <img src="images/msi-modern-14.png" alt="MSI Modern 14 C12MO i3" loading="lazy">
+                            </div>
+                        </td>
+                        <td>
+                            <strong>MSI Modern 14 C12MO i3</strong>
+                            <div style="font-size: 12px; color: var(--text-muted); margin-top: 4px;">Giá niêm yết: 10.490.000₫</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-laptop"><i class="fa-solid fa-laptop" aria-hidden="true"></i> Laptop</span>
+                            <div style="font-size: 12px; font-weight: 600; margin-top: 4px;">MSI</div>
+                        </td>
+                        <td>
+                            <div class="file-path">images/msi-modern-14.png</div>
+                        </td>
+                        <td>
+                            <span class="badge badge-verified"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Đã xác minh chuẩn</span>
+                            <div style="font-size: 12px; color: #334155; margin-top: 4px;">Đúng model MSI Modern 14 C12MO (Trọng lượng siêu nhẹ 1.4kg, bản lề mở phẳng 180°, bàn phím LED trắng)</div>
+                        </td>
+                        <td>
+                            <span class="source-badge"><i class="fa-solid fa-building" aria-hidden="true"></i> MSI Official / CellphoneS Studio</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div id="actionToast"></div>
+
+    <script src="products.js"></script>
+    <script src="admin/js/store.js"></script>
+    <script>
+        let currentCategory = 'all';
+
+        function showToast(msg) {
+            const toast = document.getElementById('actionToast');
+            toast.textContent = msg;
+            toast.style.display = 'block';
+            setTimeout(() => { toast.style.display = 'none'; }, 4000);
+        }
+
+        function filterCategory(cat, btn) {
+            currentCategory = cat;
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            applyFilters();
+        }
+
+        function handleSearch() {
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const query = (document.getElementById('searchInput').value || '').toLowerCase().trim();
+            const rows = document.querySelectorAll('#productsTable tbody tr');
+            rows.forEach(r => {
+                const catMatch = currentCategory === 'all' || r.getAttribute('data-cat') === currentCategory;
+                const text = r.textContent.toLowerCase();
+                const textMatch = !query || text.includes(query);
+                if (catMatch && textMatch) {
+                    r.style.display = '';
+                } else {
+                    r.style.display = 'none';
+                }
+            });
+        }
+
+        function backupDatabase() {
+            if (!window.TechStore) return alert('TechStore store.js chưa tải được.');
+            try {
+                const db = window.TechStore.load(window.list_products || []);
+                const json = window.TechStore.exportBackup(db);
+                const blob = new Blob([json], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'techstore-backup-truoc-khi-cap-nhat-anh.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showToast('Đã tải xuống file sao lưu an toàn!');
+            } catch(e) {
+                alert('Lỗi sao lưu: ' + e.message);
+            }
+        }
+
+        function patchLocalStorage() {
+            if (!window.TechStore) return alert('TechStore store.js chưa tải được.');
+            try {
+                let db = window.TechStore.load(window.list_products || []);
+                if (typeof window.TechStore.importStandardBatches === 'function') {
+                    db = window.TechStore.importStandardBatches(db);
+                }
+                const rep = window.TechStore.patchProductImagePaths(db);
+                showToast('Đã cập nhật: ' + rep.updated + ' ảnh, ' + rep.skipped + ' đã chuẩn, ' + rep.customKept + ' ảnh tùy chỉnh giữ nguyên.');
+                setTimeout(() => { location.reload(); }, 1500);
+            } catch(e) {
+                alert('Lỗi cập nhật: ' + e.message);
+            }
+        }
+    </script>
+</body>
+</html>

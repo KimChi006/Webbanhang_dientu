@@ -22,37 +22,37 @@ const dateText = (value) =>
     : "—";
 const pageInfo = {
   customers: [
-    "👥",
+    '<i class="fa-solid fa-users" aria-hidden="true"></i>',
     "Quản lý khách hàng",
     "Theo dõi tài khoản, thông tin khách hàng và quyền truy cập.",
   ],
   categories: [
-    "🗂️",
+    '<i class="fa-solid fa-table-cells-large" aria-hidden="true"></i>',
     "Quản lý loại sản phẩm",
     "Thêm, sửa và quản lý hiển thị các loại sản phẩm của cửa hàng.",
   ],
   products: [
-    "📦",
+    '<i class="fa-solid fa-box-open" aria-hidden="true"></i>',
     "Quản lý sản phẩm",
     "Quản lý thông tin, hình ảnh, mô tả và thông số sản phẩm.",
   ],
   imports: [
-    "📥",
+    '<i class="fa-solid fa-file-import" aria-hidden="true"></i>',
     "Quản lý nhập hàng",
     "Tạo phiếu nhập, kiểm tra giá nhập và hoàn thành nhập kho.",
   ],
   prices: [
-    "🏷️",
+    '<i class="fa-solid fa-tags" aria-hidden="true"></i>',
     "Quản lý giá bán",
     "Tra cứu giá vốn, lợi nhuận và giá bán theo từng loại sản phẩm.",
   ],
   orders: [
-    "🧾",
+    '<i class="fa-solid fa-receipt" aria-hidden="true"></i>',
     "Quản lý đơn hàng",
     "Tra cứu, xem chi tiết và cập nhật tình trạng đơn đặt hàng.",
   ],
   inventory: [
-    "📊",
+    '<i class="fa-solid fa-warehouse" aria-hidden="true"></i>',
     "Quản lý tồn kho",
     "Theo dõi tồn tại một thời điểm và báo cáo nhập – xuất – tồn.",
   ],
@@ -165,7 +165,7 @@ function table(headers, rows, paginate = true, footerRow = "") {
   const shown = paginate
     ? rows.slice((pageNumber - 1) * PAGE_SIZE, pageNumber * PAGE_SIZE)
     : rows;
-  return `<div class="table-wrap"><table><thead><tr>${headers.map((h) => `<th scope="col">${h}</th>`).join("")}</tr></thead><tbody>${shown.length ? shown.join("") : `<tr><td colspan="${headers.length}"><div class="empty-state"><strong>Không có dữ liệu phù hợp</strong>Thử thay đổi bộ lọc hoặc thêm dữ liệu mới.</div></td></tr>`}</tbody>${footerRow ? `<tfoot>${footerRow}</tfoot>` : ""}</table></div><div class="table-footer"><span>${rows.length} kết quả${paginate && rows.length ? " · " + ((pageNumber - 1) * PAGE_SIZE + 1) + "–" + Math.min(pageNumber * PAGE_SIZE, rows.length) : ""}</span>${paginate ? `<div class="pagination"><button class="btn btn-light" data-action="previous" ${pageNumber === 1 ? "disabled" : ""} aria-label="Trang trước">←</button><span>Trang ${pageNumber} / ${pages}</span><button class="btn btn-light" data-action="next" ${pageNumber === pages ? "disabled" : ""} aria-label="Trang sau">→</button></div>` : ""}</div>`;
+  return `<div class="table-wrap"><table><thead><tr>${headers.map((h) => `<th scope="col">${h}</th>`).join("")}</tr></thead><tbody>${shown.length ? shown.join("") : `<tr><td colspan="${headers.length}"><div class="empty-state"><strong>Không có dữ liệu phù hợp</strong>Thử thay đổi bộ lọc hoặc thêm dữ liệu mới.</div></td></tr>`}</tbody>${footerRow ? `<tfoot>${footerRow}</tfoot>` : ""}</table></div><div class="table-footer"><span>${rows.length} kết quả${paginate && rows.length ? " · " + ((pageNumber - 1) * PAGE_SIZE + 1) + "–" + Math.min(pageNumber * PAGE_SIZE, rows.length) : ""}</span>${paginate ? `<div class="pagination"><button class="btn btn-light" data-action="previous" ${pageNumber === 1 ? "disabled" : ""} aria-label="Trang trước"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button><span>Trang ${pageNumber} / ${pages}</span><button class="btn btn-light" data-action="next" ${pageNumber === pages ? "disabled" : ""} aria-label="Trang sau"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button></div>` : ""}</div>`;
 }
 function filterInput(name, label, type = "text", placeholder = "") {
   return `<div class="field ${name === "q" ? "search" : ""} ${type === "datetime-local" ? "time" : ""}"><label for="filter-${name}">${label}</label><input id="filter-${name}" name="${name}" type="${type}" value="${escapeHTML(filters[name] || "")}" placeholder="${placeholder}"></div>`;
@@ -189,7 +189,7 @@ function queryFilter() {
   );
 }
 function filterForm(content, kind = "main") {
-  return `<form class="filters" data-filter-form="${kind}">${content}<button type="submit" class="btn btn-primary">${kind === "report" ? "Xem báo cáo" : "Áp dụng"}</button>${action("Xóa lọc", "clear-filters")}</form>`;
+  return `<form class="filters" data-filter-form="${kind}">${content}<button type="submit" class="btn btn-primary"><i class="fa-solid fa-filter" aria-hidden="true"></i> ${kind === "report" ? "Xem báo cáo" : "Áp dụng"}</button>${action('<i class="fa-solid fa-trash-can" aria-hidden="true"></i> Xóa lọc', "clear-filters")}</form>`;
 }
 function match(...values) {
   return (
@@ -244,9 +244,9 @@ function render() {
     else b.removeAttribute("aria-current");
   });
   const actions = {
-    categories: action("+ Thêm loại sản phẩm", "edit-category", "", "primary"),
-    products: action("+ Thêm sản phẩm", "add-product", "", "primary"),
-    imports: action("+ Tạo phiếu nhập", "edit-receipt", "", "primary"),
+    categories: action('<i class="fa-solid fa-plus" aria-hidden="true"></i> Thêm loại sản phẩm', "edit-category", "", "primary"),
+    products: action('<i class="fa-solid fa-plus" aria-hidden="true"></i> Thêm sản phẩm', "add-product", "", "primary"),
+    imports: action('<i class="fa-solid fa-plus" aria-hidden="true"></i> Tạo phiếu nhập', "edit-receipt", "", "primary"),
   };
   $("#pageActions").innerHTML = actions[currentPage] || "";
   const views = {
@@ -269,7 +269,7 @@ function renderCustomers() {
       (!filters.status || (filters.status === "locked") === c.locked),
   );
   return (
-    `<div class="stats">${stat("👥", "Tổng khách hàng", db.customers.length)}${stat("✅", "Tài khoản hoạt động", db.customers.filter((c) => !c.locked).length)}${stat("🔒", "Tài khoản bị khóa", db.customers.filter((c) => c.locked).length)}</div>` +
+    `<div class="stats">${stat('<i class="fa-solid fa-users" aria-hidden="true"></i>', "Tổng khách hàng", db.customers.length)}${stat('<i class="fa-solid fa-circle-check" aria-hidden="true"></i>', "Tài khoản hoạt động", db.customers.filter((c) => !c.locked).length)}${stat('<i class="fa-solid fa-lock" aria-hidden="true"></i>', "Tài khoản bị khóa", db.customers.filter((c) => c.locked).length)}</div>` +
     panel(
       "Danh sách khách hàng",
       filterForm(
@@ -297,7 +297,7 @@ function renderCustomers() {
           ],
           rows.map(
             (c) =>
-              `<tr><td>${escapeHTML(c.id)}</td><td><div class="cell-title">${escapeHTML(c.name)}</div><div class="cell-subtitle">${escapeHTML(c.email)}</div></td><td>${escapeHTML(c.phone)}</td><td>${badge(c.locked ? "Bị khóa" : "Hoạt động", c.locked ? "locked" : "active")}</td><td>${dateText(c.createdAt)}</td><td><div class="actions">${action("Chi tiết", "view-customer", c.id)}${action(c.locked ? "Mở khóa" : "Khóa", "toggle-customer", c.id, c.locked ? "success" : "danger")}${action("Đặt lại mật khẩu", "reset-password", c.id)}</div></td></tr>`,
+              `<tr><td>${escapeHTML(c.id)}</td><td><div class="cell-title">${escapeHTML(c.name)}</div><div class="cell-subtitle">${escapeHTML(c.email)}</div></td><td>${escapeHTML(c.phone)}</td><td>${badge(c.locked ? "Bị khóa" : "Hoạt động", c.locked ? "locked" : "active")}</td><td>${dateText(c.createdAt)}</td><td><div class="actions">${action('<i class="fa-solid fa-circle-info" aria-hidden="true"></i> Chi tiết', "view-customer", c.id)}${action(c.locked ? '<i class="fa-solid fa-lock-open" aria-hidden="true"></i> Mở khóa' : '<i class="fa-solid fa-lock" aria-hidden="true"></i> Khóa', "toggle-customer", c.id, c.locked ? "success" : "danger")}${action('<i class="fa-solid fa-key" aria-hidden="true"></i> Đặt lại mật khẩu', "reset-password", c.id)}</div></td></tr>`,
           ),
         ),
     )
@@ -310,7 +310,7 @@ function renderCategories() {
       (!filters.status || (filters.status === "hidden") === c.hidden),
   );
   return (
-    `<div class="stats">${stat("🗂️", "Tổng loại sản phẩm", db.categories.length)}${stat("✅", "Loại đang hiển thị", db.categories.filter((c) => !c.hidden).length)}${stat("🙈", "Loại đã ẩn", db.categories.filter((c) => c.hidden).length)}</div>` +
+    `<div class="stats">${stat('<i class="fa-solid fa-table-cells-large" aria-hidden="true"></i>', "Tổng loại sản phẩm", db.categories.length)}${stat('<i class="fa-solid fa-circle-check" aria-hidden="true"></i>', "Loại đang hiển thị", db.categories.filter((c) => !c.hidden).length)}${stat('<i class="fa-solid fa-eye-slash" aria-hidden="true"></i>', "Loại đã ẩn", db.categories.filter((c) => c.hidden).length)}</div>` +
     panel(
       "Danh sách loại sản phẩm",
       filterForm(
@@ -338,7 +338,7 @@ function renderCategories() {
           ],
           rows.map(
             (c) =>
-              `<tr><td>${escapeHTML(c.id)}</td><td><strong>${escapeHTML(c.name)}</strong><div class="cell-subtitle">${escapeHTML(c.description)}</div></td><td>${dbProducts.filter((p) => p.categoryId === c.id).length}</td><td>${c.profitRate}%</td><td>${badge(c.hidden ? "Đã ẩn" : "Đang hiển thị", c.hidden ? "neutral" : "active")}</td><td><div class="actions">${action("Sửa", "edit-category", c.id)}${action(c.hidden ? "Hiện" : "Ẩn", "toggle-category", c.id, c.hidden ? "success" : "light")}${action("Xóa", "delete-category", c.id, "danger")}</div></td></tr>`,
+              `<tr><td>${escapeHTML(c.id)}</td><td><strong>${escapeHTML(c.name)}</strong><div class="cell-subtitle">${escapeHTML(c.description)}</div></td><td>${dbProducts.filter((p) => p.categoryId === c.id).length}</td><td>${c.profitRate}%</td><td>${badge(c.hidden ? "Đã ẩn" : "Đang hiển thị", c.hidden ? "neutral" : "active")}</td><td><div class="actions">${action('<i class="fa-solid fa-pen-to-square" aria-hidden="true"></i> Sửa', "edit-category", c.id)}${action(c.hidden ? '<i class="fa-solid fa-eye" aria-hidden="true"></i> Hiện' : '<i class="fa-solid fa-eye-slash" aria-hidden="true"></i> Ẩn', "toggle-category", c.id, c.hidden ? "success" : "light")}${action('<i class="fa-solid fa-trash-can" aria-hidden="true"></i> Xóa', "delete-category", c.id, "danger")}</div></td></tr>`,
           ),
         ),
     )
@@ -353,12 +353,12 @@ function renderProducts() {
         (filters.status === "hidden") === Boolean(effectiveHidden(p))),
   );
   return (
-    `<div class="stats">${stat("📦", "Sản phẩm đang hiển thị", dbProducts.filter((p) => !effectiveHidden(p)).length)}${stat(
-      "🛒",
+    `<div class="stats">${stat('<i class="fa-solid fa-box-open" aria-hidden="true"></i>', "Sản phẩm đang hiển thị", dbProducts.filter((p) => !effectiveHidden(p)).length)}${stat(
+      '<i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>',
       "Tổng số lượng tồn kho",
       dbProducts.reduce((n, p) => n + p.sqlStock, 0),
       "Gồm cả sản phẩm ẩn",
-    )}${stat("🙈", "Sản phẩm không hiển thị", dbProducts.filter(effectiveHidden).length)}</div>` +
+    )}${stat('<i class="fa-solid fa-eye-slash" aria-hidden="true"></i>', "Sản phẩm không hiển thị", dbProducts.filter(effectiveHidden).length)}</div>` +
     panel(
       "Danh sách sản phẩm",
       filterForm(
@@ -380,7 +380,7 @@ function renderProducts() {
           ["Sản phẩm", "Loại", "Giá bán", "Tồn kho", "Trạng thái", "Thao tác"],
           rows.map(
             (p) =>
-              `<tr><td>${productCell(p)}</td><td>${escapeHTML(category(p.categoryId)?.name || "Chưa phân loại")}</td><td class="product-price">${money(p.sqlPrice)}</td><td>${p.sqlStock}</td><td>${badge(p.hidden ? "Đã ẩn" : category(p.categoryId)?.hidden ? "Loại đã ẩn" : "Đang hiển thị", effectiveHidden(p) ? "neutral" : "active")}</td><td>${action("Xem", "view-product", p.masp)}</td></tr>`,
+              `<tr><td>${productCell(p)}</td><td>${escapeHTML(category(p.categoryId)?.name || "Chưa phân loại")}</td><td class="product-price">${money(p.sqlPrice)}</td><td>${p.sqlStock}</td><td>${badge(p.hidden ? "Đã ẩn" : category(p.categoryId)?.hidden ? "Loại đã ẩn" : "Đang hiển thị", effectiveHidden(p) ? "neutral" : "active")}</td><td><div class="actions">${action('<i class="fa-solid fa-eye" aria-hidden="true"></i> Xem', "view-product", p.masp)}${action('<i class="fa-solid fa-pen-to-square" aria-hidden="true"></i> Sửa', "edit-product", p.masp)}${action(p.hidden ? '<i class="fa-solid fa-eye" aria-hidden="true"></i> Hiện' : '<i class="fa-solid fa-eye-slash" aria-hidden="true"></i> Ẩn', "toggle-product", p.masp, p.hidden ? "success" : "light")}${action('<i class="fa-solid fa-trash-can" aria-hidden="true"></i> Xóa', "delete-product", p.masp, "danger")}</div></td></tr>`,
           ),
         ),
     )
@@ -402,7 +402,7 @@ function renderImports() {
     .slice()
     .sort((a, b) => b.at.localeCompare(a.at));
   return (
-    `<div class="stats">${stat("📥", "Tổng phiếu nhập", db.imports.length)}${stat("📝", "Chưa hoàn thành", db.imports.filter((r) => r.status === "draft").length)}${stat("✅", "Giá trị nhập hoàn thành", money(db.imports.filter((r) => r.status === "completed").reduce((n, r) => n + S.total(r), 0)))}</div><p class="notice">Phiếu chưa hoàn thành có thể chỉnh sửa. Hoàn thành phiếu sẽ ghi nhận nhập kho một lần và khóa phiếu.</p>` +
+    `<div class="stats">${stat('<i class="fa-solid fa-file-import" aria-hidden="true"></i>', "Tổng phiếu nhập", db.imports.length)}${stat('<i class="fa-solid fa-pen-to-square" aria-hidden="true"></i>', "Chưa hoàn thành", db.imports.filter((r) => r.status === "draft").length)}${stat('<i class="fa-solid fa-circle-check" aria-hidden="true"></i>', "Giá trị nhập hoàn thành", money(db.imports.filter((r) => r.status === "completed").reduce((n, r) => n + S.total(r), 0)))}</div><p class="notice">Phiếu chưa hoàn thành có thể chỉnh sửa. Hoàn thành phiếu sẽ ghi nhận nhập kho một lần và khóa phiếu.</p>` +
     panel(
       "Danh mục phiếu nhập",
       filterForm(
@@ -433,7 +433,7 @@ function renderImports() {
           ],
           rows.map(
             (r) =>
-              `<tr><td><strong>${escapeHTML(r.id)}</strong><div class="cell-subtitle">${escapeHTML(r.note.slice(0, 45))}</div></td><td>${dateText(r.at)}</td><td>${r.items.reduce((n, i) => n + i.quantity, 0)}</td><td class="product-price">${money(S.total(r))}</td><td>${stateBadge(r.status)}</td><td><div class="actions">${action("Chi tiết", "view-receipt", r.id)}${r.status === "draft" ? action("Sửa", "edit-receipt", r.id) + action("Hoàn thành", "complete-receipt", r.id, "primary") : ""}</div></td></tr>`,
+              `<tr><td><strong>${escapeHTML(r.id)}</strong><div class="cell-subtitle">${escapeHTML(r.note.slice(0, 45))}</div></td><td>${dateText(r.at)}</td><td>${r.items.reduce((n, i) => n + i.quantity, 0)}</td><td class="product-price">${money(S.total(r))}</td><td>${stateBadge(r.status)}</td><td><div class="actions">${action('<i class="fa-solid fa-circle-info" aria-hidden="true"></i> Chi tiết', "view-receipt", r.id)}${r.status === "draft" ? action('<i class="fa-solid fa-pen-to-square" aria-hidden="true"></i> Sửa', "edit-receipt", r.id) + action('<i class="fa-solid fa-circle-check" aria-hidden="true"></i> Hoàn thành', "complete-receipt", r.id, "primary") : ""}</div></td></tr>`,
           ),
         ),
     )
@@ -453,7 +453,7 @@ function renderPrices() {
           ["Sản phẩm", "Loại", "Giá vốn", "Lợi nhuận", "Giá bán", "Thao tác"],
           rows.map(
             (p) =>
-              `<tr><td>${productCell(p)}</td><td>${escapeHTML(category(p.categoryId)?.name)}</td><td>${money(S.cost(db, p.masp))}</td><td><strong>${S.margin(db, p)}%</strong><div class="cell-subtitle">${p.profitRate === null ? "Theo loại sản phẩm" : "Thiết lập riêng"}</div></td><td class="product-price">${S.cost(db, p.masp) ? money(S.sellingPrice(db, p)) : "Chưa nhập hàng"}</td><td>${action("Sửa lợi nhuận", "edit-product-margin", p.masp)}</td></tr>`,
+              `<tr><td>${productCell(p)}</td><td>${escapeHTML(category(p.categoryId)?.name)}</td><td>${money(S.cost(db, p.masp))}</td><td><strong>${S.margin(db, p)}%</strong><div class="cell-subtitle">${p.profitRate === null ? "Theo loại sản phẩm" : "Thiết lập riêng"}</div></td><td class="product-price">${S.cost(db, p.masp) ? money(S.sellingPrice(db, p)) : "Chưa nhập hàng"}</td><td>${action('<i class="fa-solid fa-pen-to-square" aria-hidden="true"></i> Sửa lợi nhuận', "edit-product-margin", p.masp)}</td></tr>`,
           ),
         ),
     ) +
@@ -463,7 +463,7 @@ function renderPrices() {
         ["Loại sản phẩm", "Lợi nhuận mặc định", "Áp dụng", "Thao tác"],
         types.map(
           (c) =>
-            `<tr><td><strong>${escapeHTML(c.name)}</strong></td><td>${c.profitRate}%</td><td>${db.products.filter((p) => p.categoryId === c.id && p.profitRate === null).length} sản phẩm dùng mức theo loại</td><td>${action("Sửa lợi nhuận", "edit-category-margin", c.id)}</td></tr>`,
+            `<tr><td><strong>${escapeHTML(c.name)}</strong></td><td>${c.profitRate}%</td><td>${db.products.filter((p) => p.categoryId === c.id && p.profitRate === null).length} sản phẩm dùng mức theo loại</td><td>${action('<i class="fa-solid fa-pen-to-square" aria-hidden="true"></i> Sửa lợi nhuận', "edit-category-margin", c.id)}</td></tr>`,
         ),
         false,
       ),
@@ -482,7 +482,7 @@ function renderOrders() {
     .slice()
     .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   return (
-    `<div class="stats">${stat("🧾", "Tổng đơn hàng", db.orders.length)}${stat("⏳", "Chờ xử lý / giao hàng", db.orders.filter((o) => ["new", "processed"].includes(o.status)).length)}${stat("✅", "Giá trị đơn đã giao", money(db.orders.filter((o) => o.status === "delivered").reduce((n, o) => n + S.total(o), 0)))}</div>` +
+    `<div class="stats">${stat('<i class="fa-solid fa-receipt" aria-hidden="true"></i>', "Tổng đơn hàng", db.orders.length)}${stat('<i class="fa-solid fa-clock" aria-hidden="true"></i>', "Chờ xử lý / giao hàng", db.orders.filter((o) => ["new", "processed"].includes(o.status)).length)}${stat('<i class="fa-solid fa-circle-check" aria-hidden="true"></i>', "Giá trị đơn đã giao", money(db.orders.filter((o) => o.status === "delivered").reduce((n, o) => n + S.total(o), 0)))}</div>` +
     panel(
       "Danh sách đơn đặt hàng",
       filterForm(
@@ -513,7 +513,7 @@ function renderOrders() {
           ],
           rows.map(
             (o) =>
-              `<tr><td><strong>${escapeHTML(o.id)}</strong></td><td>${escapeHTML(customer(o.customerId)?.name || o.recipient)}</td><td>${dateText(o.createdAt)}</td><td class="product-price">${money(S.total(o))}</td><td>${stateBadge(o.status)}</td><td>${action("Chi tiết / cập nhật", "view-order", o.id)}</td></tr>`,
+              `<tr><td><strong>${escapeHTML(o.id)}</strong></td><td>${escapeHTML(customer(o.customerId)?.name || o.recipient)}</td><td>${dateText(o.createdAt)}</td><td class="product-price">${money(S.total(o))}</td><td>${stateBadge(o.status)}</td><td>${action('<i class="fa-solid fa-circle-info" aria-hidden="true"></i> Chi tiết / cập nhật', "view-order", o.id)}</td></tr>`,
           ),
         ),
     )
@@ -586,11 +586,11 @@ function renderInventory() {
   }
   return (
     `<div class="stats">${stat(
-      "📦",
+      '<i class="fa-solid fa-warehouse" aria-hidden="true"></i>',
       "Tồn tại thời điểm tra cứu",
       selected.reduce((n, p) => n + S.stock(db, p.masp, at), 0),
       dateText(at),
-    )}${stat("⚠️", "Sản phẩm sắp hết / hết hàng", low.length, "Tồn nhỏ hơn hoặc bằng ngưỡng cảnh báo")}${stat("🔎", "Sản phẩm đang tra cứu", selected.length)}</div>` +
+    )}${stat('<i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>', "Sản phẩm sắp hết / hết hàng", low.length, "Tồn nhỏ hơn hoặc bằng ngưỡng cảnh báo")}${stat('<i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>', "Sản phẩm đang tra cứu", selected.length)}</div>` +
     panel(
       "Tra cứu tồn tại một thời điểm",
       filterForm(
@@ -615,7 +615,7 @@ function renderInventory() {
           ],
           rows.map((p) => {
             const qty = S.stock(db, p.masp, at);
-            return `<tr><td>${productCell(p)}</td><td>${escapeHTML(category(p.categoryId)?.name)}</td><td><strong>${qty}</strong></td><td>${p.threshold}</td><td>${badge(qty === 0 ? "Hết hàng" : qty <= p.threshold ? "Sắp hết hàng" : "Đủ hàng", qty === 0 ? "locked" : qty <= p.threshold ? "pending" : "active")}</td><td>${action("Lịch sử kho", "stock-history", p.masp)}</td></tr>`;
+            return `<tr><td>${productCell(p)}</td><td>${escapeHTML(category(p.categoryId)?.name)}</td><td><strong>${qty}</strong></td><td>${p.threshold}</td><td>${badge(qty === 0 ? "Hết hàng" : qty <= p.threshold ? "Sắp hết hàng" : "Đủ hàng", qty === 0 ? "locked" : qty <= p.threshold ? "pending" : "active")}</td><td>${action('<i class="fa-solid fa-warehouse" aria-hidden="true"></i> Lịch sử kho', "stock-history", p.masp)}</td></tr>`;
           }),
         ),
     ) +
@@ -667,7 +667,7 @@ function closeModal() {
   if ($("#modal").open) $("#modal").close();
 }
 function form(content, label = "Lưu thay đổi") {
-  return `<form id="editForm">${content}<p id="formMessage" class="message" role="alert"></p><div class="modal-footer">${action("Hủy", "close")}<button type="submit" class="btn btn-primary" id="saveButton">${label}</button></div></form>`;
+  return `<form id="editForm">${content}<p id="formMessage" class="message" role="alert"></p><div class="modal-footer">${action('<i class="fa-solid fa-xmark" aria-hidden="true"></i> Hủy', "close")}<button type="submit" class="btn btn-primary" id="saveButton"><i class="fa-solid fa-floppy-disk" aria-hidden="true"></i> ${label}</button></div></form>`;
 }
 function confirmModal(title, message, operation, success) {
   openModal(
@@ -743,6 +743,34 @@ const specs = [
   ["microUSB", "Thẻ nhớ / kết nối"],
   ["battery", "Pin"],
 ];
+const categorySpecs = {
+  L01: specs,
+  L02: specs,
+  L04: [
+    ["screen", "Màn hình"], ["os", "Hệ điều hành"], ["cpu", "Bộ xử lý"],
+    ["gpu", "Đồ họa"], ["ram", "RAM"], ["rom", "Lưu trữ"],
+    ["camara", "Webcam"], ["battery", "Pin"],
+  ],
+  L03: [
+    ["accessoryType", "Nhóm phụ kiện"], ["connection", "Kết nối"], ["dpi", "DPI"],
+    ["layout", "Layout"], ["keyType", "Loại phím"], ["ports", "Cổng"],
+    ["chargingStandard", "Chuẩn sạc"], ["connectors", "Đầu kết nối"],
+    ["length", "Chiều dài"], ["power", "Công suất"], ["capacity", "Dung lượng"],
+  ],
+  L05: [
+    ["type", "Kiểu tai nghe"], ["connection", "Kết nối"],
+    ["noiseCancellation", "Chống ồn"], ["battery", "Pin"],
+  ],
+  L06: [
+    ["size", "Kích thước"], ["screen", "Màn hình"],
+    ["compatibility", "Tương thích hệ điều hành"],
+    ["waterResistance", "Chống nước"], ["battery", "Pin"],
+  ],
+  L07: [
+    ["connection", "Kết nối"], ["power", "Công suất"], ["battery", "Pin / nguồn"],
+  ],
+};
+const productSpecs = (categoryId) => categorySpecs[categoryId] || specs;
 function editProduct(id) {
   const p = product(id) || {
     masp: "",
@@ -755,6 +783,7 @@ function editProduct(id) {
     detail: {},
   };
   const types = db.categories.filter((c) => !c.hidden || c.id === p.categoryId);
+  const activeSpecs = productSpecs(p.categoryId);
   if (!types.length) {
     notify("Hãy tạo hoặc mở hiển thị một loại sản phẩm trước.", true);
     return;
@@ -762,12 +791,12 @@ function editProduct(id) {
   openModal(
     id ? "Sửa sản phẩm" : "Thêm sản phẩm",
     form(
-      `<div class="form-grid">${field("masp", "Mã sản phẩm *", p.masp, "text", 'required maxlength="30" ' + (id ? "readonly" : ""))}${select("categoryId", "Loại sản phẩm *", options(types, p.categoryId))}${field("name", "Tên sản phẩm *", p.name, "text", 'required maxlength="200"')}${field("company", "Hãng sản xuất *", p.company, "text", 'required maxlength="100"')}<div class="field full-width"><label for="f-imageChoice">Hình sản phẩm *</label><select id="f-imageChoice"><option value="">Chọn ảnh có sẵn</option>${S.assets.map((file) => `<option value="../images/${file}" ${p.img === "../images/" + file ? "selected" : ""}>${escapeHTML(file)}</option>`).join("")}</select><div class="image-editor">${image({ img: p.img || "../images/" + S.assets[0], name: "Ảnh xem trước" }, "image-preview")}<div><label for="imageUpload">Hoặc tải ảnh từ máy</label><input id="imageUpload" type="file" accept="image/jpeg,image/png,image/webp,image/gif"><small>Ảnh tối đa 500 KB; được lưu cùng dữ liệu để mở offline.</small></div></div><input id="productImageValue" name="img" type="hidden" value="${escapeHTML(p.img)}"></div>${textarea("description", "Mô tả sản phẩm *", p.description, true)}${field("threshold", "Ngưỡng cảnh báo tồn kho *", p.threshold, "number", 'required min="0" max="1000000" step="1"')}<div class="full-width"><h3 class="form-section">Thông số kỹ thuật</h3></div>${specs.map(([key, label]) => field(key, label, p.detail[key] || "", "text", 'maxlength="300"')).join("")}</div><p class="notice" style="margin-top:20px">Số tồn và giá vốn được cập nhật từ phiếu nhập. Đặt lợi nhuận tại mục Quản lý giá bán.</p>`,
+      `<div class="form-grid">${field("masp", "Mã sản phẩm *", p.masp, "text", 'required maxlength="30" ' + (id ? "readonly" : ""))}${select("categoryId", "Loại sản phẩm *", options(types, p.categoryId))}${field("name", "Tên sản phẩm *", p.name, "text", 'required maxlength="200"')}${field("company", "Hãng sản xuất *", p.company, "text", 'required maxlength="100"')}<div class="field full-width"><label for="f-imageChoice">Hình sản phẩm *</label><select id="f-imageChoice"><option value="">Chọn ảnh có sẵn</option>${S.assets.map((file) => `<option value="../images/${file}" ${p.img === "../images/" + file ? "selected" : ""}>${escapeHTML(file)}</option>`).join("")}</select><div class="image-editor">${image({ img: p.img || "../images/" + S.assets[0], name: "Ảnh xem trước" }, "image-preview")}<div><label for="imageUpload">Hoặc tải ảnh từ máy</label><input id="imageUpload" type="file" accept="image/jpeg,image/png,image/webp,image/gif"><small>Ảnh tối đa 500 KB; được lưu cùng dữ liệu để mở offline.</small></div></div><input id="productImageValue" name="img" type="hidden" value="${escapeHTML(p.img)}"></div>${textarea("description", "Mô tả sản phẩm *", p.description, true)}${field("threshold", "Ngưỡng cảnh báo tồn kho *", p.threshold, "number", 'required min="0" max="1000000" step="1"')}<div class="full-width"><h3 class="form-section">Thông số kỹ thuật</h3></div><div id="productSpecFields" class="full-width form-grid">${activeSpecs.map(([key, label]) => field(key, label, p.detail[key] || "", "text", 'maxlength="300"')).join("")}</div></div><p class="notice" style="margin-top:20px">Số tồn và giá vốn được cập nhật từ phiếu nhập. Đặt lợi nhuận tại mục Quản lý giá bán.</p>`,
     ),
     (data) => {
       const input = Object.fromEntries(data);
       input.detail = Object.fromEntries(
-        specs.map(([key]) => [key, data.get(key).trim()]),
+        productSpecs(data.get("categoryId")).map(([key]) => [key, (data.get(key) || "").trim()]),
       );
       persist(
         (next) => S.saveProduct(next, input, id),
@@ -777,6 +806,13 @@ function editProduct(id) {
       );
     },
   );
+  $("#f-categoryId").addEventListener("change", (event) => {
+    $("#productSpecFields").innerHTML = productSpecs(event.currentTarget.value)
+      .map(([key, label]) =>
+        field(key, label, p.detail[key] || "", "text", 'maxlength="300"'),
+      )
+      .join("");
+  });
   const setImage = (value) => {
     $("#productImageValue").value = value;
     $(".image-preview").src = value;
@@ -814,6 +850,7 @@ function editProduct(id) {
 }
 function viewProduct(id) {
   const p = product(id);
+  const visibleSpecs = productSpecs(p.categoryId).filter(([key]) => p.detail[key]);
   openModal(
     "Chi tiết sản phẩm",
     `<div class="detail-product">${image(p)}<div><h3>${escapeHTML(p.name)}</h3><span class="muted">${escapeHTML(p.masp)} · ${escapeHTML(p.company)}</span></div></div>${details(
@@ -823,11 +860,11 @@ function viewProduct(id) {
         ["Tồn hiện tại", S.stock(db, id)],
         ["Ngưỡng cảnh báo", p.threshold],
       ],
-    )}<h3>Mô tả</h3><p class="detail-description">${escapeHTML(p.description)}</p><h3>Thông số kỹ thuật</h3>${details(specs.map(([key, label]) => [label, escapeHTML(p.detail[key] || "Chưa cập nhật")]))}`,
+    )}<h3>Mô tả</h3><p class="detail-description">${escapeHTML(p.description)}</p><h3>Thông số kỹ thuật</h3>${details(visibleSpecs.map(([key, label]) => [label, escapeHTML(p.detail[key])]))}`,
   );
 }
 function receiptLine(item = {}) {
-  return `<div class="receipt-line"><div><label>Sản phẩm *</label><select name="lineProduct" aria-label="Sản phẩm nhập"><option value="">Chọn sản phẩm</option>${options(db.products, item.productId, "masp")}</select></div><div><label>Số lượng *</label><input name="lineQuantity" aria-label="Số lượng nhập" type="number" min="1" max="1000000" step="1" value="${item.quantity ?? 1}" required></div><div><label>Giá nhập (₫) *</label><input name="lineCost" aria-label="Giá nhập" type="number" min="1" max="1000000000000" step="1" value="${item.cost ?? ""}" required></div>${action("×", "remove-line", "", "danger")}</div>`;
+  return `<div class="receipt-line"><div><label>Sản phẩm *</label><select name="lineProduct" aria-label="Sản phẩm nhập"><option value="">Chọn sản phẩm</option>${options(db.products, item.productId, "masp")}</select></div><div><label>Số lượng *</label><input name="lineQuantity" aria-label="Số lượng nhập" type="number" min="1" max="1000000" step="1" value="${item.quantity ?? 1}" required></div><div><label>Giá nhập (₫) *</label><input name="lineCost" aria-label="Giá nhập" type="number" min="1" max="1000000000000" step="1" value="${item.cost ?? ""}" required></div>${action('<i class="fa-solid fa-trash-can" aria-hidden="true"></i>', "remove-line", "", "danger", "Xóa dòng sản phẩm")}</div>`;
 }
 function updateReceiptTotal() {
   let total = 0;
@@ -855,7 +892,7 @@ function editReceipt(id) {
   openModal(
     id ? "Sửa phiếu " + id : "Tạo phiếu nhập hàng",
     form(
-      `<div class="form-grid">${field("at", "Ngày, giờ nhập *", r.at, "datetime-local", `required max="${S.now()}"`)}${field("note", "Ghi chú", r.note, "text", 'maxlength="250"')}</div><h3 class="form-section">Danh sách sản phẩm nhập</h3><p class="help">Mỗi sản phẩm một dòng, có giá nhập và số lượng riêng.</p><div id="receiptLines" style="margin-top:16px">${r.items.map(receiptLine).join("")}</div>${action("+ Thêm dòng sản phẩm", "add-line")}<p class="line-total">Tổng tiền nhập: <span id="receiptTotal"></span></p><p class="notice">Lưu phiếu chưa làm thay đổi tồn kho. Chọn Hoàn thành ở danh sách khi đã kiểm tra hàng nhập.</p>`,
+      `<div class="form-grid">${field("at", "Ngày, giờ nhập *", r.at, "datetime-local", `required max="${S.now()}"`)}${field("note", "Ghi chú", r.note, "text", 'maxlength="250"')}</div><h3 class="form-section">Danh sách sản phẩm nhập</h3><p class="help">Mỗi sản phẩm một dòng, có giá nhập và số lượng riêng.</p><div id="receiptLines" style="margin-top:16px">${r.items.map(receiptLine).join("")}</div>${action('<i class="fa-solid fa-plus" aria-hidden="true"></i> Thêm dòng sản phẩm', "add-line")}<p class="line-total">Tổng tiền nhập: <span id="receiptTotal"></span></p><p class="notice">Lưu phiếu chưa làm thay đổi tồn kho. Chọn Hoàn thành ở danh sách khi đã kiểm tra hàng nhập.</p>`,
       "Lưu phiếu",
     ),
     (data) => {
@@ -1124,6 +1161,221 @@ document.addEventListener("click", (event) => {
     "add-product": () => editProduct(""),
     "view-order": () => viewOrder(id),
     "stock-history": () => stockHistory(id),
+    "patch-images": () => {
+      openModal(
+        "Cập nhật ảnh chuẩn theo model (45 SP đợt 2)",
+        form(
+          `<p class="notice" style="margin-top:20px">
+            Thao tác này sẽ rà soát và cập nhật đường dẫn ảnh chuẩn đúng model cho các sản phẩm mở rộng (Điện thoại, Máy tính bảng, Laptop).<br>
+            <strong>Chỉ cập nhật:</strong> Sản phẩm còn dùng ảnh mẫu/ảnh cũ từ đợt nhập trước.<br>
+            <strong>Không thay đổi:</strong> Các sản phẩm bạn đã tự sửa ảnh riêng, giá bán, tồn kho, tên hoặc đơn hàng.<br>
+            <strong>Không reset Local Storage.</strong>
+          </p>
+          <div style="margin: 14px 0; display: flex; gap: 8px;">
+            <button type="button" class="btn btn-outline" id="btnBackupBeforePatch"><i class="fa-solid fa-download" aria-hidden="true"></i> Tải bản sao lưu trước khi cập nhật</button>
+            <a href="../kiem_tra_anh.html" target="_blank" class="btn btn-outline"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Mở trang rà soát ảnh trực quan</a>
+          </div>
+          <p class="help">Nhấn "Tiến hành cập nhật ảnh" để áp dụng cho cơ sở dữ liệu hiện tại trên trình duyệt này.</p>`,
+          "Tiến hành cập nhật ảnh"
+        ),
+        () => {
+          let report;
+          persist((next) => {
+            report = S.patchProductImagePaths(next);
+          });
+          if (report) {
+            notify(
+              `Cập nhật ảnh thành công: ${report.updated} sản phẩm đã sửa ảnh, ${report.skipped} sản phẩm đã đúng, ${report.customKept} sản phẩm tùy chỉnh được giữ nguyên.`
+            );
+          }
+        }
+      );
+      const btnBackup = $("#btnBackupBeforePatch");
+      if (btnBackup) {
+        btnBackup.addEventListener("click", () => {
+          try {
+            const json = S.exportBackup(db);
+            const blob = new Blob([json], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = `techstore-backup-truoc-khi-sua-anh-${S.now().slice(0, 10)}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            notify("Đã tải bản sao lưu phòng ngừa.");
+          } catch (e) {
+            notify("Lỗi khi tải sao lưu: " + e.message, true);
+          }
+        });
+      }
+    },
+    "export-backup": () => {
+      try {
+        const json = S.exportBackup(db);
+        const blob = new Blob([json], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = `techstore-backup-${S.now().slice(0, 10)}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        notify("Đã tạo file sao lưu dữ liệu.");
+      } catch (err) {
+        notify("Lỗi khi sao lưu dữ liệu: " + err.message, true);
+      }
+    },
+    "open-backup-restore": () => {
+      openModal(
+        "Khôi phục dữ liệu từ file sao lưu",
+        form(
+          `<p class="notice" style="margin-top:20px">Chọn file sao lưu JSON (techstore-backup-*.json) hoặc dán chuỗi JSON sao lưu vào ô dưới.</p>
+          <div class="field full-width">
+            <label for="restoreFileInput">Chọn file sao lưu (.json)</label>
+            <input id="restoreFileInput" type="file" accept="application/json,.json">
+          </div>
+          <div class="field full-width">
+            <label for="restoreDataInput">Hoặc dán nội dung JSON sao lưu</label>
+            <textarea id="restoreDataInput" name="backupJson" rows="8" placeholder='{"schema": 2, ...}'></textarea>
+          </div>
+          <p class="help">Lưu ý: Khôi phục sẽ thay thế dữ liệu danh mục, sản phẩm và lịch sử kho bằng bản sao lưu. Vui lòng sao lưu bản hiện tại nếu cần.</p>`,
+          "Khôi phục dữ liệu",
+        ),
+        (data) => {
+          const content = data.get("backupJson")?.trim();
+          if (!content) throw new Error("Vui lòng tải file hoặc dán JSON sao lưu.");
+          persist((next) => {
+            const stats = S.restoreBackup(next, content);
+            notify(`Đã khôi phục: ${stats.productCount} sản phẩm, ${stats.categoryCount} danh mục.`);
+          }, "Khôi phục dữ liệu thành công.");
+        },
+      );
+      const fileInput = $("#restoreFileInput");
+      if (fileInput) {
+        fileInput.addEventListener("change", (e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = () => {
+            const ta = $("#restoreDataInput");
+            if (ta) ta.value = reader.result;
+          };
+          reader.readAsText(file);
+        });
+      }
+    },
+    "open-batch-import": () => {
+      const sampleBatch = {
+        batchId: "batch-demo-preview",
+        categories: [
+          {
+            id: "L04",
+            name: "Laptop",
+            description: "Máy tính xách tay học tập và làm việc",
+            profitRate: 15,
+            hidden: false
+          }
+        ],
+        products: [
+          {
+            masp: "LT-DEMO-01",
+            name: "Laptop Asus Vivobook 15 OLED",
+            company: "Asus",
+            categoryId: "L04",
+            img: "images/samsung-galaxy-j4-plus-pink-400x400.jpg",
+            price: 18490000,
+            threshold: 3,
+            stock: 8,
+            description: "Laptop mỏng nhẹ màn hình OLED sắc nét.",
+            detail: {
+              screen: "15.6 inch, FHD OLED",
+              os: "Windows 11 Home",
+              cpu: "Intel Core i5 12500H",
+              ram: "16 GB",
+              rom: "512 GB SSD",
+              battery: "50 Wh"
+            }
+          }
+        ]
+      };
+
+      openModal(
+        "Nhập dữ liệu bổ sung theo đợt",
+        form(
+          `<p class="notice" style="margin-top:20px">Nhập danh mục và sản phẩm theo định dạng JSON chuẩn. Hệ thống tự động kiểm tra trùng lặp mã sản phẩm, không ghi đè sản phẩm quản trị đã sửa, và không phục hồi sản phẩm đã xóa.</p>
+          <div style="margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 8px;">
+            <button type="button" class="btn btn-outline" id="btnBatch1"><i class="fa-solid fa-layer-group" aria-hidden="true"></i> Lô 1 (10 SP)</button>
+            <button type="button" class="btn btn-outline" id="btnBatch2"><i class="fa-solid fa-layer-group" aria-hidden="true"></i> Lô 2 (11 SP)</button>
+            <button type="button" class="btn btn-outline" id="btnBatch3"><i class="fa-solid fa-layer-group" aria-hidden="true"></i> Lô 3 (12 SP)</button>
+            <button type="button" class="btn btn-outline" id="btnBatch4"><i class="fa-solid fa-layer-group" aria-hidden="true"></i> Lô 4 (12 SP)</button>
+            <button type="button" class="btn btn-outline" id="btnLoadSampleBatch"><i class="fa-solid fa-file-code" aria-hidden="true"></i> Tải cấu trúc mẫu</button>
+            <button type="button" class="btn btn-outline" id="btnUploadBatchFile"><i class="fa-solid fa-upload" aria-hidden="true"></i> Tải file JSON</button>
+            <input type="file" id="batchFileInput" accept="application/json,.json" style="display:none">
+          </div>
+          <div class="field full-width">
+            <label for="batchJsonInput">Nội dung JSON đợt nhập *</label>
+            <textarea id="batchJsonInput" name="batchJson" rows="10" required placeholder='{"batchId": "...", "categories": [...], "products": [...]}'></textarea>
+          </div>
+          <p class="help">Mỗi sản phẩm hợp lệ sẽ được bổ sung tồn kho đầu kỳ và tính giá bán tự động theo mức lợi nhuận của loại.</p>`,
+          "Bắt đầu nhập dữ liệu",
+        ),
+        (data) => {
+          const raw = data.get("batchJson")?.trim();
+          if (!raw) throw new Error("Vui lòng nhập hoặc dán dữ liệu JSON đợt.");
+          let batch;
+          try {
+            batch = JSON.parse(raw);
+          } catch {
+            throw new Error("Dữ liệu JSON không đúng định dạng.");
+          }
+          persist((next) => {
+            const stats = S.importBatch(next, batch);
+            if (stats.errors.length) {
+              console.warn("Lỗi khi nhập một số mục:", stats.errors);
+            }
+            notify(
+              `Đã thêm ${stats.addedProducts} sản phẩm, ${stats.addedCategories} loại. Bỏ qua: ${stats.skippedExisting} đã có, ${stats.skippedDeleted} đã xóa.`,
+            );
+          }, "Đã hoàn thành nhập đợt dữ liệu.");
+        },
+      );
+
+      const btnSample = $("#btnLoadSampleBatch");
+      if (btnSample) {
+        btnSample.addEventListener("click", () => {
+          const ta = $("#batchJsonInput");
+          if (ta) ta.value = JSON.stringify(sampleBatch, null, 2);
+        });
+      }
+      [1, 2, 3, 4].forEach((idx) => {
+        const btn = $("#btnBatch" + idx);
+        if (btn && S.EXPANSION_BATCHES && S.EXPANSION_BATCHES[idx - 1]) {
+          btn.addEventListener("click", () => {
+            const ta = $("#batchJsonInput");
+            if (ta) ta.value = JSON.stringify(S.EXPANSION_BATCHES[idx - 1], null, 2);
+          });
+        }
+      });
+
+      const btnUpload = $("#btnUploadBatchFile");
+      const fileInput = $("#batchFileInput");
+      if (btnUpload && fileInput) {
+        btnUpload.addEventListener("click", () => fileInput.click());
+        fileInput.addEventListener("change", (e) => {
+          const file = e.target.files[0];
+          if (!file) return;
+          const reader = new FileReader();
+          reader.onload = () => {
+            const ta = $("#batchJsonInput");
+            if (ta) ta.value = reader.result;
+          };
+          reader.readAsText(file);
+        });
+      }
+    },
   };
   if (handlers[name]) handlers[name]();
 });
@@ -1163,6 +1415,12 @@ $("#menu").innerHTML = Object.entries(pageInfo)
 async function showAdmin() {
   try {
     db = S.load(typeof list_products === "undefined" ? [] : list_products);
+    if (typeof S.importStandardBatches === "function") {
+      db = S.importStandardBatches(db);
+      if (typeof S.patchProductImagePaths === "function") {
+        S.patchProductImagePaths(db);
+      }
+    }
     dbProductsLoaded = false;
     dbProducts = db.products.map((p) => ({
       ...p,

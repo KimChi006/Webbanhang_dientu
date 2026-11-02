@@ -1,3 +1,647 @@
-.catalog-filters{display:grid;grid-template-columns:2fr 1.4fr 1fr 1fr auto auto;align-items:end;gap:12px;background:white;border:1px solid #e5eaf2;border-radius:14px;padding:20px;margin-bottom:26px}.catalog-filters label{display:grid;gap:8px;font-size:14px;font-weight:600}.catalog-filters input,.catalog-filters select{width:100%;min-width:0;padding:11px;border:1px solid #cbd5e1;border-radius:8px;font:inherit;background:white}.catalog-filters #filterError{grid-column:1/-1;color:#b42318;margin:0}.catalog-pages{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:30px 0}.catalog-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}.catalog-notice,.catalog-feedback{color:#1769d2;line-height:1.7}.catalog-notice:empty,.catalog-feedback:empty{display:none}.catalog-description{white-space:pre-line;line-height:1.8;margin:20px 0}.product-card p{font-size:14px;color:#64748b}.product-image{display:block}button:disabled{opacity:.5;cursor:not-allowed}a:focus-visible,button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #1769d2;outline-offset:3px}.detail-info h2{margin:28px 0 16px}@media(max-width:1000px){.catalog-filters{grid-template-columns:1fr 1fr}}@media(max-width:540px){.catalog-filters{grid-template-columns:1fr}.nav-container{flex-wrap:wrap}.nav-menu{gap:12px}.nav-actions{flex-wrap:wrap}.detail-container{grid-template-columns:1fr}}
+/* ==========================================================================
+   TechStore - CellphoneS Inspired Multi-Attribute Filter Styles
+   ========================================================================== */
 
-.detail-purchase-actions{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0}.detail-purchase-actions .btn{min-width:150px}
+.catalog-filters {
+  background: white;
+  border: 1px solid #e5eaf2;
+  border-radius: 16px;
+  padding: 22px 24px;
+  margin-bottom: 22px;
+  box-shadow: 0 4px 18px rgba(15, 23, 42, 0.04);
+}
+
+.filters-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f1f5f9;
+  margin-bottom: 18px;
+  flex-wrap: wrap;
+}
+
+.advanced-filter-toggle { border: 1px solid #c9d8ec; border-radius: 9px; padding: 8px 11px; color: #0066ff; background: #f7faff; font: inherit; font-size: 13px; font-weight: 750; cursor: pointer; }
+.advanced-filter-toggle span { margin-left: 5px; }
+.catalog-filters:not(.advanced-open) .filter-pills-grid .filter-pill-item:nth-child(n+4):not(:last-child) { display: none; }
+.catalog-filters:not(.advanced-open) .custom-price-inputs { display: none; }
+.products-section { max-width: 1272px; }
+.section-heading { align-items: center; margin-bottom: 16px; }
+.section-heading h2 { letter-spacing: -.02em; }
+.product-grid {
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 16px;
+}
+@media (min-width: 1100px) {
+  .product-grid {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 16px;
+  }
+}
+.product-card { transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease; }
+.product-card:hover { transform: translateY(-3px); border-color: #c9dbf1; box-shadow: 0 12px 28px rgba(22,65,120,.10); }
+.product-name { min-height: 2.9em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+
+.filters-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.filters-heading {
+  font-size: 17px;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.filters-subheading {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.search-input-box {
+  display: flex;
+  align-items: center;
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 3px 4px 3px 12px;
+  width: 320px;
+  max-width: 100%;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.search-input-box:focus-within {
+  border-color: #0066ff;
+  box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.15);
+  background: white;
+}
+
+.search-input-box input {
+  border: none;
+  background: transparent;
+  outline: none;
+  width: 100%;
+  min-width: 0;
+  font: inherit;
+  font-size: 14px;
+  color: #1e293b;
+  padding: 6px 0;
+}
+
+.search-input-box .btn-search {
+  border: none;
+  background: #0066ff;
+  color: white;
+  padding: 7px 14px;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.15s;
+}
+
+.search-input-box .btn-search:hover {
+  background: #0052cc;
+}
+
+/* Lưới các nút nhóm bộ lọc (Filter Pills Grid) */
+.filter-pills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.filter-pill-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.filter-pill-item .pill-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.filter-pill-item select {
+  width: 100%;
+  min-width: 0;
+  height: 40px;
+  padding: 8px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 13.5px;
+  background-color: #ffffff;
+  color: #1e293b;
+  cursor: pointer;
+  transition: border-color 0.15s, background-color 0.15s, box-shadow 0.15s;
+  box-sizing: border-box;
+}
+
+.filter-pill-item select:hover {
+  border-color: #94a3b8;
+  background-color: #f8fafc;
+}
+
+.filter-pill-item select:focus-visible {
+  border-color: #0066ff;
+  outline: 3px solid rgba(0, 102, 255, 0.25);
+  outline-offset: 1px;
+}
+
+/* Khoảng giá tùy chỉnh (Custom Price Inputs) */
+.custom-price-inputs {
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding-top: 14px;
+  border-top: 1px dashed #e2e8f0;
+}
+
+.custom-price-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 140px;
+}
+
+.custom-price-field span {
+  font-size: 12px;
+  font-weight: 600;
+  color: #475569;
+}
+
+.custom-price-field input {
+  height: 38px;
+  padding: 6px 12px;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  font: inherit;
+  font-size: 13.5px;
+  background: white;
+  color: #1e293b;
+  box-sizing: border-box;
+}
+
+.custom-price-inputs .btn {
+  height: 38px;
+  padding: 0 16px;
+  font-size: 13.5px;
+  font-weight: 600;
+  border-radius: 8px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.catalog-filters #filterError {
+  color: #b42318;
+  margin: 10px 0 0;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.catalog-filters #filterError:empty {
+  display: none;
+}
+
+.catalog-filters [hidden] {
+  display: none !important;
+}
+
+.filter-source-select {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.filter-pill-item {
+  position: relative;
+}
+
+.filter-popover-trigger {
+  width: 100%;
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 14px;
+  border: 1px solid #cbd5e1;
+  border-radius: 9px;
+  background: #fff;
+  color: #0f172a;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.filter-popover-trigger:hover,
+.filter-popover-trigger:focus-visible,
+.filter-popover-trigger.is-active {
+  border-color: #0066ff;
+  box-shadow: 0 0 0 2px rgba(0, 102, 255, 0.12);
+  outline: none;
+}
+
+.filter-popover-panel {
+  position: absolute;
+  z-index: 30;
+  top: calc(100% + 6px);
+  left: 0;
+  width: max-content;
+  min-width: 100%;
+  max-width: min(360px, calc(100vw - 32px));
+  max-height: 280px;
+  overflow: auto;
+  padding: 8px;
+  border: 1px solid #dbe4ef;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.18);
+}
+
+.filter-check-option {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  padding: 9px 10px;
+  border-radius: 7px;
+  cursor: pointer;
+  white-space: normal;
+}
+
+.filter-check-option:hover,
+.filter-check-option:focus-within {
+  background: #eff6ff;
+}
+
+.filter-check-option input {
+  width: 17px;
+  height: 17px;
+  margin-top: 1px;
+  accent-color: #0066ff;
+}
+
+.filter-empty-option {
+  display: block;
+  padding: 9px;
+  color: #64748b;
+}
+
+/* Khu vực Đang lọc theo (Active Filter Chips) */
+.active-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 22px;
+  padding: 12px 18px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}
+
+.active-filters[hidden] {
+  display: none !important;
+}
+
+.active-filters:empty {
+  display: none;
+}
+
+.active-filters-title {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #334155;
+  margin-right: 4px;
+}
+
+.filter-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #eff6ff;
+  color: #0066ff;
+  border: 1px solid #bfdbfe;
+  padding: 4px 10px;
+  border-radius: 9999px;
+  font-size: 12.5px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.filter-chip-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 17px;
+  height: 17px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  color: #0066ff;
+  font-size: 15px;
+  font-weight: bold;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s;
+}
+
+.filter-chip-remove:hover,
+.filter-chip-remove:focus-visible {
+  background: #dbeafe;
+  color: #0052cc;
+}
+
+.btn-clear-all {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: #dc2626;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 6px;
+  text-decoration: underline;
+  transition: background-color 0.15s;
+}
+
+.btn-clear-all:hover,
+.btn-clear-all:focus-visible {
+  background: #fee2e2;
+}
+
+/* Badge thông số trên thẻ sản phẩm */
+.spec-tag {
+  display: inline-block;
+  background: #f1f5f9;
+  color: #475569;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 4px;
+}
+
+/* Trạng thái không có kết quả */
+.empty-products {
+  grid-column: 1 / -1;
+  text-align: center;
+  padding: 48px 24px;
+  background: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  border-radius: 14px;
+  color: #64748b;
+  margin: 16px 0;
+}
+
+.empty-products p {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #334155;
+}
+
+.empty-products .empty-hint {
+  font-size: 13.5px;
+  font-weight: 400;
+  color: #64748b;
+  margin-bottom: 18px;
+}
+
+/* Phân trang và chung */
+.catalog-pages {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin: 30px 0;
+}
+
+.catalog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 16px;
+}
+
+.catalog-notice,
+.catalog-feedback {
+  color: #0066ff;
+  line-height: 1.7;
+}
+
+.catalog-notice:empty,
+.catalog-feedback:empty {
+  display: none;
+}
+
+.catalog-description {
+  white-space: pre-line;
+  line-height: 1.8;
+  margin: 20px 0;
+}
+
+.product-card p {
+  font-size: 14px;
+  color: #64748b;
+}
+
+/* Chuẩn hóa khung hiển thị ảnh catalogue chuẩn CellphoneS / Thế Giới Di Động */
+.product-image {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1 / 1;
+  width: 100%;
+  max-height: 200px;
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 12px;
+  box-sizing: border-box;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.product-image img {
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  transition: transform 0.25s ease-in-out;
+}
+
+.product-card:hover .product-image img {
+  transform: scale(1.05);
+}
+
+.detail-image {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #ffffff;
+  border-radius: 14px;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.detail-image img {
+  max-width: 100%;
+  max-height: 380px;
+  object-fit: contain;
+}
+
+button:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 3px solid #0066ff;
+  outline-offset: 3px;
+}
+
+.detail-info h2 {
+  margin: 28px 0 16px;
+}
+
+.detail-purchase-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 16px 0;
+}
+
+.detail-purchase-actions .btn {
+  min-width: 150px;
+}
+
+/* Đáp ứng màn hình (Responsive Breakpoints) */
+@media (max-width: 992px) {
+  .filter-pills-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .filters-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .search-input-box {
+    width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .filter-pills-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 540px) {
+  .catalog-filters {
+    padding: 16px;
+  }
+  .filter-pills-grid {
+    grid-template-columns: 1fr;
+  }
+  .custom-price-inputs {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .custom-price-inputs .btn {
+    width: 100%;
+  }
+  .btn-clear-all {
+    margin-left: 0;
+    width: 100%;
+    text-align: left;
+    margin-top: 4px;
+  }
+  .nav-container {
+    flex-wrap: wrap;
+  }
+  .nav-menu {
+    gap: 12px;
+  }
+  .nav-actions {
+    flex-wrap: wrap;
+  }
+  .detail-container {
+    grid-template-columns: 1fr;
+  }
+  /* Một kết quả không nên bị kẹt ở nửa chiều rộng của lưới hai cột. */
+  .product-grid {
+    grid-template-columns: repeat(auto-fit, minmax(155px, 1fr));
+  }
+  .catalog-actions .btn,
+  .detail-purchase-actions .btn,
+  .filter-popover-trigger {
+    min-height: 44px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
+
+/* Font Awesome Icon Alignment in Catalog */
+.catalog-actions .btn,
+.detail-purchase-actions .btn,
+.search-input-box .btn-search,
+.advanced-filter-toggle,
+.btn-apply-price,
+.catalog-back {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+}
+.catalog-actions .btn i,
+.detail-purchase-actions .btn i,
+.btn-apply-price i {
+  font-size: 15px;
+}
+.catalog-back i {
+  font-size: 14px;
+}
+.filter-chip i {
+  margin-right: 4px;
+  color: #0066ff;
+}
+.filter-chip-remove i {
+  font-size: 11px;
+}
+.btn-clear-all i {
+  margin-right: 4px;
+}
+.catalog-pages .btn i {
+  font-size: 13px;
+}

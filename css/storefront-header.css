@@ -1,0 +1,357 @@
+/* Customer storefront header: an original TechStore system, shared by catalog and detail pages. */
+.storefront-header { position: sticky; top: 0; z-index: 100; box-shadow: 0 4px 16px rgba(8, 35, 82, .15); }
+.storefront-utility { background: #004ecc; color: #dbeafe; font-size: .78rem; }
+.storefront-utility-inner { max-width: 1320px; min-height: 26px; margin: 0 auto; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.storefront-utility a { color: #fff; text-decoration: none; }
+.storefront-utility a:hover { text-decoration: underline; }
+
+.storefront-header .navbar { position: static; background: #0066ff; box-shadow: none; }
+.storefront-header .nav-container { max-width: 1320px; min-height: 64px; margin: 0 auto; padding: 0 20px; display: flex; align-items: center; justify-content: space-between; gap: 14px; }
+
+/* Logo */
+.storefront-header .logo { order: 1; flex: 0 0 auto; display: inline-flex; align-items: center; gap: 8px; color: #fff; font-size: 1.32rem; letter-spacing: -.03em; text-decoration: none; }
+.storefront-header .logo:hover { color: #fff; }
+.storefront-header .logo-mark { width: 34px; height: 34px; flex: 0 0 34px; }
+.storefront-header .logo-wordmark { font-weight: 800; color: #fff; }
+.storefront-header .logo span { color: inherit; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+/* Search bar */
+.header-search { order: 2; flex: 1 1 400px; max-width: 540px; min-width: 180px; display: flex; align-items: center; background: #fff; border: 1px solid transparent; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 8px rgba(0, 25, 71, .15); }
+.header-search:focus-within { border-color: #80b3ff; box-shadow: 0 0 0 3px rgba(0, 102, 255, .25); }
+.header-search input { min-width: 0; flex: 1; border: 0; outline: 0; padding: 10px 14px; color: #14213d; font: inherit; background: transparent; font-size: .88rem; }
+.header-search button { width: 42px; min-height: 42px; border: 0; color: #0066ff; background: transparent; cursor: pointer; font-size: 1rem; }
+.header-search button:hover { background: #eff6ff; }
+
+/* Nav Menu (Desktop) */
+.storefront-header .nav-menu { order: 3; flex: 0 0 auto; display: flex; align-items: center; gap: 4px; }
+.storefront-header .nav-menu > a,
+.storefront-header .nav-product-trigger { display: inline-flex; align-items: center; gap: 6px; color: #eaf4ff; padding: 8px 11px; font-size: .88rem; font-weight: 650; border-radius: 8px; text-decoration: none; transition: background .18s ease, color .18s ease; }
+.storefront-header .nav-menu i, .category-shortcuts i { width: 1.2em; text-align: center; }
+.storefront-header .nav-menu > a:hover,
+.storefront-header .nav-menu > a:focus-visible,
+.storefront-header .nav-product-trigger:hover,
+.storefront-header .nav-product-trigger:focus-visible { color: #fff; background: rgba(255, 255, 255, .15); }
+
+/* Category dropdown */
+.storefront-header .nav-product-menu { position: relative; display: inline-flex; align-items: center; }
+.storefront-header .nav-category-dropdown { display: none; position: absolute; top: calc(100% + 4px); left: 0; min-width: 210px; max-width: 260px; max-height: 60vh; overflow-y: auto; z-index: 1100; background: #fff; border: 1px solid #d8e2f0; border-radius: 12px; box-shadow: 0 16px 34px rgba(15, 42, 82, .18); padding: 6px; }
+.storefront-header .nav-product-menu:hover .nav-category-dropdown,
+.storefront-header .nav-product-menu:focus-within .nav-category-dropdown,
+.storefront-header .nav-product-menu.mobile-expanded .nav-category-dropdown { display: block; }
+.storefront-header .nav-category-dropdown a,
+.storefront-header .nav-category-dropdown a:visited { display: block; color: #172b4d; background: transparent; font-size: .88rem; font-weight: 650; line-height: 1.35; padding: 10px 12px; border-left: 3px solid transparent; border-radius: 7px; white-space: normal; text-decoration: none; }
+.storefront-header .nav-category-dropdown a:hover,
+.storefront-header .nav-category-dropdown a:focus-visible { color: #0066ff; background: #eff6ff; border-left-color: #0066ff; outline: none; }
+.storefront-header .nav-category-dropdown a[aria-current="page"] { color: #0066ff; background: #eff6ff; border-left-color: #0066ff; font-weight: 800; }
+
+/* Mobile menu toggle */
+.storefront-header .mobile-menu-toggle { display: none; }
+
+/* Nav Actions (Buttons: Đăng ký, Đăng nhập, Giỏ hàng) */
+.storefront-header .nav-actions { order: 4; margin-left: 0; gap: 8px; flex: 0 0 auto; display: inline-flex; align-items: center; }
+.storefront-header .nav-actions .btn { min-height: 36px; padding: 8px 13px; border: 1px solid rgba(255, 255, 255, .55); color: #fff; background: #0052cc; border-radius: 8px; font-weight: 650; font-size: .84rem; display: inline-flex; align-items: center; gap: 6px; cursor: pointer; text-decoration: none; white-space: nowrap; box-sizing: border-box; transition: background .18s ease, border-color .18s ease, transform .18s ease, box-shadow .18s ease; }
+.storefront-header .nav-actions .btn i { font-size: .95rem; width: 1.2em; text-align: center; color: #fff; }
+.storefront-header .nav-actions .btn-outline { background: rgba(0, 82, 204, .65); border-color: rgba(255, 255, 255, .6); color: #fff; }
+.storefront-header .nav-actions .btn-primary { background: #0052cc; border-color: rgba(255, 255, 255, .65); color: #fff; }
+.storefront-header .nav-actions .btn-cart { background: #0052cc; border-color: rgba(255, 255, 255, .65); color: #fff; display: inline-flex; align-items: center; gap: 6px; }
+.storefront-header .nav-actions .btn:hover,
+.storefront-header .nav-actions .btn:focus-visible { background: #0040a8; border-color: #fff; color: #fff; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0, 26, 74, .25); }
+.storefront-header .cart-count { display: inline-grid; place-items: center; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 999px; color: #0066ff; background: #fff; font-size: .72rem; font-weight: 800; line-height: 1; margin-left: 2px; }
+.storefront-header .account-greeting { color: #eaf4ff; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: .82rem; display: inline-flex; align-items: center; gap: 5px; }
+
+/* Hero */
+.hero { max-width: none; margin: 0; padding: 0; }
+.hero-content { position: relative; max-width: none; min-height: 280px; padding: 34px 24px; border-radius: 0; display: flex; align-items: center; justify-content: center; text-align: center; background: #0066ff; overflow: hidden; }
+.hero-content::before, .hero-content::after { display: none; }
+.hero-copy { position: relative; z-index: 2; width: min(100%, 920px); margin: 0 auto; }
+.hero-eyebrow { display: block; color: #dbeafe; font-size: .75rem; font-weight: 800; letter-spacing: .09em; text-transform: uppercase; margin-bottom: 8px; }
+.hero-content h1 { max-width: 900px; margin: 0 auto; font-size: clamp(2rem, 3.25vw, 2.9rem); line-height: 1.08; text-wrap: balance; color: #fff; }
+.hero-content p { max-width: 720px; color: #ffffff; margin: 13px auto 20px; text-wrap: balance; }
+.hero-cta { display: inline-flex; align-items: center; gap: 8px; padding: 10px 15px; border-radius: 9px; color: #0066ff; background: #fff; font-weight: 800; text-decoration: none; }
+
+/* Category explorer */
+.category-explorer { background: #fff; border-bottom: 1px solid #e6edf7; }
+.category-explorer-inner { max-width: 1272px; margin: auto; padding: 20px 24px; display: flex; align-items: center; gap: 25px; }
+.category-explorer-heading { min-width: 175px; }
+.category-explorer-heading span { color: #0066ff; font-size: .72rem; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; }
+.category-explorer-heading h2 { margin: 2px 0 0; font-size: 1.05rem; color: #172033; }
+.category-shortcuts { flex: 1; display: grid; grid-template-columns: repeat(7, minmax(90px,1fr)); gap: 9px; }
+.category-shortcuts a { min-height: 78px; padding: 10px 6px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; color: #334155; background: #f7faff; border: 1px solid #e1eaf6; border-radius: 12px; font-size: .8rem; font-weight: 750; text-align: center; text-decoration: none; transition: transform .18s ease, background-color .18s ease, border-color .18s ease, box-shadow .18s ease; }
+.category-shortcuts a i { color: #0066ff; font-size: 28px; line-height: 1; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; transition: color .18s ease, transform .18s ease; }
+.category-shortcuts a:hover, .category-shortcuts a:focus-visible { border-color: #80b3ff; background: #eff6ff; transform: translateY(-2px); color: #0066ff; }
+.category-shortcuts a:hover i, .category-shortcuts a:focus-visible i { color: #0066ff; transform: scale(1.08); }
+.category-shortcuts a.active, .category-shortcuts a[aria-current="true"] { border-color: #0066ff; background: #eff6ff; color: #0066ff; box-shadow: 0 4px 12px rgba(0, 102, 255, .18); }
+.category-shortcuts a.active i, .category-shortcuts a[aria-current="true"] i { color: #0066ff; }
+.header-search button:focus-visible, .storefront-header a:focus-visible, .storefront-header .btn:focus-visible { outline: 3px solid #facc15; outline-offset: 2px; }
+
+/* Modals */
+.modal-open { overflow: hidden; }
+.modal .close-modal { z-index: 3; min-width: 40px; min-height: 40px; padding: 0; cursor: pointer; border-radius: 10px; }
+.modal .close-modal:hover, .modal .close-modal:focus-visible { color: #0066ff; background: #eff6ff; }
+#profileModal .modal-content { display: flex; flex-direction: column; }
+#profileModal .close-modal { position: sticky; top: -20px; align-self: flex-end; margin: -20px -20px 0 0; flex: 0 0 40px; }
+#profileModal #profileForm { overflow: visible; }
+#profileModal .profile-form-actions { display: flex; justify-content: flex-end; margin-top: 10px; }
+#profileModal .profile-form-actions .btn { min-width: 110px; min-height: 40px; }
+@media (max-width: 600px) { #profileModal .modal-content { max-height: calc(100vh - 24px); overflow-y: auto; } #profileModal .profile-form-actions { position: sticky; bottom: 0; padding: 10px 0 2px; background: #fff; } #profileModal .form-submit { margin-left: 0; margin-right: 0; max-width: none; width: 100%; } #profileModal .profile-form-actions .btn { width: 100%; } }
+
+/* ===== RESPONSIVE MULTI-ROW (< 992px: TABLET VÀ MOBILE) ===== */
+@media (max-width: 992px) {
+  .storefront-utility { display: none; }
+
+  .storefront-header .nav-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 10px 16px 8px;
+    gap: 8px 10px;
+    min-height: auto;
+  }
+
+  /* HÀNG 1 (Trái): Logo TechStore */
+  .storefront-header .logo {
+    order: 1;
+    flex: 0 0 auto;
+    font-size: 1.18rem;
+    gap: 7px;
+  }
+  .storefront-header .logo-mark {
+    width: 28px;
+    height: 28px;
+    flex: 0 0 28px;
+  }
+
+  /* HÀNG 1 (Phải): Cụm 3 nút Đăng ký, Đăng nhập, Giỏ hàng */
+  .storefront-header .nav-actions {
+    order: 2;
+    margin-left: auto;
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .storefront-header .nav-actions .btn {
+    min-height: 33px;
+    padding: 6px 10px;
+    font-size: .8rem;
+    gap: 5px;
+    border-radius: 7px;
+  }
+  .storefront-header .nav-actions .btn i {
+    font-size: .85rem;
+    width: auto;
+  }
+  .storefront-header .cart-count {
+    min-width: 18px;
+    height: 18px;
+    font-size: .68rem;
+    padding: 0 4px;
+  }
+  .storefront-header .account-greeting {
+    display: none !important;
+  }
+
+  /* HÀNG 2: Ô tìm kiếm (Search bar) dàn đều 100% */
+  .header-search {
+    order: 3;
+    width: 100%;
+    flex: 1 0 100%;
+    max-width: 100%;
+    min-width: 100%;
+    margin: 2px 0 3px;
+    min-height: 40px;
+  }
+  .header-search input {
+    padding: 9px 12px;
+    font-size: .88rem;
+  }
+  .header-search button {
+    width: 40px;
+    min-height: 40px;
+  }
+
+  /* HÀNG 3: Thanh điều hướng (Trang chủ, Sản phẩm, Liên hệ) dạng tab ngang / cuộn ngang */
+  .storefront-header .nav-menu {
+    order: 4;
+    width: 100%;
+    flex: 1 0 100%;
+    display: flex !important;
+    position: static !important;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 8px;
+    overflow: visible;
+    margin: 0;
+    padding: 2px 0 4px;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  .storefront-header .nav-menu::-webkit-scrollbar { display: none; }
+
+  .storefront-header .nav-menu > a,
+  .storefront-header .nav-product-trigger {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 13px;
+    border-radius: 20px;
+    font-size: .82rem;
+    font-weight: 650;
+    color: #ffffff;
+    background: rgba(255, 255, 255, .16);
+    border: 1px solid rgba(255, 255, 255, .28);
+    text-decoration: none;
+    white-space: nowrap;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    transition: background .18s ease, color .18s ease, border-color .18s ease;
+  }
+  .storefront-header .nav-menu > a i,
+  .storefront-header .nav-product-trigger i {
+    color: #ffffff;
+    font-size: .82rem;
+    width: auto;
+  }
+  .storefront-header .nav-menu > a:hover,
+  .storefront-header .nav-menu > a:focus-visible,
+  .storefront-header .nav-product-trigger:hover,
+  .storefront-header .nav-product-trigger:focus-visible {
+    background: #ffffff;
+    color: #0066ff;
+    border-color: #ffffff;
+  }
+  .storefront-header .nav-menu > a:hover i,
+  .storefront-header .nav-product-trigger:hover i {
+    color: #0066ff;
+  }
+
+  /* Dropdown danh mục của Sản phẩm khi ở hàng 3 */
+  .storefront-header .nav-product-menu {
+    position: relative;
+    display: inline-flex;
+    flex-shrink: 0;
+  }
+  .storefront-header .nav-menu .nav-category-dropdown {
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 0;
+    width: 220px;
+    max-width: 85vw;
+    max-height: 55vh;
+    overflow-y: auto;
+    background: #ffffff;
+    border: 1px solid #d8e2f0;
+    border-radius: 12px;
+    box-shadow: 0 12px 28px rgba(15, 23, 42, .22);
+    z-index: 1200;
+    padding: 6px;
+  }
+  .storefront-header .mobile-menu-toggle {
+    display: none !important;
+  }
+}
+
+/* Category Explorer Responsive */
+@media (max-width: 900px) {
+  .category-explorer-inner { padding: 14px 16px; display: block; }
+  .category-explorer-heading { margin-bottom: 10px; }
+  .category-shortcuts {
+    display: flex;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    gap: 10px;
+    padding-bottom: 8px;
+    scrollbar-width: thin;
+  }
+  .category-shortcuts a {
+    flex: 0 0 100px;
+    min-width: 100px;
+    min-height: 72px;
+  }
+}
+
+/* Mobile nhỏ (<= 480px) */
+@media (max-width: 480px) {
+  .storefront-header .nav-container {
+    padding: 8px 10px 6px;
+    gap: 6px 6px;
+  }
+  .storefront-header .logo {
+    font-size: 1.05rem;
+    gap: 5px;
+  }
+  .storefront-header .logo-mark {
+    width: 26px;
+    height: 26px;
+    flex: 0 0 26px;
+  }
+  .storefront-header .nav-actions {
+    gap: 4px;
+  }
+  .storefront-header .nav-actions .btn {
+    min-height: 30px;
+    padding: 5px 7px;
+    font-size: .74rem;
+    gap: 4px;
+    border-radius: 6px;
+  }
+  .storefront-header .nav-actions .btn i {
+    font-size: .78rem;
+  }
+  .storefront-header .cart-count {
+    min-width: 17px;
+    height: 17px;
+    font-size: .65rem;
+    padding: 0 4px;
+  }
+  .storefront-header .nav-menu > a,
+  .storefront-header .nav-product-trigger {
+    padding: 5px 11px;
+    font-size: .78rem;
+    gap: 5px;
+  }
+  .category-explorer-inner { padding: 12px 10px; }
+  .category-shortcuts a {
+    flex: 0 0 90px;
+    min-width: 90px;
+    min-height: 68px;
+    padding: 8px 4px;
+    font-size: .76rem;
+  }
+  .category-shortcuts a i {
+    font-size: 24px;
+    width: 28px;
+    height: 28px;
+  }
+  .hero-content { min-height: 185px; padding: 26px 16px; }
+  .hero-content h1 { font-size: clamp(1.6rem, 7vw, 1.9rem); }
+}
+
+/* Extra small (<= 360px) */
+@media (max-width: 360px) {
+  .storefront-header .nav-container {
+    padding: 6px 8px 5px;
+    gap: 5px;
+  }
+  .storefront-header .logo {
+    font-size: .95rem;
+    gap: 4px;
+  }
+  .storefront-header .logo-mark {
+    width: 23px;
+    height: 23px;
+    flex: 0 0 23px;
+  }
+  .storefront-header .nav-actions {
+    gap: 3px;
+  }
+  .storefront-header .nav-actions .btn {
+    padding: 4px 6px;
+    font-size: .71rem;
+    gap: 3px;
+  }
+}

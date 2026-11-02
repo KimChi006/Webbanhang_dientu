@@ -1,7 +1,7 @@
 /* 1. Bảng màu và thành phần cơ bản trong giao diện admin. */
 :root {
-  --blue: #2563eb;
-  --blue-dark: #1d4ed8;
+  --blue: #0066ff;
+  --blue-dark: #0052cc;
   --bg: #f5f7fb;
   --text: #1e293b;
   --muted: #64748b;
@@ -90,7 +90,7 @@ p {
 }
 button:focus-visible,
 a:focus-visible {
-  outline: 3px solid #93c5fd;
+  outline: 3px solid rgba(0, 102, 255, 0.35);
   outline-offset: 3px;
 }
 input,
@@ -108,7 +108,7 @@ input:focus,
 select:focus,
 textarea:focus {
   border-color: var(--blue);
-  box-shadow: 0 0 0 3px #2563eb18;
+  box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.15);
 }
 input[readonly] {
   background: #f1f5f9;
@@ -167,7 +167,7 @@ textarea {
   display: grid;
   place-items: center;
   padding: 20px;
-  background: linear-gradient(135deg, #eff6ff, #f8fafc);
+  background: var(--bg);
 }
 .login-card {
   width: 100%;
@@ -521,7 +521,7 @@ tbody tr:last-child td {
 }
 .status-blue {
   background: #dbeafe;
-  color: #1d4ed8;
+  color: #0052cc;
 }
 .status-neutral {
   background: #f1f5f9;

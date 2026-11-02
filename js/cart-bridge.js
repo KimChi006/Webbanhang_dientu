@@ -26,7 +26,11 @@
       window.openModal?.('login');
       throw new Error('Vui lòng đăng nhập tài khoản khách hàng trước khi mua hàng.');
     }
-    const db = S.load(typeof list_products !== 'undefined' ? list_products : []);
+    let db = S.load(typeof list_products !== 'undefined' ? list_products : []);
+    // Cầu nối có thể được gọi trước khi catalog khởi tạo (ví dụ từ một liên kết
+    // chi tiết). Luôn nạp các đợt chuẩn ở đây để mã sản phẩm mở rộng được xử lý
+    // giống hệt khi người dùng bắt đầu từ trang danh sách.
+    if (typeof S.importStandardBatches === 'function') db = S.importStandardBatches(db);
     const product = db.products.find(p => String(p.masp) === String(productId) && !p.hidden);
     if (!product) throw new Error('Sản phẩm không tồn tại hoặc đã bị ẩn.');
     const price = S.sellingPrice(db, product);

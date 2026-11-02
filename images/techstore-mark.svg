@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" role="img" aria-label="TechStore">
+  <rect width="48" height="48" rx="12" fill="#ffffff"/>
+  <path d="M11 13.5h26v6H27v15h-6v-15H11z" fill="#0066ff"/>
+  <path d="M31.5 28.5h5v5h-5zM25.5 36h5v5h-5z" fill="#08a6d8"/>
+  <path d="M34 28.5v-4.5h-4.5M28 38.5h-4.5V34" fill="none" stroke="#08a6d8" stroke-width="2" stroke-linecap="round"/>
+</svg>
