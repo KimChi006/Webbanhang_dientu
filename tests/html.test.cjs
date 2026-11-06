@@ -1,6 +1,6 @@
 const fs=require('node:fs'),vm=require('node:vm'),path=require('node:path');
 const root=path.join(__dirname,'..');
-for(const file of ['index.html','chi_tiet_sp.html','admin/index.html','don-hang.html','kiem_tra_anh.html','xem_truoc_mau_6_sp.html']){
+for(const file of ['index.html','chi_tiet_sp.html','admin/index.html','don-hang.html']){
  const html=fs.readFileSync(path.join(root,file),'utf8');let n=0;
  if((html.match(/<!doctype html/gi)||[]).length!==1)throw Error('Tài liệu HTML phải chỉ có một doctype: '+file);
  for(const m of html.matchAll(/<script\b([^>]*)>([\s\S]*?)<\/script>/gi)){

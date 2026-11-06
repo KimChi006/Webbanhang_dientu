@@ -168,7 +168,7 @@ function table(headers, rows, paginate = true, footerRow = "") {
   return `<div class="table-wrap"><table><thead><tr>${headers.map((h) => `<th scope="col">${h}</th>`).join("")}</tr></thead><tbody>${shown.length ? shown.join("") : `<tr><td colspan="${headers.length}"><div class="empty-state"><strong>Không có dữ liệu phù hợp</strong>Thử thay đổi bộ lọc hoặc thêm dữ liệu mới.</div></td></tr>`}</tbody>${footerRow ? `<tfoot>${footerRow}</tfoot>` : ""}</table></div><div class="table-footer"><span>${rows.length} kết quả${paginate && rows.length ? " · " + ((pageNumber - 1) * PAGE_SIZE + 1) + "–" + Math.min(pageNumber * PAGE_SIZE, rows.length) : ""}</span>${paginate ? `<div class="pagination"><button class="btn btn-light" data-action="previous" ${pageNumber === 1 ? "disabled" : ""} aria-label="Trang trước"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button><span>Trang ${pageNumber} / ${pages}</span><button class="btn btn-light" data-action="next" ${pageNumber === pages ? "disabled" : ""} aria-label="Trang sau"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button></div>` : ""}</div>`;
 }
 function filterInput(name, label, type = "text", placeholder = "") {
-  return `<div class="field ${name === "q" ? "search" : ""} ${type === "datetime-local" ? "time" : ""}"><label for="filter-${name}">${label}</label><input id="filter-${name}" name="${name}" type="${type}" value="${escapeHTML(filters[name] || "")}" placeholder="${placeholder}"></div>`;
+  return `<div class="field ${name === "q" ? "search" : ""} ${type === "datetime-local" ? "time" : ""}"><label for="filter-${name}">${label}</label><input id="filter-${name}" name="${name}" type="${type}" ${type === "date" ? `max="${S.now().slice(0, 10)}"` : type === "datetime-local" ? `max="${S.now()}"` : ""} value="${escapeHTML(filters[name] || "")}" placeholder="${placeholder}"></div>`;
 }
 function filterSelect(name, label, html) {
   return `<div class="field"><label for="filter-${name}">${label}</label><select id="filter-${name}" name="${name}"><option value="">Tất cả</option>${html}</select></div>`;
@@ -1173,7 +1173,6 @@ document.addEventListener("click", (event) => {
           </p>
           <div style="margin: 14px 0; display: flex; gap: 8px;">
             <button type="button" class="btn btn-outline" id="btnBackupBeforePatch"><i class="fa-solid fa-download" aria-hidden="true"></i> Tải bản sao lưu trước khi cập nhật</button>
-            <a href="../kiem_tra_anh.html" target="_blank" class="btn btn-outline"><i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i> Mở trang rà soát ảnh trực quan</a>
           </div>
           <p class="help">Nhấn "Tiến hành cập nhật ảnh" để áp dụng cho cơ sở dữ liệu hiện tại trên trình duyệt này.</p>`,
           "Tiến hành cập nhật ảnh"

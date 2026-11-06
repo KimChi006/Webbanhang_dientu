@@ -1040,10 +1040,6 @@
                     <li><a href="#" onclick="openModal('login'); return false;"><i class="fa-solid fa-user-circle" aria-hidden="true"></i> Đăng nhập / Đăng ký</a></li>
                     <li><a href="index.html#san-pham"><i class="fa-solid fa-filter" aria-hidden="true"></i> Bộ lọc &amp; Tìm kiếm nhanh</a></li>
                 </ul>
-                <div class="footer-notes">
-                    <p class="footer-note-item"><i class="fa-solid fa-truck-fast" aria-hidden="true"></i> <span><strong>Phương thức:</strong> Hỗ trợ đặt hàng trực tuyến, thanh toán khi nhận hàng (COD).</span></p>
-                    <p class="footer-note-item"><i class="fa-solid fa-database" aria-hidden="true"></i> <span><strong>Lưu trữ:</strong> Dữ liệu đơn hàng và tài khoản đồng bộ trên hệ thống trình duyệt.</span></p>
-                </div>
             </div>
 
         </div>
@@ -1087,8 +1083,10 @@
                         id="authPhone"
                         type="tel"
                         autocomplete="tel"
-                        maxlength="20"
-                        pattern="[0-9+() .-]{9,20}"
+                        maxlength="10"
+                        inputmode="numeric"
+                        pattern="(0[0-9]{9}|84[0-9]{8})"
+                        title="Số điện thoại gồm 10 chữ số, bắt đầu bằng 0 hoặc 84"
                         placeholder="Nhập số điện thoại"
                     >
                 </div>
@@ -1190,7 +1188,7 @@
                 <div class="form-group">
                     <label for="profilePhone">Số điện thoại</label>
                     <input id="profilePhone" type="tel"
-                        maxlength="20" required>
+                        maxlength="10" inputmode="numeric" pattern="(0[0-9]{9}|84[0-9]{8})" title="Số điện thoại gồm 10 chữ số, bắt đầu bằng 0 hoặc 84" required>
                 </div>
 
                 <div class="form-group">
@@ -1211,7 +1209,6 @@
                         id="profileSubmit" type="submit">
                     Lưu thay đổi
                 </button>
-                <div class="profile-form-actions"><button class="btn btn-outline" id="profileCancel" type="button" onclick="requestCloseProfile()">Hủy</button></div>
             </form>
         </div>
     </div>
@@ -1430,6 +1427,10 @@
                     : "Nhập mật khẩu";
         }
 
+        const localToday = new Date();
+        const todayDateLimit = `${localToday.getFullYear()}-${String(localToday.getMonth()+1).padStart(2,"0")}-${String(localToday.getDate()).padStart(2,"0")}`;
+        document.querySelectorAll('input[type="date"]').forEach(input => input.max = todayDateLimit);
+
         const authForm = document.getElementById("authForm");
         const formMessage = document.getElementById("formMessage");
         let profileSnapshot = null;
@@ -1437,7 +1438,7 @@
         function profileFormValues() { return ["profileName", "profileEmail", "profilePhone", "profileBirth", "profileAddress"].map(id => document.getElementById(id)?.value || ""); }
         function profileIsDirty() { return profileSnapshot && JSON.stringify(profileFormValues()) !== JSON.stringify(profileSnapshot); }
         function closeOverlay(id) { const modal = document.getElementById(id); if (!modal) return; modal.classList.remove("show"); if (!document.querySelector(".modal.show")) document.body.classList.remove("modal-open"); if (id === "profileModal" && profileOpener && document.contains(profileOpener)) profileOpener.focus(); if (id === "profileModal") { profileSnapshot = null; profileOpener = null; } }
-        function requestCloseProfile() { if (profileIsDirty() && !window.confirm("Bạn có muốn bỏ các thay đổi chưa lưu không?")) return; closeOverlay("profileModal"); }
+        function requestCloseProfile() { closeOverlay("profileModal"); }
         function closeOverlayOutside(event) { if (event.target !== event.currentTarget) return; if (event.currentTarget.id === "profileModal") requestCloseProfile(); else closeOverlay(event.currentTarget.id); }
         document.addEventListener("keydown", event => { if (event.key !== "Escape") return; const visible = document.querySelector(".modal.show"); if (!visible) return; if (visible.id === "profileModal") requestCloseProfile(); else closeOverlay(visible.id); });
 
@@ -1484,7 +1485,8 @@
             if (!data.hoTen || !data.email || !data.ngaySinh || !data.soDienThoai || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email)) {
                 message.style.color = "#d14343"; message.textContent = "Vui lòng nhập họ tên, email, số điện thoại và ngày sinh hợp lệ."; return;
             }
-            if (!/^[0-9+() .-]{9,20}$/.test(data.soDienThoai)) { message.style.color = "#d14343"; message.textContent = "Số điện thoại không hợp lệ."; return; }
+            if (!/^(0[0-9]{9}|84[0-9]{8})$/.test(data.soDienThoai)) { message.style.color = "#d14343"; message.textContent = "Số điện thoại phải gồm đúng 10 chữ số và bắt đầu bằng 0 hoặc 84."; return; }
+            const profileBirthDate = new Date(data.ngaySinh + "T00:00:00"); const profileToday = new Date(); profileToday.setHours(0,0,0,0); if (Number.isNaN(profileBirthDate.getTime()) || profileBirthDate > profileToday) { message.style.color = "#d14343"; message.textContent = "Ngày sinh không được vượt quá ngày hiện tại."; return; }
             const users = tv4DemoUsers();
             if (users.some(user => String(user.email).toLowerCase() === data.email.toLowerCase() && String(user.email).toLowerCase() !== String(current.email).toLowerCase())) {
                 message.style.color = "#d14343"; message.textContent = "Email này đã được tài khoản khác sử dụng."; return;
@@ -1538,7 +1540,7 @@
                     const ngaySinh = document.getElementById("authBirthDate").value;
                     const confirmPassword = document.getElementById("confirmPassword").value;
                     if (!hoTen || !soDienThoai || !email || !ngaySinh || !password) throw new Error("Vui lòng nhập đầy đủ thông tin.");
-                    if (!/^[0-9+() .-]{9,20}$/.test(soDienThoai)) throw new Error("Số điện thoại không hợp lệ.");
+                    if (!/^(0[0-9]{9}|84[0-9]{8})$/.test(soDienThoai)) throw new Error("Số điện thoại phải gồm đúng 10 chữ số và bắt đầu bằng 0 hoặc 84.");
                     if (password.length < 8) throw new Error("Mật khẩu phải có ít nhất 8 ký tự.");
                     if (password !== confirmPassword) throw new Error("Mật khẩu nhập lại không khớp.");
                     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error("Email không hợp lệ.");
