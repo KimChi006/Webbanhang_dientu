@@ -182,10 +182,10 @@
       viewRoot.innerHTML = `<div class="layout"><section class="panel"><div class="panel-head"><h2>Sản phẩm đã chọn</h2><span class="muted">${cart.length} mặt hàng</span></div><div class="panel-body">${cartRows}</div></section><aside class="panel summary-panel"><div class="panel-head"><h2>Tóm tắt đơn hàng</h2></div><div class="panel-body"><div class="summary-row"><span>Số lượng sản phẩm</span><strong>${cart.reduce((sum, item) => sum + Number(item.quantity), 0)}</strong></div><div class="summary-row"><span>Phí giao hàng</span><strong>Miễn phí</strong></div><div class="summary-row total"><span>Tạm tính</span><strong>${money(total(cart))}</strong></div><button type="button" class="btn btn-primary" data-action="checkout" ${cart.some(item => Number(item.quantity) > availableStock(item) || availableStock(item) < 1) ? "disabled" : ""}><i class="fa-solid fa-receipt" aria-hidden="true"></i> Tiến hành đặt hàng <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button><div class="hint">Đơn hàng sẽ được tiếp nhận ở trạng thái <strong>Mới đặt</strong>. Quý khách vui lòng kiểm tra kỹ thông tin người nhận và giỏ hàng trước khi xác nhận.</div></div></aside></div>`;
     }
     function renderCheckout() {
-      setPageHeading("Thông tin đặt hàng", "Nhập địa chỉ nhận hàng.");
+      setPageHeading("Thông tin đặt hàng", "Nhập thông tin người nhận và xác nhận phương thức thanh toán.");
       const cart = getCart();
       if (!cart.length) { view = "cart"; renderCart(); return; }
-      viewRoot.innerHTML = `<div class="layout"><section class="panel"><div class="panel-head"><h2>Địa chỉ nhận hàng</h2></div><div class="panel-body"><form id="checkoutForm"><div class="field full"><label for="newAddress">Địa chỉ nhận hàng *</label><textarea id="newAddress" name="newAddress" required maxlength="300" placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành phố">${esc(profile.diaChi || "")}</textarea></div><div id="checkoutError" class="notice error" hidden></div><div class="checkout-actions"><button type="button" class="btn btn-light" data-action="back-cart">← Quay lại giỏ hàng</button><button type="submit" id="placeOrderBtn" class="btn btn-primary"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Xác nhận đặt hàng</button></div></form></div></section><aside class="panel summary-panel"><div class="panel-head"><h2>Đơn hàng của bạn</h2></div><div class="panel-body">${cart.map(item => `<div class="summary-row"><span>${esc(item.name)} × ${Number(item.quantity)}</span><strong>${money(Number(item.price) * Number(item.quantity))}</strong></div>`).join("")}<div class="summary-row"><span>Phí giao hàng</span><strong>Miễn phí</strong></div><div class="summary-row total"><span>Tổng thanh toán</span><strong>${money(total(cart))}</strong></div><div class="hint">Đơn hàng sẽ sử dụng họ tên và số điện thoại đã lưu trong tài khoản.</div></div></aside></div>`;
+      viewRoot.innerHTML = `<div class="layout"><section class="panel"><div class="panel-head"><h2>Thông tin đặt hàng</h2></div><div class="panel-body"><form id="checkoutForm"><div class="form-grid"><div class="field"><label for="recipient">Họ tên người nhận *</label><input id="recipient" name="recipient" required maxlength="100" value="${esc(profile.hoTen || account.hoTen || account.name || "")}" autocomplete="name" placeholder="Nhập họ và tên"></div><div class="field"><label for="phone">Số điện thoại *</label><input id="phone" name="phone" type="tel" required maxlength="10" inputmode="numeric" pattern="(0[0-9]{9}|84[0-9]{8})" value="${esc(profile.soDienThoai || account.soDienThoai || account.phone || "")}" autocomplete="tel" placeholder="0901234567"></div><div class="field full"><label for="newAddress">Địa chỉ nhận hàng *</label><textarea id="newAddress" name="newAddress" required maxlength="300" placeholder="Số nhà, đường, phường/xã, quận/huyện, tỉnh/thành phố">${esc(profile.diaChi || "")}</textarea></div><div class="field full"><label for="note">Ghi chú (không bắt buộc)</label><textarea id="note" name="note" maxlength="500" placeholder="Ví dụ: giao giờ hành chính, gọi trước khi giao"></textarea></div><div class="field full"><label>Phương thức thanh toán *</label><div class="radio-options"><label class="radio-card"><input type="radio" name="payment" value="Tiền mặt khi nhận hàng" checked><span><strong>Tiền mặt khi nhận hàng (COD)</strong><small>Thanh toán bằng tiền mặt cho nhân viên giao hàng khi nhận sản phẩm.</small></span></label><label class="radio-card"><input type="radio" name="payment" value="Chuyển khoản ngân hàng"><span><strong>Chuyển khoản ngân hàng</strong><small>Chuyển khoản qua tài khoản ngân hàng của TechStore.</small></span></label><label class="radio-card"><input type="radio" name="payment" value="Thanh toán trực tuyến"><span><strong>Thanh toán trực tuyến</strong><small>Thanh toán qua thẻ hoặc ví điện tử.</small></span></label></div></div></div><div id="checkoutError" class="notice error" hidden></div><div class="checkout-actions"><button type="button" class="btn btn-light" data-action="back-cart">← Quay lại giỏ hàng</button><button type="submit" id="placeOrderBtn" class="btn btn-primary"><i class="fa-solid fa-circle-check" aria-hidden="true"></i> Xác nhận đặt hàng</button></div></form></div></section><aside class="panel summary-panel"><div class="panel-head"><h2>Đơn hàng của bạn</h2></div><div class="panel-body">${cart.map(item => `<div class="summary-row"><span>${esc(item.name)} × ${Number(item.quantity)}</span><strong>${money(Number(item.price) * Number(item.quantity))}</strong></div>`).join("")}<div class="summary-row"><span>Phí giao hàng</span><strong>Miễn phí</strong></div><div class="summary-row total"><span>Tổng thanh toán</span><strong>${money(total(cart))}</strong></div><div class="hint">Kiểm tra thông tin người nhận và sản phẩm trước khi xác nhận đặt hàng.</div></div></aside></div>`;
       $("#checkoutForm").addEventListener("submit", submitOrder);
     }
     function resolveAdminProductId(item, database) {
@@ -197,13 +197,15 @@
       const form = event.currentTarget, data = new FormData(form);
       const errorNode = $("#checkoutError"), submit = $("#placeOrderBtn");
       errorNode.hidden = true;
-      const recipient = String(profile.hoTen || account.hoTen || account.name || "Khách hàng").trim();
-      const phone = String(profile.soDienThoai || account.soDienThoai || account.phone || "").trim();
+      const recipient = String(data.get("recipient") || "").trim();
+      const phone = String(data.get("phone") || "").trim();
       const address = String(data.get("newAddress") || "").trim();
-      const note = "";
+      const note = String(data.get("note") || "").trim();
+      const payment = String(data.get("payment") || "Tiền mặt khi nhận hàng");
       if (!recipient || recipient.length > 100) return fail("Vui lòng nhập họ tên người nhận hợp lệ.");
-      if (!/^(0[0-9]{9}|84[0-9]{8})$/.test(phone)) return fail("Vui lòng cập nhật số điện thoại hợp lệ trong thông tin tài khoản trước khi đặt hàng.");
+      if (!/^(0[0-9]{9}|84[0-9]{8})$/.test(phone)) return fail("Số điện thoại phải có đúng 10 chữ số và bắt đầu bằng 0 hoặc 84.");
       if (!address || address.length > 300) return fail("Vui lòng nhập địa chỉ nhận hàng (tối đa 300 ký tự).");
+      if (note.length > 500) return fail("Ghi chú không được vượt quá 500 ký tự.");
       if (!getCart().length) return fail("Giỏ hàng đang trống, không thể đặt hàng.");
       submit.disabled = true; submit.textContent = "Đang tạo đơn hàng…";
       try {
@@ -226,7 +228,7 @@
           address,
           recipient,
           phone,
-          payment: "Tiền mặt khi nhận hàng",
+          payment,
           note,
           items
         };
